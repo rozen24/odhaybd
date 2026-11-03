@@ -8,3 +8,5 @@ out
 .env.*.local
 .DS_Store
 tsconfig.tsbuildinfo
+.prisma-composer/
+.alchemy/
