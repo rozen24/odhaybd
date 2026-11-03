@@ -3,7 +3,7 @@
 //
 // Save as scripts/package-for-cpanel.mjs, then:
 //   1. next.config.ts: add  output: "standalone"  and  basePath: "/pustakbd"
-//   2. npx prisma generate
+//   2. npx prisma7 generate
 //   3. set NEXT_PUBLIC_BASE_PATH=/pustakbd and run  npm run build
 //        PowerShell:   $env:NEXT_PUBLIC_BASE_PATH="/pustakbd"; npm run build
 //        macOS/Linux:  NEXT_PUBLIC_BASE_PATH=/pustakbd npm run build
@@ -102,7 +102,7 @@ if (await exists(clientDir)) {
       '  If you use Prisma 6 or earlier, add\n' +
       '    binaryTargets = ["native", "rhel-openssl-3.0.x"]\n' +
       "  to the generator in prisma/schema.prisma (use the target that matches your\n" +
-      "  server), run  npx prisma generate, then build and package again.\n",
+      "  server), run  npx prisma7 generate, then build and package again.\n",
     );
   }
 }

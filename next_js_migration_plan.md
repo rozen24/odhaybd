@@ -661,11 +661,11 @@ or secrets.
 ==================================================
 Use Prisma migrations.
 Commands should follow a workflow similar to:
-npx prisma generate
-npx prisma migrate dev
-npx prisma db seed
+npx prisma7 generate
+npx prisma7 migrate dev
+npx prisma7 db seed
 For production:
-npx prisma migrate deploy
+npx prisma7 migrate deploy
 Do not use destructive database resets on a production database.
 ==================================================
 27. SEED DATA
@@ -1114,4 +1114,3 @@ This is the implementation plan, not the rewrite. If you want me to start, the f
 Starting Phase 2–3: Next.js App Router with the existing UI and URLs. I’ll inspect the remaining Vite entrypoints, then add the Next shell without moving or restyling components.
 
 Setting up the Next.js foundation and a React Router compatibility layer so we can keep existing URLs and UI while swapping the Vite shell.
-
