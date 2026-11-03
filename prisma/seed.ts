@@ -1,3 +1,5 @@
+import 'dotenv/config';
+import { PrismaPg } from '@prisma/adapter-pg';
 import { randomBytes, scrypt as scryptCallback } from "node:crypto";
 import { promisify } from "node:util";
 import { PrismaClient, UserRole } from "@prisma/client";
@@ -11,7 +13,11 @@ import {
   seedSettings,
 } from "../src/services/seed";
 
-const prisma = new PrismaClient();
+// 1. Set up the driver adapter using your environment variable
+const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL });
+
+// 2. Pass the adapter instance into PrismaClient
+const prisma = new PrismaClient({ adapter });
 const scrypt = promisify(scryptCallback);
 
 const MIN_PASSWORD_LENGTH = 8;
@@ -228,10 +234,11 @@ async function main() {
 }
 
 main()
-  .catch((error) => {
-    console.error(error);
-    process.exitCode = 1;
-  })
-  .finally(async () => {
+  .then(async () => {
     await prisma.$disconnect();
+  })
+  .catch(async (e) => {
+    console.error(e);
+    await prisma.$disconnect();
+    process.exit(1);
   });
