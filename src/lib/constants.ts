@@ -1,6 +1,6 @@
 import type { PaymentMethod } from "../types";
 
-export const SITE_NAME = "Pustak BD";
+export const SITE_NAME = "Odhay BD";
 export const SITE_TAGLINE = "Bangladesh's Book Universe";
 
 export const FREE_SHIPPING_THRESHOLD = 1000;
