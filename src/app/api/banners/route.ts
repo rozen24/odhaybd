@@ -7,7 +7,7 @@ import { fail, handle, ok, readJson, str } from "@/lib/api-route";
 
 const PLACEMENTS = ["hero", "secondary", "campaign"];
 
-// Empty on your PC; "/pustakbd" in the sub-folder deployment.
+// Empty on your PC; "/odhaybd" in the sub-folder deployment.
 const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
 // The storefront gets only active banners. When a signed-in admin or editor

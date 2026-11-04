@@ -1,15 +1,15 @@
 // Packages the Next.js standalone build for cPanel (Namecheap shared hosting),
-// to run at https://amardokan-e.com/pustakbd  (a SUBFOLDER, basePath "/pustakbd").
+// to run at https://amardokan-e.com/odhaybd  (a SUBFOLDER, basePath "/odhaybd").
 //
 // Save as scripts/package-for-cpanel.mjs, then:
-//   1. next.config.ts: add  output: "standalone"  and  basePath: "/pustakbd"
+//   1. next.config.ts: add  output: "standalone"  and  basePath: "/odhaybd"
 //   2. npx prisma7 generate
-//   3. set NEXT_PUBLIC_BASE_PATH=/pustakbd and run  npm run build
-//        PowerShell:   $env:NEXT_PUBLIC_BASE_PATH="/pustakbd"; npm run build
-//        macOS/Linux:  NEXT_PUBLIC_BASE_PATH=/pustakbd npm run build
+//   3. set NEXT_PUBLIC_BASE_PATH=/odhaybd and run  npm run build
+//        PowerShell:   $env:NEXT_PUBLIC_BASE_PATH="/odhaybd"; npm run build
+//        macOS/Linux:  NEXT_PUBLIC_BASE_PATH=/odhaybd npm run build
 //   4. node scripts/package-for-cpanel.mjs
 //
-// Result: pustakbd-deploy.zip, ready to upload and extract in the cPanel
+// Result: odhaybd-deploy.zip, ready to upload and extract in the cPanel
 // application folder.
 
 import { access, cp, readFile, readdir, rename, rm, writeFile } from "node:fs/promises";
@@ -17,8 +17,8 @@ import { existsSync } from "node:fs";
 import { execFileSync } from "node:child_process";
 import path from "node:path";
 
-const BASE_PATH = "/pustakbd";
-const zipName = "pustakbd-deploy.zip";
+const BASE_PATH = "/odhaybd";
+const zipName = "odhaybd-deploy.zip";
 
 const root = process.cwd();
 const standalone = path.join(root, ".next", "standalone");

@@ -935,7 +935,7 @@ The app is already a structured bookstore SPA, not a throwaway Figma dump. The m
 
 ## What you have today
 
-**Stack:** Vite 6 + React 18 + TypeScript + Tailwind 4 + shadcn/ui + Lucide. Brand is **Pustak BD** / Boierpata (`guidelines/Guidelines.md`).
+**Stack:** Vite 6 + React 18 + TypeScript + Tailwind 4 + shadcn/ui + Lucide. Brand is **Odhay BD** / Boierpata (`guidelines/Guidelines.md`).
 
 **Routing (keep these URLs):**
 

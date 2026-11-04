@@ -112,7 +112,7 @@ async function main() {
     );
   }
 
-  console.log("\n[seed] Starting Pustak BD database seed...\n");
+  console.log("\n[seed] Starting Odhay BD database seed...\n");
 
   // ---------- Users ----------
   console.log("[seed] Creating/verifying user accounts...");
@@ -419,7 +419,7 @@ async function main() {
   );
 
   console.log("\n========================================");
-  console.log("       PUSTAK BD SEED COMPLETED");
+  console.log("       Odhay BD SEED COMPLETED");
   console.log("========================================");
   console.log(`✓ Admin: ${admin.email}`);
   console.log(`✓ Products: ${seedBooks.length}`);

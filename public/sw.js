@@ -1,7 +1,7 @@
-// "" on a normal domain, "/pustakbd" in the sub-folder
+// "" on a normal domain, "/odhaybd" in the sub-folder
 const BASE = new URL(self.registration.scope).pathname.replace(/\/$/, "");
 
-   const CACHE_NAME = "pustak-static-v2";
+   const CACHE_NAME = "odhay-static-v2";
    const STATIC_ASSETS = ["/", "/offline", "/manifest.webmanifest", "/icons/icon-192.svg", "/icons/icon-512.svg"].map((p) => BASE + p);
 
 self.addEventListener("install", (event) => {

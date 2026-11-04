@@ -46,7 +46,7 @@ export function PwaClient() {
 
   return (
     <div className="fixed inset-x-4 bottom-20 z-50 flex items-center justify-between gap-4 rounded-lg border border-border bg-card p-3 text-sm shadow-lg md:inset-x-auto md:bottom-6 md:right-6 md:w-80">
-      <p className="text-foreground">Install Pustak BD for a quicker reading experience.</p>
+      <p className="text-foreground">Install Odhay BD for a quicker reading experience.</p>
       <div className="flex shrink-0 items-center gap-2">
         <button type="button" onClick={dismiss} className="text-xs text-muted-foreground hover:text-foreground">Later</button>
         <button type="button" onClick={install} className="rounded-md bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground">Install</button>

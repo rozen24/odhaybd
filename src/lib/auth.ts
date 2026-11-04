@@ -10,7 +10,7 @@ import type { Profile } from "@/types";
 export const SESSION_COOKIE = "bp_session";
 const SESSION_DAYS = 30;
 
-// When the site lives in a sub-folder (https://example.com/pustakbd) the cookie
+// When the site lives in a sub-folder (https://example.com/odhaybd) the cookie
 // is limited to that folder, so other apps on the same domain never receive it.
 const COOKIE_PATH = process.env.NEXT_PUBLIC_BASE_PATH || "/";
 

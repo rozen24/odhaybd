@@ -6,7 +6,7 @@ import { fail, handle, ok } from "@/lib/api-route";
 
 const MAX_BYTES = 5 * 1024 * 1024; // 5 MB
 
-// Empty on your PC; "/pustakbd" in the sub-folder deployment. Saved image links
+// Empty on your PC; "/odhaybd" in the sub-folder deployment. Saved image links
 // include it so <img src> points at the right place.
 const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
