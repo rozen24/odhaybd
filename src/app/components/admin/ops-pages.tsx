@@ -268,21 +268,47 @@ export function AdminSettings() {
     setTerm("");
   };
 
-  const save = async (e: React.FormEvent) => {
+    const save = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (sections.some((s) => !s.title.trim() || !s.categorySlug)) { toast.error("Each homepage section needs a title and category"); return; }
+
+    const cleanSections = sections.map((s) => ({ ...s, title: s.title.trim() }));
+    if (cleanSections.some((s) => !s.title || !s.categorySlug)) {
+      toast.error("Each homepage section needs a title and category");
+      return;
+    }
+
+    const shippingFee = Number(form.shippingFee ?? 0);
+    const freeShippingThreshold = Number(form.freeShippingThreshold ?? 0);
+    if (
+      !Number.isFinite(shippingFee) || shippingFee < 0 ||
+      !Number.isFinite(freeShippingThreshold) || freeShippingThreshold < 0
+    ) {
+      toast.error("Shipping values must be 0 or more");
+      return;
+    }
+
     setSaving(true);
     try {
+      // Send only the fields this form edits (no id / updatedAt / unknown keys).
       const saved = await services.store.saveSettings({
-        ...form,
-        shippingFee: Number(form.shippingFee ?? 0),
-        freeShippingThreshold: Number(form.freeShippingThreshold ?? 0),
+        storeName: form.storeName?.trim() ?? "",
+        supportPhone: form.supportPhone?.trim() ?? "",
+        supportEmail: form.supportEmail?.trim() ?? "",
+        announcement: form.announcement?.trim() ?? "",
+        deliveryEstimate: form.deliveryEstimate?.trim() ?? "",
+        shippingFee,
+        freeShippingThreshold,
+        popularSearches: searches.map((t) => t.trim()).filter(Boolean),
+        homeSections: cleanSections,
       });
       setForm({ popularSearches: [], homeSections: [], ...saved });
       settings.refetch();
       toast.success("Settings saved");
-    } catch (err) { toast.error((err as Error).message); }
-    finally { setSaving(false); }
+    } catch (err) {
+      toast.error((err as Error).message);
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (

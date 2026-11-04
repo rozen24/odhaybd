@@ -2,8 +2,8 @@ import "dotenv/config";
 
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient, UserRole } from "@prisma/client";
-import { randomBytes, scrypt as scryptCallback } from "node:crypto";
-import { promisify } from "node:util";
+
+import { hashPassword } from "@/lib/auth"; // use whatever your auth lib exports for hashing
 
 import {
   seedAuthors,
@@ -28,25 +28,9 @@ if (!databaseUrl) {
 const adapter = new PrismaPg({ connectionString: databaseUrl });
 const prisma = new PrismaClient({ adapter });
 
-const scrypt = promisify(scryptCallback);
+
+
 const MIN_PASSWORD_LENGTH = 8;
-
-// -----------------------------------------------------------------------------
-// Password hashing
-// -----------------------------------------------------------------------------
-// This format must match the password-verification logic used by your login:
-// salt:hex-encoded-scrypt-hash
-
-async function hashPassword(password: string): Promise<string> {
-  const salt = randomBytes(16).toString("hex");
-  const derived = (await scrypt(password, salt, 64)) as Buffer;
-
-  return `${salt}:${derived.toString("hex")}`;
-}
-
-// -----------------------------------------------------------------------------
-// User helpers
-// -----------------------------------------------------------------------------
 
 async function upsertUser(
   email: string,
@@ -66,25 +50,14 @@ async function upsertUser(
     );
   }
 
-  // The seed environment password is the source of truth for seeded accounts.
-  // Re-running the seed will reset this account's password to this value.
-  const hashedPassword = await hashPassword(password);
+  // Same hashing as login, so the format can never drift apart again.
+  // Re-running the seed resets this account's password to the env value.
+  const passwordHash = await hashPassword(password);
 
   return prisma.user.upsert({
     where: { email: normalizedEmail },
-    update: {
-      name,
-      role,
-      status: "ACTIVE",
-      passwordHash: hashedPassword,
-    },
-    create: {
-      email: normalizedEmail,
-      name,
-      role,
-      status: "ACTIVE",
-      passwordHash: hashedPassword,
-    },
+    update: { name, role, status: "ACTIVE", passwordHash },
+    create: { email: normalizedEmail, name, role, status: "ACTIVE", passwordHash },
   });
 }
 
