@@ -151,28 +151,27 @@ async function main() {
     SEED_CUSTOMER_PASSWORD,
   } = process.env;
 
-  // Admin creation is mandatory. Do not silently skip it.
+
+    // Admin creation is mandatory. Do not silently skip it.
   if (!SEED_ADMIN_EMAIL?.trim() || !SEED_ADMIN_PASSWORD) {
     throw new Error(
       "[seed] Missing SEED_ADMIN_EMAIL or SEED_ADMIN_PASSWORD. Configure both environment variables before running the seed.",
     );
   }
 
-  // 1. Hash the raw environment variable password first
-  const secureAdminPassword = await hashPassword(SEED_ADMIN_PASSWORD);
+  // ❌ REMOVE the manual hashing line here
 
-  // 2. Pass the secure hashed string into your upsert handler
+  // 2. Pass the RAW environment variable password string directly
   const admin = await upsertUser(
     SEED_ADMIN_EMAIL,
     "Store Admin",
     UserRole.ADMIN,
-    secureAdminPassword, // Pass the secure hash here
+    SEED_ADMIN_PASSWORD, // 👈 PASS THE RAW PASSWORD STRING HERE
   );
 
-
-    console.log(
-      `[seed] ✓ Admin account created/verified: ${admin.email}`,
-    );
+  console.log(
+    `[seed] ✓ Admin account created/verified: ${admin.email}`,
+  );
 
   // Demo customer is optional.
   if (SEED_CUSTOMER_EMAIL?.trim() && SEED_CUSTOMER_PASSWORD) {
