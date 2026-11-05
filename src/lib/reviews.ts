@@ -1,6 +1,6 @@
 // Helpers for the review endpoints.
 // If `npm run typecheck` reports a mismatch with your Review type, adjust toReview.
-import type { Prisma } from "@prisma/client";
+import type { Prisma } from "@/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
 import type { Review } from "@/types";
 

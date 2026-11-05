@@ -1,7 +1,10 @@
 import "dotenv/config";
 
 import { PrismaPg } from "@prisma/adapter-pg";
-import { PrismaClient, UserRole } from "@prisma/client";
+import {
+  PrismaClient,
+  UserRole,
+} from "../src/generated/prisma/client";
 
 import { hashPassword } from "@/lib/auth"; // use whatever your auth lib exports for hashing
 

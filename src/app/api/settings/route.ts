@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import type { Prisma } from "@prisma/client";
+import type { Prisma } from "@/generated/prisma/client";
 import { seedSettings } from "@/services/seed";
 import { fail, handle, ok, readJson, str } from "@/lib/api-route";
 import { getSessionUser } from "@/lib/auth";

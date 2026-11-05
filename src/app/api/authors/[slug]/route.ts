@@ -1,6 +1,6 @@
 // NOTE: Next.js needs one parameter name per path position, so for PUT and
 // DELETE the "[slug]" segment carries the author's id.
-import type { Prisma } from "@prisma/client";
+import type { Prisma } from "@/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
 import { requireRole } from "@/lib/guards";
 import { toAuthor, uniqueSlug } from "@/lib/catalog-admin";

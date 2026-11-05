@@ -1,6 +1,6 @@
 // Helpers for the admin deal-campaign endpoints.
 import { randomBytes } from "node:crypto";
-import type { Prisma } from "@prisma/client";
+import type { Prisma } from "@/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
 import type { DealCampaign, DealProduct } from "@/types";
 

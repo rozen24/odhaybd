@@ -3,12 +3,18 @@
   "private": true,
   "version": "0.0.1",
   "type": "module",
+
+  "engines": {
+  "node": "22.x",
+  "npm": "11.x"
+  },
+
   "prisma": {
     "seed": "tsx prisma/seed.ts"
   },
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "prisma7 generate && next build",
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",

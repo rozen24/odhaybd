@@ -1,6 +1,6 @@
 // Maps Prisma rows to the shapes the frontend expects (src/types).
 // If `npm run typecheck` reports a mismatch, this is the one file to adjust.
-import type { Prisma } from "@prisma/client";
+import type { Prisma } from "@/generated/prisma/client";
 import type { Address, AppNotification, Coupon, Order, OrderStatus } from "@/types";
 
 export const orderInclude = {

@@ -1,6 +1,6 @@
 // Helpers for the admin "home category sections" endpoints.
 import { randomBytes } from "node:crypto";
-import type { Prisma } from "@prisma/client";
+import type { Prisma } from "@/generated/prisma/client";
 import type { HomeCategoryItem, HomeCategorySection } from "@/types";
 
 export const sectionInclude = {

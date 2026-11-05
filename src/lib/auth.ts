@@ -3,7 +3,7 @@
 // mapping from a User row to the app's Profile type.
 import { createHash, randomBytes, scrypt, timingSafeEqual } from "node:crypto";
 import { cookies } from "next/headers";
-import type { Prisma } from "@prisma/client";
+import type { Prisma } from "@/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
 import type { Profile } from "@/types";
 
