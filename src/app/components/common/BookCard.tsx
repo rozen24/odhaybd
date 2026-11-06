@@ -8,7 +8,8 @@
 //  - cover shadow grows
 
 import { Link } from "@/lib/navigation";
-import { Eye, GitCompare, Heart, ShoppingCart } from "lucide-react";
+import { Heart, GitCompare, Minus, Plus, ShoppingCart } from "lucide-react";
+// Eye and ShoppingCart are no longer needed here
 import { BookCover } from "./BookCover";
 import { PriceTag } from "./PriceTag";
 import { RatingStars } from "./RatingStars";
@@ -20,11 +21,14 @@ import { Button } from "../ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip";
 import { cn } from "../ui/utils";
 import type { Book } from "../../../types";
+import { useState } from "react";
+
+
 
 const BOOK_CARD_CSS = `
 /* Card lift */
 .book-card {
-  transition: transform 1.4s ease;
+  transition: transform 2.4s ease;
 }
 .book-card:hover {
   transform: translateY(-4px);
@@ -51,7 +55,7 @@ const BOOK_CARD_CSS = `
   height: 100%;
   transform: scale(1);
   transform-origin: center;
-  transition: transform 1.5s ease;
+  transition: transform 2.5s ease;
 }
 .book-card:hover .book-card__img {
   transform: scale(1.30);
@@ -118,6 +122,20 @@ const BOOK_CARD_CSS = `
   .book-card:hover { transform: none; }
   .book-card:hover .book-card__img { transform: none; }
 }
+
+   .book-card__actions,
+   .book-card__cta { opacity: 0; transition: opacity 2.2s ease; }
+
+   .book-card:hover .book-card__actions,
+   .book-card:hover .book-card__cta,
+   .book-card:focus-within .book-card__actions,
+   .book-card:focus-within .book-card__cta { opacity: 1; }
+
+   @media (hover: none) {
+     .book-card__actions,
+     .book-card__cta { opacity: 1; }
+   }
+
 `;
 
 // Inject once (and refresh on hot reload) so no separate CSS file is needed.
@@ -162,6 +180,9 @@ export function BookCard({
   const outOfStock = book.stock <= 0;
   const addDisabled = outOfStock || disableAdd;
 
+  // 1. Add near the top of your card component
+  const [qty, setQty] = useState(1);
+
   return (
     <TooltipProvider delayDuration={300}>
       <div className={cn("book-card group flex h-full flex-col", className)}>
@@ -191,23 +212,24 @@ export function BookCard({
 
           {/* Action buttons: hidden until the card is hovered or focused
               (fade handled by the injected CSS). Always shown on touch screens. */}
+          // 2. Replace your actions block with this
+          {/* Icon buttons (wishlist + compare), top-right */}
           <div className="book-card__actions absolute right-2 top-2 flex flex-col gap-1.5">
             <Tooltip>
               <TooltipTrigger asChild>
-                <IconBtn label={wished ? "Remove from wishlist" : "Add to wishlist"} active={wished} onClick={() => toggleWishlist(book)}>
+                <IconBtn
+                  label={wished ? "Remove from wishlist" : "Add to wishlist"}
+                  active={wished}
+                  onClick={() => toggleWishlist(book)}
+                >
                   <Heart size={15} fill={wished ? "currentColor" : "none"} />
                 </IconBtn>
               </TooltipTrigger>
-              <TooltipContent side="left">{wished ? "Remove from wishlist" : "Add to wishlist"}</TooltipContent>
+              <TooltipContent side="left">
+                {wished ? "Remove from wishlist" : "Add to wishlist"}
+              </TooltipContent>
             </Tooltip>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <IconBtn label="Quick view" onClick={() => quickView.open(book)}>
-                  <Eye size={15} />
-                </IconBtn>
-              </TooltipTrigger>
-              <TooltipContent side="left">Quick view</TooltipContent>
-            </Tooltip>
+
             <Tooltip>
               <TooltipTrigger asChild>
                 <IconBtn label="Compare" active={compared} onClick={() => toggleCompare(book)}>
@@ -216,18 +238,71 @@ export function BookCard({
               </TooltipTrigger>
               <TooltipContent side="left">Compare</TooltipContent>
             </Tooltip>
+          </div>
+
+          {/* Pill CTA group: Quick view + qty stepper + Add to cart */}
+          <div className="book-card__cta absolute inset-x-0 bottom-3 flex flex-col items-center gap-1 px-1">
+            {/* Quick view */}
+            <button
+              type="button"
+              aria-label="Quick view"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                quickView.open(book);
+              }}
+              className="rounded-full bg-[#8f0a0a] px-6 py-2.5 text-sm font-semibold text-white shadow-lg
+                        transition-colors hover:bg-[#6f0707] focus-visible:outline-none
+                        focus-visible:ring-2 focus-visible:ring-white/80"
+            >
+              Quick view
+            </button>
+
+            {/* Qty stepper + Add to cart */}
             {!outOfStock && (
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <IconBtn
-                    label="Add to cart"
-                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); addToCart(book); }}
-                  >
-                    <ShoppingCart size={15} />
-                  </IconBtn>
-                </TooltipTrigger>
-                <TooltipContent side="left">Add to cart</TooltipContent>
-              </Tooltip>
+              <div
+                className="flex w-full max-w-[230px] items-center gap-1 rounded-full bg-[#8f0a0a] p-1 pl-1 text-white shadow-lg"
+                onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}
+              >
+                <button
+                  type="button"
+                  aria-label="Decrease quantity"
+                  disabled={qty <= 1}
+                  onClick={() => setQty((q) => Math.max(1, q - 1))}
+                  className="flex h-7 w-7 items-center justify-center rounded-full transition-colors
+                            hover:bg-white/15 disabled:opacity-40 disabled:hover:bg-transparent"
+                >
+                  <Minus size={14} />
+                </button>
+
+                <span className="min-w-5 text-center text-sm font-semibold tabular-nums" aria-live="polite">
+                  {qty}
+                </span>
+
+                <button
+                  type="button"
+                  aria-label="Increase quantity"
+                  onClick={() => setQty((q) => q + 1)}
+                  className="flex h-7 w-7 items-center justify-center rounded-full transition-colors hover:bg-white/15"
+                >
+                  <Plus size={14} />
+                </button>
+
+                <button
+                  type="button"
+                  aria-label="Add to cart"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    addToCart(book, qty);   // see note below
+                    setQty(1);
+                  }}
+                  className="ml-1 flex-1 whitespace-nowrap rounded-full px-3 py-1.5 text-sm font-semibold
+                            transition-colors hover:bg-white/15"
+                >
+                  Add to cart
+                </button>
+              </div>
             )}
           </div>
         </div>
