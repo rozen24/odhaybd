@@ -4,6 +4,7 @@ import { SITE_NAME, SITE_TAGLINE } from "@/lib/constants";
 import { Providers } from "./providers";
 import { StorefrontShell } from "./components/layout/RootLayout";
 import "../styles/index.css";
+import ChatWidget from "@/components/ChatWidget";
 
 const base = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
@@ -44,6 +45,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Suspense fallback={<div className="min-h-screen bg-background" />}>
           <Providers>
             <StorefrontShell>{children}</StorefrontShell>
+            <ChatWidget />
           </Providers>
         </Suspense>
       </body>

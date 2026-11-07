@@ -3,12 +3,10 @@
   "private": true,
   "version": "0.0.1",
   "type": "module",
-
   "engines": {
-  "node": "22.x",
-  "npm": "11.x"
+    "node": "22.x",
+    "npm": "11.x"
   },
-
   "prisma": {
     "seed": "tsx prisma/seed.ts"
   },
@@ -28,6 +26,7 @@
   "dependencies": {
     "@emotion/react": "11.14.0",
     "@emotion/styled": "11.14.1",
+    "@google/genai": "^3.0.0",
     "@mui/icons-material": "7.3.5",
     "@mui/material": "7.3.5",
     "@popperjs/core": "2.11.8",
