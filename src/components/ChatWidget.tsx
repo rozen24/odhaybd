@@ -87,7 +87,7 @@ export default function ChatWidget() {
       {open && (
         <div className="fixed bottom-24 right-5 z-50 flex h-[500px] w-[350px] max-w-[calc(100vw-2.5rem)] flex-col rounded-2xl border bg-white shadow-2xl">
           <div className="rounded-t-2xl bg-[#8f0a0a] px-4 py-3 text-white">
-            <div className="font-semibold">PustakBD Support</div>
+            <div className="font-semibold">OdhayBD Support</div>
             <div className="text-xs opacity-80">AI assistant · please don't share passwords or card numbers</div>
           </div>
 
