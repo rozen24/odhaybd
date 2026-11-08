@@ -1,6 +1,6 @@
 // Repository interfaces (the swap point) + client-side local stores for the
 // cart-family state (cart / wishlist / compare / recently-viewed). Data-domain
-// repositories are implemented against Supabase in ./supabase-repositories.ts.
+// repositories are implemented against the app's HTTP API in ./http-repositories.ts.
 // Later, a REST/Prisma backend can implement these same interfaces and be wired
 // in ./index.ts with no component changes.
 
@@ -128,6 +128,7 @@ export interface CatalogAdminRepository {
   createBanner(b: Partial<Banner>): Promise<Banner>;
   updateBanner(id: string, b: Partial<Banner>): Promise<Banner>;
   removeBanner(id: string): Promise<void>;
+  reorderBanners(ids: string[]): Promise<void>;
 }
 
 export interface StoreRepository {

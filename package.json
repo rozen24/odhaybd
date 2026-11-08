@@ -16,7 +16,6 @@
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
-    "test:api": "node scripts/api-security-test.mjs",
     "prisma:generate": "prisma7 generate",
     "prisma:validate": "prisma7 validate",
     "prisma:migrate": "prisma7 migrate dev",

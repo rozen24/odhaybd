@@ -1,6 +1,4 @@
-// Shared domain types for the bookstore. These mirror the KV-backed records
-// served by the Supabase edge function so the repository layer can be swapped
-// without touching UI code.
+// Shared domain types for the bookstore API and UI.
 
 export type UserRole = "customer" | "seller" | "admin";
 export type AccountStatus = "active" | "suspended";
@@ -197,6 +195,7 @@ export interface CmsPage {
 
 export interface Banner {
   id: string;
+  sortOrder: number;
   title: string;
   subtitle: string;
   ctaLabel: string;

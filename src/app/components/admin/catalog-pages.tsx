@@ -2,7 +2,7 @@
 // homepage banners (image upload, placement, CTA, active flag).
 
 import { useRef, useState } from "react";
-import { BookUser, Building2, FolderTree, ImageIcon, Pencil, Plus, Upload, X } from "lucide-react";
+import { ArrowDown, ArrowUp, BookUser, Building2, FolderTree, ImageIcon, Pencil, Plus, Upload, X } from "lucide-react";
 import { toast } from "sonner";
 import { invalidate, useQuery } from "../../../lib/query";
 import { services } from "../../../services";
@@ -30,6 +30,23 @@ async function attempt(fn: () => Promise<unknown>, ok: string, done?: () => void
 
 function Search({ value, onChange, label }: { value: string; onChange: (v: string) => void; label: string }) {
   return <Input value={value} onChange={(e) => onChange(e.target.value)} placeholder={`Search ${label}…`} className="h-8 w-48" aria-label={`Search ${label}`} />;
+}
+
+function move<T>(arr: T[], i: number, dir: -1 | 1): T[] {
+  const j = i + dir;
+  if (j < 0 || j >= arr.length) return arr;
+  const out = arr.slice();
+  [out[i], out[j]] = [out[j], out[i]];
+  return out;
+}
+
+function ReorderButtons({ index, count, onMove, label }: { index: number; count: number; onMove: (dir: -1 | 1) => void; label: string }) {
+  return (
+    <div className="flex gap-0.5">
+      <Button variant="ghost" size="icon" className="size-7" disabled={index === 0} onClick={() => onMove(-1)} aria-label={`Move ${label} up`}><ArrowUp size={14} /></Button>
+      <Button variant="ghost" size="icon" className="size-7" disabled={index === count - 1} onClick={() => onMove(1)} aria-label={`Move ${label} down`}><ArrowDown size={14} /></Button>
+    </div>
+  );
 }
 
 function ImagePicker({ value, onChange, label, aspect = "aspect-square w-16" }: { value: string; onChange: (url: string) => void; label: string; aspect?: string }) {
@@ -326,6 +343,18 @@ function BannerDialog({ banner, onSaved }: { banner?: Banner; onSaved: () => voi
 export function AdminBanners() {
   const list = useCatalogList("banners", () => services.catalog.banners());
   const toggle = (b: Banner) => attempt(() => services.catalogAdmin.updateBanner(b.id, { active: !(b.active ?? true) }), (b.active ?? true) ? "Banner hidden" : "Banner activated", list.refresh);
+  const reorder = (items: Banner[], index: number, dir: -1 | 1) => {
+    const nextItems = move(items, index, dir);
+    const current = (list.data ?? []).slice().sort((a, b) => a.sortOrder - b.sortOrder);
+    const itemIds = new Set(items.map((item) => item.id));
+    const positions = current.reduce<number[]>((result, item, position) => {
+      if (itemIds.has(item.id)) result.push(position);
+      return result;
+    }, []);
+    const next = current.slice();
+    positions.forEach((position, itemIndex) => { next[position] = nextItems[itemIndex]; });
+    void attempt(() => services.catalogAdmin.reorderBanners(next.map((banner) => banner.id)), "Order saved", list.refresh);
+  };
   return (
     <div>
       <PageHeader eyebrow="Storefront" title="Banners" description="Homepage hero, secondary and campaign banners." actions={<BannerDialog onSaved={list.refresh} />} />
@@ -334,13 +363,13 @@ export function AdminBanners() {
       ) : (
         <div className="space-y-6">
           {PLACEMENTS.map((p) => {
-            const items = list.data!.filter((b) => (b.placement ?? "hero") === p.value);
+            const items = list.data!.filter((b) => (b.placement ?? "hero") === p.value).sort((a, b) => a.sortOrder - b.sortOrder);
             if (items.length === 0) return null;
             return (
               <section key={p.value}>
                 <p className="mb-2 text-[11px] uppercase tracking-[0.18em] text-muted-foreground">{p.label}</p>
                 <div className="divide-y divide-border rounded-lg border border-border bg-card">
-                  {items.map((b) => {
+                  {items.map((b, index) => {
                     const active = b.active ?? true;
                     return (
                       <div key={b.id} className="flex flex-wrap items-center gap-4 p-3">
@@ -351,6 +380,7 @@ export function AdminBanners() {
                           <p className="mt-1 text-xs text-muted-foreground">{b.ctaLabel || "—"} → <span className="font-mono">{b.ctaHref || "—"}</span></p>
                         </div>
                         <div className="flex items-center gap-2">
+                          <ReorderButtons index={index} count={items.length} onMove={(dir) => reorder(items, index, dir)} label={b.title} />
                           <Switch checked={active} onCheckedChange={() => toggle(b)} aria-label={`Toggle ${b.title}`} />
                           <Pill tone={active ? "positive" : "neutral"}>{active ? "Active" : "Hidden"}</Pill>
                           <BannerDialog key={b.id + b.title + b.imageUrl} banner={b} onSaved={list.refresh} />

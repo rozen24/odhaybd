@@ -1,5 +1,5 @@
 // Auth pages: login, register, forgot password, reset password, and the
-// one-time admin bootstrap. Backed by real Supabase Auth via the AuthContext.
+// one-time admin bootstrap. Backed by the app's Prisma session auth.
 
 import { useState } from "react";
 import { Link, useNavigate, useSearchParams } from "@/lib/navigation";
@@ -78,7 +78,7 @@ function GoogleButton() {
       variant="outline"
       size="lg"
       className="w-full gap-2 bg-card"
-      onClick={() => signInWithGoogle().catch((e) => toast.error(`Google sign-in failed: ${e.message}. The provider may need to be enabled in Supabase.`))}
+      onClick={() => signInWithGoogle().catch((e) => toast.error(`Google sign-in failed: ${e.message}. The provider is not configured.`))}
     >
       <span aria-hidden className="font-display text-base font-semibold">G</span> Continue with Google
     </Button>

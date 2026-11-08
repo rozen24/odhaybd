@@ -5,12 +5,9 @@
 // (src/app/api/**/route.ts) through ./api/client. Those routes use Prisma
 // (see ./prisma-repositories.ts) to read and write PostgreSQL on the server.
 
-import { supabaseRepositories } from "./supabase-repositories";
+import { httpRepositories } from "./http-repositories";
 
-// NOTE: despite its name, this module is only the HTTP implementation of the
-// repository interfaces. It should be renamed (e.g. http-repositories.ts) once
-// it no longer imports anything from Supabase.
-export const services = supabaseRepositories;
+export const services = httpRepositories;
 
 // Kept so existing callers (e.g. providers) keep compiling. Seeding now happens
 // on the server with `npm run prisma:seed`, not from the browser.

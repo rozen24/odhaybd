@@ -1,7 +1,6 @@
-// Supabase-backed implementations of the repository interfaces. Data flows
-// through the Hono edge function (see supabase/functions/server/index.tsx).
-// Cart / wishlist / compare / recently-viewed remain client-side state
-// (standard for an SPA) and reuse the local implementations.
+// HTTP implementations of the repository interfaces. Data flows through this
+// app's Prisma-backed API routes. Cart / wishlist / compare / recently-viewed
+// remain client-side state and reuse the local implementations.
 
 import type {
   Author, Banner, BlogPost, Book, BookQuery, Category, CmsPage, Coupon,
@@ -122,6 +121,7 @@ const catalogAdminRepo: CatalogAdminRepository = {
   createBanner: (b) => api.post<Banner>(`/banners`, b),
   updateBanner: (id, b) => api.put<Banner>(`/banners/${id}`, b),
   removeBanner: async (id) => { await api.del(`/banners/${id}`); },
+  reorderBanners: async (ids) => { await api.put(`/admin/banners/reorder`, { ids }); },
 };
 
 const storeRepo: StoreRepository = {
@@ -160,9 +160,7 @@ const homeSectionsRepo: HomeSectionsRepository = {
     api.put<HomeCategoryItem[]>(`/admin/home-sections/${encodeURIComponent(id)}/items`, { productIds }),
 };
 
-// Data domains hit Supabase; cart-family stays client-side; auth is handled by
-// AuthContext via the Supabase client + /signup and /profile endpoints.
-export const supabaseRepositories = {
+export const httpRepositories = {
   books: booksRepo,
   catalog: catalogRepo,
   cart: localStores.cart,

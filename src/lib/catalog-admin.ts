@@ -52,10 +52,11 @@ export function toCategory(c: {
 
 export function toBanner(b: {
   id: string; title: string; subtitle: string | null; ctaLabel: string | null; ctaHref: string | null;
-  imageUrl: string | null; background: string | null; placement: string | null; active: boolean;
+  imageUrl: string | null; background: string | null; placement: string | null; active: boolean; sortOrder: number;
 }): Banner {
   return {
     id: b.id,
+    sortOrder: b.sortOrder,
     title: b.title,
     subtitle: b.subtitle ?? "",
     ctaLabel: b.ctaLabel ?? "",

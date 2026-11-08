@@ -1,7 +1,6 @@
 // Realistic seed dataset for Boierpata. This is the single source of truth for
-// initial catalog content and is pushed to the Supabase edge function once via
-// POST /seed (see ./index.ts bootstrap). Book covers are rendered procedurally
-// (BookCover), so coverUrl is left blank for books.
+// initial catalog content used by the Prisma seed script. Book covers are
+// rendered procedurally (BookCover), so coverUrl is left blank for books.
 
 import type {
   Author, Banner, BlogPost, Book, Category, CmsPage, Coupon, Publisher, Review, Seller,
@@ -139,9 +138,9 @@ export const seedCoupons: Coupon[] = [
 ];
 
 export const seedBanners: Banner[] = [
-  { id: "bn1", title: "Discover Your Next Great Read", subtitle: "Thousands of titles across every genre, delivered nationwide.", ctaLabel: "Shop All Books", ctaHref: "/books", imageUrl: pic("banner1", 1200, 600), bg: "linear-gradient(135deg,#1f6f52,#134034)" },
-  { id: "bn2", title: "Flash Sale — Up to 30% Off", subtitle: "Grab bestsellers at unbeatable prices while stocks last.", ctaLabel: "See Deals", ctaHref: "/books?flag=flash", imageUrl: pic("banner2", 1200, 600), bg: "linear-gradient(135deg,#d98324,#8a4b2f)" },
-  { id: "bn3", title: "Classics That Never Fade", subtitle: "Rediscover timeless literature from legendary authors.", ctaLabel: "Explore Classics", ctaHref: "/category/classics", imageUrl: pic("banner3", 1200, 600), bg: "linear-gradient(135deg,#2c4a6e,#182d45)" },
+  { id: "bn1", sortOrder: 0, title: "Discover Your Next Great Read", subtitle: "Thousands of titles across every genre, delivered nationwide.", ctaLabel: "Shop All Books", ctaHref: "/books", imageUrl: pic("banner1", 1200, 600), bg: "linear-gradient(135deg,#1f6f52,#134034)" },
+  { id: "bn2", sortOrder: 1, title: "Flash Sale — Up to 30% Off", subtitle: "Grab bestsellers at unbeatable prices while stocks last.", ctaLabel: "See Deals", ctaHref: "/books?flag=flash", imageUrl: pic("banner2", 1200, 600), bg: "linear-gradient(135deg,#d98324,#8a4b2f)" },
+  { id: "bn3", sortOrder: 2, title: "Classics That Never Fade", subtitle: "Rediscover timeless literature from legendary authors.", ctaLabel: "Explore Classics", ctaHref: "/category/classics", imageUrl: pic("banner3", 1200, 600), bg: "linear-gradient(135deg,#2c4a6e,#182d45)" },
 ];
 
 export const seedBlog: BlogPost[] = [

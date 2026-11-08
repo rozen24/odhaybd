@@ -201,7 +201,7 @@ const catalogRepository: CatalogRepository = {
   },
   async banners() {
     const banners = await prisma.banner.findMany({ where: { active: true }, orderBy: { sortOrder: "asc" } });
-    return banners.map((banner) => ({ id: banner.id, title: banner.title, subtitle: banner.subtitle ?? "", ctaLabel: banner.ctaLabel ?? "", ctaHref: banner.ctaHref ?? "", imageUrl: banner.imageUrl ?? "", bg: banner.background ?? "", placement: banner.placement as "hero" | "secondary" | "campaign" | undefined, active: banner.active }));
+    return banners.map((banner) => ({ id: banner.id, sortOrder: banner.sortOrder, title: banner.title, subtitle: banner.subtitle ?? "", ctaLabel: banner.ctaLabel ?? "", ctaHref: banner.ctaHref ?? "", imageUrl: banner.imageUrl ?? "", bg: banner.background ?? "", placement: banner.placement as "hero" | "secondary" | "campaign" | undefined, active: banner.active }));
   },
 };
 
