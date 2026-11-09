@@ -20,7 +20,7 @@ export interface DealsRepository {
   reorderCampaigns(ids: string[]): Promise<void>;
   products(campaignId: string): Promise<{ deal: DealProduct; book?: Book }[]>;
   addProduct(p: {
-    campaign_id: string; product_id: string; deal_price: number;
+    campaign_id: string; product_id: string; deal_price?: number;
     stock_limit?: number | null; display_order?: number; is_active?: boolean;
   }): Promise<DealProduct>;
   updateProduct(campaignId: string, id: string, p: Partial<DealProduct>): Promise<DealProduct>;

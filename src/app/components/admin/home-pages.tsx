@@ -239,10 +239,12 @@ function DealRow({ row, index, count, onMove, campaign }: {
   const { deal, book } = row;
   const [price, setPrice] = useState(String(deal.deal_price));
   const [limit, setLimit] = useState(deal.stock_limit != null ? String(deal.stock_limit) : "");
+  const usesDealPrice = campaign.type !== "FREE_SHIPPING" && campaign.type !== "BUY_ONE_GET_ONE";
   useEffect(() => { setPrice(String(deal.deal_price)); setLimit(deal.stock_limit != null ? String(deal.stock_limit) : ""); }, [deal.deal_price, deal.stock_limit]);
 
   const update = (p: Partial<DealProduct>, ok = "Deal updated") => attempt(() => services.deals.updateProduct(campaign.id, deal.id, p), ok, refreshDeals);
   const commitPrice = () => {
+    if (!usesDealPrice) return;
     const n = Number(price);
     if (!(n > 0)) { toast.error("Deal price must be greater than 0"); setPrice(String(deal.deal_price)); return; }
     if (n !== deal.deal_price) update({ deal_price: n });
@@ -265,7 +267,7 @@ function DealRow({ row, index, count, onMove, campaign }: {
         </div>
       </td>
       <td className="tabular-nums text-muted-foreground">{formatTk(deal.original_price)}</td>
-      <td><Input type="number" min={1} step="1" value={price} onChange={(e) => setPrice(e.target.value)} onBlur={commitPrice} className="h-8 w-24" aria-label="Deal price" /></td>
+      {usesDealPrice ? <td><Input type="number" min={1} step="1" value={price} onChange={(e) => setPrice(e.target.value)} onBlur={commitPrice} className="h-8 w-24" aria-label="Deal price" /></td> : <td className="text-muted-foreground">—</td>}
       <td className="tabular-nums">{deal.discount_percentage > 0 ? <Pill tone="primary">-{deal.discount_percentage}%</Pill> : "—"}</td>
       <td><Input type="number" min={0} value={limit} onChange={(e) => setLimit(e.target.value)} onBlur={commitLimit} placeholder="∞" className="h-8 w-20" aria-label="Stock limit" /></td>
       <td className="tabular-nums">{deal.sold_count}</td>
@@ -288,18 +290,19 @@ function DealProductsSheet({ campaign }: { campaign: DealCampaign }) {
   const [price, setPrice] = useState("");
   const [limit, setLimit] = useState("");
   const [adding, setAdding] = useState(false);
+  const usesDealPrice = campaign.type !== "FREE_SHIPPING" && campaign.type !== "BUY_ONE_GET_ONE";
 
   const add = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!picked) return;
     const n = Number(price);
-    if (!(n > 0)) { toast.error("Deal price must be greater than 0"); return; }
+    if (usesDealPrice && !(n > 0)) { toast.error("Deal price must be greater than 0"); return; }
     setAdding(true);
     const ok = await attempt(
       () => services.deals.addProduct({
         campaign_id: campaign.id,
         product_id: picked.id,
-        deal_price: n,
+        ...(usesDealPrice ? { deal_price: n } : {}),
         stock_limit: limit === "" ? null : Math.max(0, Math.floor(Number(limit))),
         display_order: rows.length,
         is_active: true,
@@ -340,20 +343,20 @@ function DealProductsSheet({ campaign }: { campaign: DealCampaign }) {
                   <Button type="button" variant="ghost" size="sm" onClick={() => setPicked(null)}>Change</Button>
                 </div>
                 <div className="grid gap-3 sm:grid-cols-2">
-                  <div className="space-y-1.5"><Label htmlFor="dp-price">Deal price (৳)</Label><Input id="dp-price" type="number" min={1} value={price} onChange={(e) => setPrice(e.target.value)} required /></div>
+                  {usesDealPrice && <div className="space-y-1.5"><Label htmlFor="dp-price">Deal price (৳)</Label><Input id="dp-price" type="number" min={1} value={price} onChange={(e) => setPrice(e.target.value)} required /></div>}
                   <div className="space-y-1.5"><Label htmlFor="dp-limit">Stock limit (optional)</Label><Input id="dp-limit" type="number" min={0} value={limit} onChange={(e) => setLimit(e.target.value)} placeholder="No limit" /></div>
                 </div>
                 <Button type="submit" size="sm" disabled={adding}>{adding ? "Adding…" : "Add to campaign"}</Button>
               </form>
             ) : (
-              <BookPicker excludeIds={rows.map((r) => r.deal.product_id)} onPick={(b) => { setPicked(b); setPrice(String(b.price)); }} />
+              <BookPicker excludeIds={rows.map((r) => r.deal.product_id)} onPick={(b) => { setPicked(b); setPrice(usesDealPrice ? String(b.price) : ""); }} />
             )}
           </Panel>
 
           {q.error ? <ErrorState error={q.error} onRetry={q.refetch} /> : q.loading ? <TableSkeleton rows={4} /> : rows.length === 0 ? (
             <EmptyState compact icon={Zap} title="No books in this campaign yet" description="Search above to add the first deal." />
           ) : (
-            <DataTable head={["Book", "Original", "Deal price", "Off", "Limit", "Sold", "Active", ""]} minWidth={760}>
+            <DataTable head={["Book", "Original", ...(usesDealPrice ? ["Deal price"] : []), "Off", "Limit", "Sold", "Active", ""]} minWidth={760}>
               {rows.map((r, i) => <DealRow key={r.deal.id} row={r} index={i} count={rows.length} onMove={(d) => onMove(i, d)} campaign={campaign} />)}
             </DataTable>
           )}

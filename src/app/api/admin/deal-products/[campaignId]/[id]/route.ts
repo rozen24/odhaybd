@@ -11,12 +11,15 @@ export const PUT = handle(async (request: Request, { params }: Ctx) => {
   if (auth.error) return auth.error;
   const { campaignId, id } = await params;
   if (!isUuid(campaignId) || !isUuid(id)) return fail("Deal not found", 404);
-  const existing = await prisma.dealProduct.findFirst({ where: { id, campaignId } });
+  const existing = await prisma.dealProduct.findFirst({ where: { id, campaignId }, include: { campaign: { select: { type: true } } } });
   if (!existing) return fail("Deal not found", 404);
   const b = await readJson(request);
 
   const data: Prisma.DealProductUpdateInput = {};
   if (b.deal_price !== undefined) {
+    if (existing.campaign.type === "FREE_SHIPPING" || existing.campaign.type === "BUY_ONE_GET_ONE") {
+      return fail("This deal does not use a deal price", 400);
+    }
     const price = Number(b.deal_price);
     if (!Number.isFinite(price) || price <= 0 || price > Number(existing.originalPrice)) {
       return fail("Enter a valid deal price (not above the book's price)", 400);

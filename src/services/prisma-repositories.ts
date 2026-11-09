@@ -43,12 +43,8 @@ function numberValue(value: Prisma.Decimal | number | null | undefined): number 
 }
 
 function toBook(product: ProductRecord): Book {
-  const deal = product.dealProducts[0];
   const now = Date.now();
   const variantFlashIsLive = !!product.flashSaleEndsAt && product.flashSaleEndsAt.getTime() > now;
-  const dealIsLive = deal &&
-    new Date(deal.campaign.startAt).getTime() <= now &&
-    (!deal.campaign.endAt || new Date(deal.campaign.endAt).getTime() > now);
   const variantRecords = [...product.variants].sort((a, b) => {
     const aPaperback = a.name.toLowerCase().includes("paperback");
     const bPaperback = b.name.toLowerCase().includes("paperback");
@@ -66,7 +62,7 @@ function toBook(product: ProductRecord): Book {
     : [{
         id: "",
         name: "Paperback (Premium)",
-        price: numberValue(product.salePrice ?? product.regularPrice),
+        price: numberValue(variantFlashIsLive && product.salePrice ? product.salePrice : product.regularPrice),
         oldPrice: numberValue(product.regularPrice),
         flashPrice: variantFlashIsLive && product.salePrice ? numberValue(product.salePrice) : undefined,
         stock: Math.max(0, (product.inventory?.quantity ?? 0) - (product.inventory?.reserved ?? 0)),
@@ -102,17 +98,11 @@ function toBook(product: ProductRecord): Book {
     isNewArrival: product.newRelease,
     isEditorsChoice: product.editorChoice,
     isAwardWinner: product.awardWinner,
-    flashSale: dealIsLive
-      ? { price: numberValue(deal.dealPrice), endsAt: deal.campaign.endAt?.toISOString() ?? new Date(now + 86400000).toISOString() }
-      : variantFlashIsLive && defaultVariant.flashPrice
-        ? { price: defaultVariant.flashPrice, endsAt: product.flashSaleEndsAt!.toISOString() }
-        : undefined,
+    flashSale: variantFlashIsLive && defaultVariant.flashPrice
+      ? { price: defaultVariant.flashPrice, endsAt: product.flashSaleEndsAt!.toISOString() }
+      : undefined,
     createdAt: product.createdAt.toISOString(),
   };
-}
-
-function variantsHaveSale(variants: ProductRecord["variants"]) {
-  return variants.some((variant) => variant.salePrice !== null);
 }
 
 function productWhere(query: BookQuery): Prisma.ProductWhereInput {
@@ -144,8 +134,13 @@ function productWhere(query: BookQuery): Prisma.ProductWhereInput {
     ...(query.flag === "award" ? { awardWinner: true } : {}),
     ...(query.flag === "flash" ? {
       OR: [
-        { dealProducts: { some: { active: true, campaign: { active: true } } } },
-        { flashSaleEndsAt: { gt: new Date() }, variants: { some: { salePrice: { not: null } } } },
+        {
+          flashSaleEndsAt: { gt: new Date() },
+          OR: [
+            { salePrice: { not: null } },
+            { variants: { some: { salePrice: { not: null } } } },
+          ],
+        },
       ],
     } : {}),
   };
