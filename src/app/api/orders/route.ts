@@ -32,14 +32,17 @@ export const POST = handle(async (request: Request) => {
   if (!Array.isArray(body.items) || body.items.length === 0 || body.items.length > 50) {
     return fail("Your cart is empty", 400);
   }
-  const wanted = new Map<string, number>();
+  const wanted = new Map<string, { bookId: string; variantId?: string; quantity: number }>();
   for (const raw of body.items as Record<string, unknown>[]) {
     const bookId = str(raw?.bookId, 40);
+    const variantId = raw?.variantId === undefined ? undefined : str(raw.variantId, 40);
     const qty = Number(raw?.quantity);
-    if (!isUuid(bookId) || !Number.isInteger(qty) || qty < 1 || qty > 20) {
+    if (!isUuid(bookId) || (variantId && !isUuid(variantId)) || !Number.isInteger(qty) || qty < 1 || qty > 20) {
       return fail("Some items in your cart are invalid. Please refresh your cart.", 400);
     }
-    wanted.set(bookId, (wanted.get(bookId) ?? 0) + qty);
+    const key = `${bookId}:${variantId ?? ""}`;
+    const current = wanted.get(key);
+    wanted.set(key, { bookId, variantId, quantity: (current?.quantity ?? 0) + qty });
   }
 
   const methodKey = str(body.paymentMethod, 20).toLowerCase() as keyof typeof METHODS;
@@ -59,13 +62,23 @@ export const POST = handle(async (request: Request) => {
   }
 
   // 2. Price everything from the database
-  const books = await prismaRepositories.books.getMany([...wanted.keys()]);
+  const books = await prismaRepositories.books.getMany([...new Set([...wanted.values()].map((item) => item.bookId))]);
   const byId = new Map(books.map((b) => [b.id, b]));
-  const lines = [...wanted.entries()].map(([id, qty]) => ({ book: byId.get(id), qty }));
+  const lines = [...wanted.values()].map((item) => {
+    const book = byId.get(item.bookId);
+    const variant = book?.variants?.find((candidate) => candidate.id === item.variantId);
+    return { book, variant, variantId: item.variantId, qty: item.quantity };
+  });
   if (lines.some((l) => !l.book || l.book.status !== "published")) {
     return fail("Some books in your cart are no longer available", 409);
   }
-  const priced = lines.map((l) => ({ book: l.book!, qty: l.qty, price: l.book!.flashSale?.price ?? l.book!.price }));
+  if (lines.some((l) => l.variantId && !l.variant)) return fail("A selected product type is no longer available", 409);
+  const priced = lines.map((l) => ({
+    book: l.book!,
+    variant: l.variant,
+    qty: l.qty,
+    price: l.variant?.flashPrice ?? l.variant?.price ?? l.book!.flashSale?.price ?? l.book!.price,
+  }));
   const subtotal = priced.reduce((s, l) => s + l.price * l.qty, 0);
 
   const { freeShippingThreshold, shippingFee } = await getShippingRules();
@@ -86,9 +99,13 @@ export const POST = handle(async (request: Request) => {
   try {
     const order = await prisma.$transaction(async (tx) => {
       for (const l of priced) {
-        const updated = await tx.$executeRaw`
-          UPDATE "Inventory" SET "reserved" = "reserved" + ${l.qty}::int
-          WHERE "productId" = ${l.book.id}::uuid AND "quantity" - "reserved" >= ${l.qty}::int`;
+        const updated = l.variant
+          ? await tx.$executeRaw`
+            UPDATE "Inventory" SET "reserved" = "reserved" + ${l.qty}::int
+            WHERE "variantId" = ${l.variant.id}::uuid AND "quantity" - "reserved" >= ${l.qty}::int`
+          : await tx.$executeRaw`
+            UPDATE "Inventory" SET "reserved" = "reserved" + ${l.qty}::int
+            WHERE "productId" = ${l.book.id}::uuid AND "quantity" - "reserved" >= ${l.qty}::int`;
         if (updated === 0) throw new OrderError(`"${l.book.title}" does not have enough stock`);
       }
       const created = await tx.order.create({
@@ -105,6 +122,8 @@ export const POST = handle(async (request: Request) => {
           items: {
             create: priced.map((l) => ({
               productId: l.book.id,
+              variantId: l.variant?.id || null,
+              variantName: l.variant?.name || null,
               title: l.book.title,
               coverUrl: l.book.coverUrl || null,
               price: l.price,

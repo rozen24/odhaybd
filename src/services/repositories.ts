@@ -143,7 +143,7 @@ export interface StoreRepository {
 /* Client-side local stores (cart / wishlist / compare / recent)       */
 /* ------------------------------------------------------------------ */
 
-export interface LocalCartItem { bookId: string; qty: number }
+export interface LocalCartItem { bookId: string; variantId?: string; qty: number }
 
 function read<T>(key: string, fallback: T): T {
   if (typeof window === "undefined") return fallback;
@@ -168,9 +168,9 @@ const MAX_COMPARE = 4;
 
 export interface CartRepository {
   items(): LocalCartItem[];
-  add(bookId: string, qty?: number): LocalCartItem[];
-  setQty(bookId: string, qty: number): LocalCartItem[];
-  remove(bookId: string): LocalCartItem[];
+  add(bookId: string, qty?: number, variantId?: string): LocalCartItem[];
+  setQty(bookId: string, qty: number, variantId?: string): LocalCartItem[];
+  remove(bookId: string, variantId?: string): LocalCartItem[];
   clear(): LocalCartItem[];
 }
 
@@ -195,23 +195,23 @@ export interface RecentRepository {
 
 const cart: CartRepository = {
   items: () => read<LocalCartItem[]>(CART_KEY, []),
-  add(bookId, qty = 1) {
+  add(bookId, qty = 1, variantId) {
     const items = cart.items();
-    const existing = items.find((i) => i.bookId === bookId);
+    const existing = items.find((i) => i.bookId === bookId && i.variantId === variantId);
     if (existing) existing.qty += qty;
-    else items.push({ bookId, qty });
+    else items.push({ bookId, variantId, qty });
     write(CART_KEY, items);
     return items;
   },
-  setQty(bookId, qty) {
+  setQty(bookId, qty, variantId) {
     let items = cart.items();
-    if (qty <= 0) items = items.filter((i) => i.bookId !== bookId);
-    else items = items.map((i) => (i.bookId === bookId ? { ...i, qty } : i));
+    if (qty <= 0) items = items.filter((i) => !(i.bookId === bookId && i.variantId === variantId));
+    else items = items.map((i) => (i.bookId === bookId && i.variantId === variantId ? { ...i, qty } : i));
     write(CART_KEY, items);
     return items;
   },
-  remove(bookId) {
-    const items = cart.items().filter((i) => i.bookId !== bookId);
+  remove(bookId, variantId) {
+    const items = cart.items().filter((i) => !(i.bookId === bookId && i.variantId === variantId));
     write(CART_KEY, items);
     return items;
   },

@@ -30,7 +30,8 @@ const STEPS = [
   { id: "review", label: "Review", icon: Check },
 ] as const;
 
-const priceOf = (b: Book) => b.flashSale?.price ?? b.price;
+const variantOf = (b: Book, variantId?: string) => b.variants?.find((variant) => variant.id === variantId) ?? b.variants?.[0];
+const priceOf = (b: Book, variantId?: string) => variantOf(b, variantId)?.flashPrice ?? variantOf(b, variantId)?.price ?? b.flashSale?.price ?? b.price;
 const NEW = "__new";
 
 export default function CheckoutPage() {
@@ -73,7 +74,7 @@ export default function CheckoutPage() {
 
   const lines = cart.map((c) => ({ item: c, book: bookCache[c.bookId] })).filter((l): l is { item: typeof l.item; book: Book } => !!l.book);
   const resolving = cart.length > 0 && lines.length < cart.length;
-  const subtotal = lines.reduce((s, l) => s + priceOf(l.book) * l.item.qty, 0);
+  const subtotal = lines.reduce((s, l) => s + priceOf(l.book, l.item.variantId) * l.item.qty, 0);
 
   const address: Omit<Address, "id" | "label" | "isDefault"> = useMemo(() => {
     if (addrChoice !== NEW) {
@@ -151,8 +152,9 @@ export default function CheckoutPage() {
     setPlacing(true);
     const orderAddress: Address = { id: "addr", label: "Shipping", isDefault: true, ...address };
     const items: OrderItem[] = lines.map((l) => ({
-      bookId: l.book.id, title: l.book.title, coverUrl: l.book.coverUrl,
-      price: priceOf(l.book), quantity: l.item.qty,
+      bookId: l.book.id, variantId: l.item.variantId, variantName: variantOf(l.book, l.item.variantId)?.name,
+      title: l.book.title, coverUrl: l.book.coverUrl,
+      price: priceOf(l.book, l.item.variantId), quantity: l.item.qty,
     }));
     try {
       if (user && addrChoice === NEW && saveNew) {
@@ -341,8 +343,8 @@ export default function CheckoutPage() {
                 {lines.map(({ item, book }) => (
                   <li key={item.bookId} className="flex items-center gap-3">
                     <div className="h-14 w-10 shrink-0 overflow-hidden rounded-[3px] shadow-sm"><BookCover title={book.title} coverUrl={book.coverUrl} /></div>
-                    <div className="min-w-0 flex-1"><p className="truncate text-sm">{book.title}</p><p className="text-xs text-muted-foreground">Qty {item.qty}</p></div>
-                    <span className="text-sm tabular-nums">{formatTk(priceOf(book) * item.qty)}</span>
+                    <div className="min-w-0 flex-1"><p className="truncate text-sm">{book.title}</p><p className="text-xs text-muted-foreground">{variantOf(book, item.variantId)?.name ?? "Paperback (Premium)"} · Qty {item.qty}</p></div>
+                    <span className="text-sm tabular-nums">{formatTk(priceOf(book, item.variantId) * item.qty)}</span>
                   </li>
                 ))}
               </ul>

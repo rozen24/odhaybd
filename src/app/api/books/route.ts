@@ -78,7 +78,9 @@ export const POST = handle(async (request: Request) => {
     if (dup) return fail("A book with this ISBN already exists", 409);
   }
 
-  const { regularPrice, salePrice } = pricing(input.price as number, input.oldPrice ?? 0);
+  const paperback = input.variants?.[0];
+  if (!paperback) return fail("Paperback pricing is required", 400);
+  const { regularPrice, salePrice } = pricing(paperback.price, paperback.oldPrice);
   const images = input.images ?? [];
   const created = await prisma.product.create({
     data: {
@@ -95,6 +97,7 @@ export const POST = handle(async (request: Request) => {
       weightGrams: input.weightGrams ?? null,
       regularPrice,
       salePrice,
+      flashSaleEndsAt: input.flashSale ? new Date(input.flashSale.endsAt) : null,
       status: input.status ?? "PUBLISHED",
       bestseller: input.bestseller ?? false,
       newRelease: input.newRelease ?? false,
@@ -103,7 +106,20 @@ export const POST = handle(async (request: Request) => {
       sellerId: input.sellerId ?? null,
       publisherId: input.publisherId ?? null,
       images: { create: images.map((url, sortOrder) => ({ url, sortOrder })) },
-      inventory: { create: { quantity: input.stock ?? 0 } },
+      inventory: { create: { quantity: paperback.stock } },
+      variants: {
+        create: (input.variants ?? []).map((variant) => {
+          const priced = pricing(variant.price, variant.oldPrice);
+          return {
+            sku: `${newSku()}-${variant.name.toLowerCase().includes("hard") ? "HC" : "PB"}`,
+            name: variant.name,
+            basePrice: variant.price,
+            regularPrice: priced.regularPrice,
+            salePrice: variant.flashPrice ?? null,
+            inventory: { create: { quantity: variant.stock } },
+          };
+        }),
+      },
       authors: { create: (input.authorIds ?? []).map((authorId) => ({ authorId })) },
       categories: { create: (input.categoryIds ?? []).map((categoryId) => ({ categoryId })) },
     },

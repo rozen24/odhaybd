@@ -16,7 +16,8 @@ import { formatTk, discountPercent } from "../../../lib/format";
 import { cn } from "../ui/utils";
 import type { Book } from "../../../types";
 
-const priceOf = (b: Book) => b.flashSale?.price ?? b.price;
+const variantOf = (b: Book, variantId?: string) => b.variants?.find((variant) => variant.id === variantId) ?? b.variants?.[0];
+const priceOf = (b: Book, variantId?: string) => variantOf(b, variantId)?.flashPrice ?? variantOf(b, variantId)?.price ?? b.flashSale?.price ?? b.price;
 
 export function ShoppingCartDrawer() {
   const { cart, bookCache, cartDrawerOpen, closeCartDrawer, setQty, removeFromCart, recent } = useStore();
@@ -28,8 +29,8 @@ export function ShoppingCartDrawer() {
     .map((c) => ({ item: c, book: bookCache[c.bookId] }))
     .filter((l): l is { item: typeof l.item; book: Book } => !!l.book);
 
-  const subtotal = lines.reduce((s, l) => s + priceOf(l.book) * l.item.qty, 0);
-  const savings = lines.reduce((s, l) => s + Math.max(0, (l.book.oldPrice || 0) - priceOf(l.book)) * l.item.qty, 0);
+  const subtotal = lines.reduce((s, l) => s + priceOf(l.book, l.item.variantId) * l.item.qty, 0);
+  const savings = lines.reduce((s, l) => s + Math.max(0, (variantOf(l.book, l.item.variantId)?.oldPrice || l.book.oldPrice) - priceOf(l.book, l.item.variantId)) * l.item.qty, 0);
   const toFree = Math.max(0, settings.freeShippingThreshold - subtotal);
   const freeProgress = settings.freeShippingThreshold > 0
     ? Math.min(100, (subtotal / settings.freeShippingThreshold) * 100)
@@ -103,8 +104,9 @@ export function ShoppingCartDrawer() {
           ) : (
             <ul className="divide-y divide-border">
               {lines.map(({ item, book }) => {
-                const effectivePrice = priceOf(book);
-                const pct = discountPercent(effectivePrice, book.oldPrice);
+                const effectivePrice = priceOf(book, item.variantId);
+                const selectedVariant = variantOf(book, item.variantId);
+                const pct = discountPercent(effectivePrice, selectedVariant?.oldPrice ?? book.oldPrice);
                 const authorName = book.authorIds.map((id) => authorById(id)?.name).filter(Boolean).join(", ");
                 return (
                   <li key={item.bookId} className="flex gap-3 px-5 py-4">
@@ -129,10 +131,11 @@ export function ShoppingCartDrawer() {
                       {authorName && (
                         <p className="truncate text-xs text-muted-foreground">{authorName}</p>
                       )}
-                      <PriceTag price={effectivePrice} oldPrice={book.oldPrice} size="sm" />
+                      <p className="text-[11px] text-muted-foreground">{variantOf(book, item.variantId)?.name ?? "Paperback (Premium)"}</p>
+                      <PriceTag price={priceOf(book, item.variantId)} oldPrice={variantOf(book, item.variantId)?.oldPrice ?? book.oldPrice} size="sm" />
                       {pct > 0 && (
                         <p className="text-[11px] font-medium text-accent">
-                          Save {formatTk((book.oldPrice || 0) - effectivePrice)} ({pct}% off)
+                          Save {formatTk((selectedVariant?.oldPrice ?? book.oldPrice) - effectivePrice)} ({pct}% off)
                         </p>
                       )}
                     </div>
@@ -142,19 +145,19 @@ export function ShoppingCartDrawer() {
                       <button
                         type="button"
                         aria-label={`Remove ${book.title} from cart`}
-                        onClick={() => removeFromCart(item.bookId)}
+                        onClick={() => removeFromCart(item.bookId, item.variantId)}
                         className="text-muted-foreground transition-colors hover:text-destructive focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
                       >
                         <Trash2 size={14} />
                       </button>
                       <QuantityStepper
                         value={item.qty}
-                        onChange={(v) => setQty(item.bookId, v)}
+                        onChange={(v) => setQty(item.bookId, v, item.variantId)}
                         min={1}
                         max={99}
                       />
                       <p className="text-sm font-semibold tabular-nums text-foreground">
-                        {formatTk(effectivePrice * item.qty)}
+                        {formatTk(priceOf(book, item.variantId) * item.qty)}
                       </p>
                     </div>
                   </li>

@@ -60,6 +60,7 @@ export type ProductMinAggregateOutputType = {
   weightGrams: number | null
   regularPrice: runtime.Decimal | null
   salePrice: runtime.Decimal | null
+  flashSaleEndsAt: Date | null
   status: $Enums.ProductStatus | null
   featured: boolean | null
   bestseller: boolean | null
@@ -90,6 +91,7 @@ export type ProductMaxAggregateOutputType = {
   weightGrams: number | null
   regularPrice: runtime.Decimal | null
   salePrice: runtime.Decimal | null
+  flashSaleEndsAt: Date | null
   status: $Enums.ProductStatus | null
   featured: boolean | null
   bestseller: boolean | null
@@ -120,6 +122,7 @@ export type ProductCountAggregateOutputType = {
   weightGrams: number
   regularPrice: number
   salePrice: number
+  flashSaleEndsAt: number
   status: number
   featured: number
   bestseller: number
@@ -170,6 +173,7 @@ export type ProductMinAggregateInputType = {
   weightGrams?: true
   regularPrice?: true
   salePrice?: true
+  flashSaleEndsAt?: true
   status?: true
   featured?: true
   bestseller?: true
@@ -200,6 +204,7 @@ export type ProductMaxAggregateInputType = {
   weightGrams?: true
   regularPrice?: true
   salePrice?: true
+  flashSaleEndsAt?: true
   status?: true
   featured?: true
   bestseller?: true
@@ -230,6 +235,7 @@ export type ProductCountAggregateInputType = {
   weightGrams?: true
   regularPrice?: true
   salePrice?: true
+  flashSaleEndsAt?: true
   status?: true
   featured?: true
   bestseller?: true
@@ -347,6 +353,7 @@ export type ProductGroupByOutputType = {
   weightGrams: number | null
   regularPrice: runtime.Decimal
   salePrice: runtime.Decimal | null
+  flashSaleEndsAt: Date | null
   status: $Enums.ProductStatus
   featured: boolean
   bestseller: boolean
@@ -400,6 +407,7 @@ export type ProductWhereInput = {
   weightGrams?: Prisma.IntNullableFilter<"Product"> | number | null
   regularPrice?: Prisma.DecimalFilter<"Product"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   salePrice?: Prisma.DecimalNullableFilter<"Product"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  flashSaleEndsAt?: Prisma.DateTimeNullableFilter<"Product"> | Date | string | null
   status?: Prisma.EnumProductStatusFilter<"Product"> | $Enums.ProductStatus
   featured?: Prisma.BoolFilter<"Product"> | boolean
   bestseller?: Prisma.BoolFilter<"Product"> | boolean
@@ -445,6 +453,7 @@ export type ProductOrderByWithRelationInput = {
   weightGrams?: Prisma.SortOrderInput | Prisma.SortOrder
   regularPrice?: Prisma.SortOrder
   salePrice?: Prisma.SortOrderInput | Prisma.SortOrder
+  flashSaleEndsAt?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
   featured?: Prisma.SortOrder
   bestseller?: Prisma.SortOrder
@@ -493,6 +502,7 @@ export type ProductWhereUniqueInput = Prisma.AtLeast<{
   weightGrams?: Prisma.IntNullableFilter<"Product"> | number | null
   regularPrice?: Prisma.DecimalFilter<"Product"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   salePrice?: Prisma.DecimalNullableFilter<"Product"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  flashSaleEndsAt?: Prisma.DateTimeNullableFilter<"Product"> | Date | string | null
   status?: Prisma.EnumProductStatusFilter<"Product"> | $Enums.ProductStatus
   featured?: Prisma.BoolFilter<"Product"> | boolean
   bestseller?: Prisma.BoolFilter<"Product"> | boolean
@@ -538,6 +548,7 @@ export type ProductOrderByWithAggregationInput = {
   weightGrams?: Prisma.SortOrderInput | Prisma.SortOrder
   regularPrice?: Prisma.SortOrder
   salePrice?: Prisma.SortOrderInput | Prisma.SortOrder
+  flashSaleEndsAt?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
   featured?: Prisma.SortOrder
   bestseller?: Prisma.SortOrder
@@ -576,6 +587,7 @@ export type ProductScalarWhereWithAggregatesInput = {
   weightGrams?: Prisma.IntNullableWithAggregatesFilter<"Product"> | number | null
   regularPrice?: Prisma.DecimalWithAggregatesFilter<"Product"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   salePrice?: Prisma.DecimalNullableWithAggregatesFilter<"Product"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  flashSaleEndsAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Product"> | Date | string | null
   status?: Prisma.EnumProductStatusWithAggregatesFilter<"Product"> | $Enums.ProductStatus
   featured?: Prisma.BoolWithAggregatesFilter<"Product"> | boolean
   bestseller?: Prisma.BoolWithAggregatesFilter<"Product"> | boolean
@@ -606,6 +618,7 @@ export type ProductCreateInput = {
   weightGrams?: number | null
   regularPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   salePrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  flashSaleEndsAt?: Date | string | null
   status?: $Enums.ProductStatus
   featured?: boolean
   bestseller?: boolean
@@ -649,6 +662,7 @@ export type ProductUncheckedCreateInput = {
   weightGrams?: number | null
   regularPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   salePrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  flashSaleEndsAt?: Date | string | null
   status?: $Enums.ProductStatus
   featured?: boolean
   bestseller?: boolean
@@ -692,6 +706,7 @@ export type ProductUpdateInput = {
   weightGrams?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   regularPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   salePrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  flashSaleEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   featured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bestseller?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -735,6 +750,7 @@ export type ProductUncheckedUpdateInput = {
   weightGrams?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   regularPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   salePrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  flashSaleEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   featured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bestseller?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -778,6 +794,7 @@ export type ProductCreateManyInput = {
   weightGrams?: number | null
   regularPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   salePrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  flashSaleEndsAt?: Date | string | null
   status?: $Enums.ProductStatus
   featured?: boolean
   bestseller?: boolean
@@ -808,6 +825,7 @@ export type ProductUpdateManyMutationInput = {
   weightGrams?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   regularPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   salePrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  flashSaleEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   featured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bestseller?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -836,6 +854,7 @@ export type ProductUncheckedUpdateManyInput = {
   weightGrams?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   regularPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   salePrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  flashSaleEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   featured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bestseller?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -876,6 +895,7 @@ export type ProductCountOrderByAggregateInput = {
   weightGrams?: Prisma.SortOrder
   regularPrice?: Prisma.SortOrder
   salePrice?: Prisma.SortOrder
+  flashSaleEndsAt?: Prisma.SortOrder
   status?: Prisma.SortOrder
   featured?: Prisma.SortOrder
   bestseller?: Prisma.SortOrder
@@ -915,6 +935,7 @@ export type ProductMaxOrderByAggregateInput = {
   weightGrams?: Prisma.SortOrder
   regularPrice?: Prisma.SortOrder
   salePrice?: Prisma.SortOrder
+  flashSaleEndsAt?: Prisma.SortOrder
   status?: Prisma.SortOrder
   featured?: Prisma.SortOrder
   bestseller?: Prisma.SortOrder
@@ -945,6 +966,7 @@ export type ProductMinOrderByAggregateInput = {
   weightGrams?: Prisma.SortOrder
   regularPrice?: Prisma.SortOrder
   salePrice?: Prisma.SortOrder
+  flashSaleEndsAt?: Prisma.SortOrder
   status?: Prisma.SortOrder
   featured?: Prisma.SortOrder
   bestseller?: Prisma.SortOrder
@@ -1026,6 +1048,10 @@ export type NullableDecimalFieldUpdateOperationsInput = {
   decrement?: runtime.Decimal | runtime.DecimalJsLike | number | string
   multiply?: runtime.Decimal | runtime.DecimalJsLike | number | string
   divide?: runtime.Decimal | runtime.DecimalJsLike | number | string
+}
+
+export type NullableDateTimeFieldUpdateOperationsInput = {
+  set?: Date | string | null
 }
 
 export type EnumProductStatusFieldUpdateOperationsInput = {
@@ -1274,6 +1300,7 @@ export type ProductCreateWithoutSellerInput = {
   weightGrams?: number | null
   regularPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   salePrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  flashSaleEndsAt?: Date | string | null
   status?: $Enums.ProductStatus
   featured?: boolean
   bestseller?: boolean
@@ -1316,6 +1343,7 @@ export type ProductUncheckedCreateWithoutSellerInput = {
   weightGrams?: number | null
   regularPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   salePrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  flashSaleEndsAt?: Date | string | null
   status?: $Enums.ProductStatus
   featured?: boolean
   bestseller?: boolean
@@ -1387,6 +1415,7 @@ export type ProductScalarWhereInput = {
   weightGrams?: Prisma.IntNullableFilter<"Product"> | number | null
   regularPrice?: Prisma.DecimalFilter<"Product"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   salePrice?: Prisma.DecimalNullableFilter<"Product"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  flashSaleEndsAt?: Prisma.DateTimeNullableFilter<"Product"> | Date | string | null
   status?: Prisma.EnumProductStatusFilter<"Product"> | $Enums.ProductStatus
   featured?: Prisma.BoolFilter<"Product"> | boolean
   bestseller?: Prisma.BoolFilter<"Product"> | boolean
@@ -1417,6 +1446,7 @@ export type ProductCreateWithoutImagesInput = {
   weightGrams?: number | null
   regularPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   salePrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  flashSaleEndsAt?: Date | string | null
   status?: $Enums.ProductStatus
   featured?: boolean
   bestseller?: boolean
@@ -1459,6 +1489,7 @@ export type ProductUncheckedCreateWithoutImagesInput = {
   weightGrams?: number | null
   regularPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   salePrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  flashSaleEndsAt?: Date | string | null
   status?: $Enums.ProductStatus
   featured?: boolean
   bestseller?: boolean
@@ -1517,6 +1548,7 @@ export type ProductUpdateWithoutImagesInput = {
   weightGrams?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   regularPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   salePrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  flashSaleEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   featured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bestseller?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1559,6 +1591,7 @@ export type ProductUncheckedUpdateWithoutImagesInput = {
   weightGrams?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   regularPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   salePrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  flashSaleEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   featured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bestseller?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1601,6 +1634,7 @@ export type ProductCreateWithoutVariantsInput = {
   weightGrams?: number | null
   regularPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   salePrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  flashSaleEndsAt?: Date | string | null
   status?: $Enums.ProductStatus
   featured?: boolean
   bestseller?: boolean
@@ -1643,6 +1677,7 @@ export type ProductUncheckedCreateWithoutVariantsInput = {
   weightGrams?: number | null
   regularPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   salePrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  flashSaleEndsAt?: Date | string | null
   status?: $Enums.ProductStatus
   featured?: boolean
   bestseller?: boolean
@@ -1701,6 +1736,7 @@ export type ProductUpdateWithoutVariantsInput = {
   weightGrams?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   regularPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   salePrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  flashSaleEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   featured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bestseller?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1743,6 +1779,7 @@ export type ProductUncheckedUpdateWithoutVariantsInput = {
   weightGrams?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   regularPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   salePrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  flashSaleEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   featured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bestseller?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1785,6 +1822,7 @@ export type ProductCreateWithoutInventoryInput = {
   weightGrams?: number | null
   regularPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   salePrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  flashSaleEndsAt?: Date | string | null
   status?: $Enums.ProductStatus
   featured?: boolean
   bestseller?: boolean
@@ -1827,6 +1865,7 @@ export type ProductUncheckedCreateWithoutInventoryInput = {
   weightGrams?: number | null
   regularPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   salePrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  flashSaleEndsAt?: Date | string | null
   status?: $Enums.ProductStatus
   featured?: boolean
   bestseller?: boolean
@@ -1885,6 +1924,7 @@ export type ProductUpdateWithoutInventoryInput = {
   weightGrams?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   regularPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   salePrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  flashSaleEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   featured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bestseller?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1927,6 +1967,7 @@ export type ProductUncheckedUpdateWithoutInventoryInput = {
   weightGrams?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   regularPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   salePrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  flashSaleEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   featured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bestseller?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1969,6 +2010,7 @@ export type ProductCreateWithoutPublisherInput = {
   weightGrams?: number | null
   regularPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   salePrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  flashSaleEndsAt?: Date | string | null
   status?: $Enums.ProductStatus
   featured?: boolean
   bestseller?: boolean
@@ -2011,6 +2053,7 @@ export type ProductUncheckedCreateWithoutPublisherInput = {
   weightGrams?: number | null
   regularPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   salePrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  flashSaleEndsAt?: Date | string | null
   status?: $Enums.ProductStatus
   featured?: boolean
   bestseller?: boolean
@@ -2079,6 +2122,7 @@ export type ProductCreateWithoutAuthorsInput = {
   weightGrams?: number | null
   regularPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   salePrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  flashSaleEndsAt?: Date | string | null
   status?: $Enums.ProductStatus
   featured?: boolean
   bestseller?: boolean
@@ -2121,6 +2165,7 @@ export type ProductUncheckedCreateWithoutAuthorsInput = {
   weightGrams?: number | null
   regularPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   salePrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  flashSaleEndsAt?: Date | string | null
   status?: $Enums.ProductStatus
   featured?: boolean
   bestseller?: boolean
@@ -2179,6 +2224,7 @@ export type ProductUpdateWithoutAuthorsInput = {
   weightGrams?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   regularPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   salePrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  flashSaleEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   featured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bestseller?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2221,6 +2267,7 @@ export type ProductUncheckedUpdateWithoutAuthorsInput = {
   weightGrams?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   regularPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   salePrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  flashSaleEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   featured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bestseller?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2263,6 +2310,7 @@ export type ProductCreateWithoutCategoriesInput = {
   weightGrams?: number | null
   regularPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   salePrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  flashSaleEndsAt?: Date | string | null
   status?: $Enums.ProductStatus
   featured?: boolean
   bestseller?: boolean
@@ -2305,6 +2353,7 @@ export type ProductUncheckedCreateWithoutCategoriesInput = {
   weightGrams?: number | null
   regularPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   salePrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  flashSaleEndsAt?: Date | string | null
   status?: $Enums.ProductStatus
   featured?: boolean
   bestseller?: boolean
@@ -2363,6 +2412,7 @@ export type ProductUpdateWithoutCategoriesInput = {
   weightGrams?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   regularPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   salePrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  flashSaleEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   featured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bestseller?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2405,6 +2455,7 @@ export type ProductUncheckedUpdateWithoutCategoriesInput = {
   weightGrams?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   regularPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   salePrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  flashSaleEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   featured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bestseller?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2447,6 +2498,7 @@ export type ProductCreateWithoutTagsInput = {
   weightGrams?: number | null
   regularPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   salePrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  flashSaleEndsAt?: Date | string | null
   status?: $Enums.ProductStatus
   featured?: boolean
   bestseller?: boolean
@@ -2489,6 +2541,7 @@ export type ProductUncheckedCreateWithoutTagsInput = {
   weightGrams?: number | null
   regularPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   salePrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  flashSaleEndsAt?: Date | string | null
   status?: $Enums.ProductStatus
   featured?: boolean
   bestseller?: boolean
@@ -2547,6 +2600,7 @@ export type ProductUpdateWithoutTagsInput = {
   weightGrams?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   regularPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   salePrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  flashSaleEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   featured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bestseller?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2589,6 +2643,7 @@ export type ProductUncheckedUpdateWithoutTagsInput = {
   weightGrams?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   regularPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   salePrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  flashSaleEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   featured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bestseller?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2631,6 +2686,7 @@ export type ProductCreateWithoutCartItemsInput = {
   weightGrams?: number | null
   regularPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   salePrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  flashSaleEndsAt?: Date | string | null
   status?: $Enums.ProductStatus
   featured?: boolean
   bestseller?: boolean
@@ -2673,6 +2729,7 @@ export type ProductUncheckedCreateWithoutCartItemsInput = {
   weightGrams?: number | null
   regularPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   salePrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  flashSaleEndsAt?: Date | string | null
   status?: $Enums.ProductStatus
   featured?: boolean
   bestseller?: boolean
@@ -2731,6 +2788,7 @@ export type ProductUpdateWithoutCartItemsInput = {
   weightGrams?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   regularPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   salePrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  flashSaleEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   featured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bestseller?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2773,6 +2831,7 @@ export type ProductUncheckedUpdateWithoutCartItemsInput = {
   weightGrams?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   regularPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   salePrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  flashSaleEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   featured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bestseller?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2815,6 +2874,7 @@ export type ProductCreateWithoutWishlistItemsInput = {
   weightGrams?: number | null
   regularPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   salePrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  flashSaleEndsAt?: Date | string | null
   status?: $Enums.ProductStatus
   featured?: boolean
   bestseller?: boolean
@@ -2857,6 +2917,7 @@ export type ProductUncheckedCreateWithoutWishlistItemsInput = {
   weightGrams?: number | null
   regularPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   salePrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  flashSaleEndsAt?: Date | string | null
   status?: $Enums.ProductStatus
   featured?: boolean
   bestseller?: boolean
@@ -2915,6 +2976,7 @@ export type ProductUpdateWithoutWishlistItemsInput = {
   weightGrams?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   regularPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   salePrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  flashSaleEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   featured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bestseller?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2957,6 +3019,7 @@ export type ProductUncheckedUpdateWithoutWishlistItemsInput = {
   weightGrams?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   regularPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   salePrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  flashSaleEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   featured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bestseller?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2999,6 +3062,7 @@ export type ProductCreateWithoutCompareItemsInput = {
   weightGrams?: number | null
   regularPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   salePrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  flashSaleEndsAt?: Date | string | null
   status?: $Enums.ProductStatus
   featured?: boolean
   bestseller?: boolean
@@ -3041,6 +3105,7 @@ export type ProductUncheckedCreateWithoutCompareItemsInput = {
   weightGrams?: number | null
   regularPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   salePrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  flashSaleEndsAt?: Date | string | null
   status?: $Enums.ProductStatus
   featured?: boolean
   bestseller?: boolean
@@ -3099,6 +3164,7 @@ export type ProductUpdateWithoutCompareItemsInput = {
   weightGrams?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   regularPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   salePrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  flashSaleEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   featured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bestseller?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -3141,6 +3207,7 @@ export type ProductUncheckedUpdateWithoutCompareItemsInput = {
   weightGrams?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   regularPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   salePrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  flashSaleEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   featured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bestseller?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -3183,6 +3250,7 @@ export type ProductCreateWithoutOrderItemsInput = {
   weightGrams?: number | null
   regularPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   salePrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  flashSaleEndsAt?: Date | string | null
   status?: $Enums.ProductStatus
   featured?: boolean
   bestseller?: boolean
@@ -3225,6 +3293,7 @@ export type ProductUncheckedCreateWithoutOrderItemsInput = {
   weightGrams?: number | null
   regularPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   salePrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  flashSaleEndsAt?: Date | string | null
   status?: $Enums.ProductStatus
   featured?: boolean
   bestseller?: boolean
@@ -3283,6 +3352,7 @@ export type ProductUpdateWithoutOrderItemsInput = {
   weightGrams?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   regularPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   salePrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  flashSaleEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   featured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bestseller?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -3325,6 +3395,7 @@ export type ProductUncheckedUpdateWithoutOrderItemsInput = {
   weightGrams?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   regularPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   salePrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  flashSaleEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   featured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bestseller?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -3367,6 +3438,7 @@ export type ProductCreateWithoutReviewsInput = {
   weightGrams?: number | null
   regularPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   salePrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  flashSaleEndsAt?: Date | string | null
   status?: $Enums.ProductStatus
   featured?: boolean
   bestseller?: boolean
@@ -3409,6 +3481,7 @@ export type ProductUncheckedCreateWithoutReviewsInput = {
   weightGrams?: number | null
   regularPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   salePrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  flashSaleEndsAt?: Date | string | null
   status?: $Enums.ProductStatus
   featured?: boolean
   bestseller?: boolean
@@ -3467,6 +3540,7 @@ export type ProductUpdateWithoutReviewsInput = {
   weightGrams?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   regularPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   salePrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  flashSaleEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   featured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bestseller?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -3509,6 +3583,7 @@ export type ProductUncheckedUpdateWithoutReviewsInput = {
   weightGrams?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   regularPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   salePrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  flashSaleEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   featured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bestseller?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -3551,6 +3626,7 @@ export type ProductCreateWithoutDealProductsInput = {
   weightGrams?: number | null
   regularPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   salePrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  flashSaleEndsAt?: Date | string | null
   status?: $Enums.ProductStatus
   featured?: boolean
   bestseller?: boolean
@@ -3593,6 +3669,7 @@ export type ProductUncheckedCreateWithoutDealProductsInput = {
   weightGrams?: number | null
   regularPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   salePrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  flashSaleEndsAt?: Date | string | null
   status?: $Enums.ProductStatus
   featured?: boolean
   bestseller?: boolean
@@ -3651,6 +3728,7 @@ export type ProductUpdateWithoutDealProductsInput = {
   weightGrams?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   regularPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   salePrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  flashSaleEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   featured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bestseller?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -3693,6 +3771,7 @@ export type ProductUncheckedUpdateWithoutDealProductsInput = {
   weightGrams?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   regularPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   salePrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  flashSaleEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   featured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bestseller?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -3735,6 +3814,7 @@ export type ProductCreateWithoutSectionItemsInput = {
   weightGrams?: number | null
   regularPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   salePrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  flashSaleEndsAt?: Date | string | null
   status?: $Enums.ProductStatus
   featured?: boolean
   bestseller?: boolean
@@ -3777,6 +3857,7 @@ export type ProductUncheckedCreateWithoutSectionItemsInput = {
   weightGrams?: number | null
   regularPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   salePrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  flashSaleEndsAt?: Date | string | null
   status?: $Enums.ProductStatus
   featured?: boolean
   bestseller?: boolean
@@ -3835,6 +3916,7 @@ export type ProductUpdateWithoutSectionItemsInput = {
   weightGrams?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   regularPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   salePrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  flashSaleEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   featured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bestseller?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -3877,6 +3959,7 @@ export type ProductUncheckedUpdateWithoutSectionItemsInput = {
   weightGrams?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   regularPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   salePrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  flashSaleEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   featured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bestseller?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -3919,6 +4002,7 @@ export type ProductCreateManySellerInput = {
   weightGrams?: number | null
   regularPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   salePrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  flashSaleEndsAt?: Date | string | null
   status?: $Enums.ProductStatus
   featured?: boolean
   bestseller?: boolean
@@ -3948,6 +4032,7 @@ export type ProductUpdateWithoutSellerInput = {
   weightGrams?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   regularPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   salePrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  flashSaleEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   featured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bestseller?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -3990,6 +4075,7 @@ export type ProductUncheckedUpdateWithoutSellerInput = {
   weightGrams?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   regularPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   salePrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  flashSaleEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   featured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bestseller?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -4032,6 +4118,7 @@ export type ProductUncheckedUpdateManyWithoutSellerInput = {
   weightGrams?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   regularPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   salePrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  flashSaleEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   featured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bestseller?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -4061,6 +4148,7 @@ export type ProductCreateManyPublisherInput = {
   weightGrams?: number | null
   regularPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   salePrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  flashSaleEndsAt?: Date | string | null
   status?: $Enums.ProductStatus
   featured?: boolean
   bestseller?: boolean
@@ -4090,6 +4178,7 @@ export type ProductUpdateWithoutPublisherInput = {
   weightGrams?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   regularPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   salePrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  flashSaleEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   featured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bestseller?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -4132,6 +4221,7 @@ export type ProductUncheckedUpdateWithoutPublisherInput = {
   weightGrams?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   regularPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   salePrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  flashSaleEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   featured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bestseller?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -4174,6 +4264,7 @@ export type ProductUncheckedUpdateManyWithoutPublisherInput = {
   weightGrams?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   regularPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   salePrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  flashSaleEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   featured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bestseller?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -4333,6 +4424,7 @@ export type ProductSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   weightGrams?: boolean
   regularPrice?: boolean
   salePrice?: boolean
+  flashSaleEndsAt?: boolean
   status?: boolean
   featured?: boolean
   bestseller?: boolean
@@ -4379,6 +4471,7 @@ export type ProductSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   weightGrams?: boolean
   regularPrice?: boolean
   salePrice?: boolean
+  flashSaleEndsAt?: boolean
   status?: boolean
   featured?: boolean
   bestseller?: boolean
@@ -4411,6 +4504,7 @@ export type ProductSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   weightGrams?: boolean
   regularPrice?: boolean
   salePrice?: boolean
+  flashSaleEndsAt?: boolean
   status?: boolean
   featured?: boolean
   bestseller?: boolean
@@ -4443,6 +4537,7 @@ export type ProductSelectScalar = {
   weightGrams?: boolean
   regularPrice?: boolean
   salePrice?: boolean
+  flashSaleEndsAt?: boolean
   status?: boolean
   featured?: boolean
   bestseller?: boolean
@@ -4457,7 +4552,7 @@ export type ProductSelectScalar = {
   updatedAt?: boolean
 }
 
-export type ProductOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "slug" | "sku" | "isbn" | "title" | "description" | "shortDescription" | "translator" | "edition" | "pages" | "language" | "binding" | "weightGrams" | "regularPrice" | "salePrice" | "status" | "featured" | "bestseller" | "newRelease" | "editorChoice" | "awardWinner" | "ratingAverage" | "ratingCount" | "sellerId" | "publisherId" | "createdAt" | "updatedAt", ExtArgs["result"]["product"]>
+export type ProductOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "slug" | "sku" | "isbn" | "title" | "description" | "shortDescription" | "translator" | "edition" | "pages" | "language" | "binding" | "weightGrams" | "regularPrice" | "salePrice" | "flashSaleEndsAt" | "status" | "featured" | "bestseller" | "newRelease" | "editorChoice" | "awardWinner" | "ratingAverage" | "ratingCount" | "sellerId" | "publisherId" | "createdAt" | "updatedAt", ExtArgs["result"]["product"]>
 export type ProductInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   seller?: boolean | Prisma.Product$sellerArgs<ExtArgs>
   publisher?: boolean | Prisma.Product$publisherArgs<ExtArgs>
@@ -4520,6 +4615,7 @@ export type $ProductPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     weightGrams: number | null
     regularPrice: runtime.Decimal
     salePrice: runtime.Decimal | null
+    flashSaleEndsAt: Date | null
     status: $Enums.ProductStatus
     featured: boolean
     bestseller: boolean
@@ -4985,6 +5081,7 @@ export interface ProductFieldRefs {
   readonly weightGrams: Prisma.FieldRef<"Product", 'Int'>
   readonly regularPrice: Prisma.FieldRef<"Product", 'Decimal'>
   readonly salePrice: Prisma.FieldRef<"Product", 'Decimal'>
+  readonly flashSaleEndsAt: Prisma.FieldRef<"Product", 'DateTime'>
   readonly status: Prisma.FieldRef<"Product", 'ProductStatus'>
   readonly featured: Prisma.FieldRef<"Product", 'Boolean'>
   readonly bestseller: Prisma.FieldRef<"Product", 'Boolean'>

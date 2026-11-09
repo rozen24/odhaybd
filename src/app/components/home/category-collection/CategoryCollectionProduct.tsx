@@ -5,8 +5,9 @@ import { discountPercent, formatTk } from "../../../../lib/format";
 import type { Book } from "../../../../types";
 
 export function CategoryCollectionProduct({ book }: { book: Book }) {
-  const price = book.flashSale?.price ?? book.price;
-  const oldPrice = book.oldPrice;
+  const defaultVariant = book.variants?.[0];
+  const price = book.flashSale?.price ?? defaultVariant?.flashPrice ?? book.price;
+  const oldPrice = defaultVariant?.oldPrice ?? book.oldPrice;
   const pct = discountPercent(price, oldPrice);
   const savingsAmt = oldPrice && pct > 0 ? oldPrice - price : 0;
 

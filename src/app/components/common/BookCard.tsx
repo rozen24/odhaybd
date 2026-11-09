@@ -171,8 +171,9 @@ export function BookCard({
   const quickView = useQuickView();
 
   const authorName = book.authorIds.map((id) => authorById(id)?.name).filter(Boolean).join(", ");
-  const price = priceOverride?.price ?? book.flashSale?.price ?? book.price;
-  const oldPrice = priceOverride?.oldPrice ?? book.oldPrice;
+  const defaultVariant = book.variants?.[0];
+  const price = priceOverride?.price ?? book.flashSale?.price ?? defaultVariant?.flashPrice ?? book.price;
+  const oldPrice = priceOverride?.oldPrice ?? defaultVariant?.oldPrice ?? book.oldPrice;
   const pct = discountPercent(price, oldPrice);
   const savingsAmt = oldPrice && pct > 0 ? oldPrice - price : 0;
   const wished = inWishlist(book.id);
@@ -200,7 +201,7 @@ export function BookCard({
           <div className="pointer-events-none absolute left-0 top-2 flex flex-col items-start gap-1">
             {pct > 0 && <span className="rounded-r bg-primary px-2 py-0.5 text-[11px] font-semibold tabular-nums text-primary-foreground">-{pct}%</span>}
             {badge && <span className="rounded-r bg-accent px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-accent-foreground">{badge}</span>}
-            {book.flashSale && !priceOverride && <span className="rounded-r bg-foreground px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-background">Flash</span>}
+            {(book.flashSale || defaultVariant?.flashPrice) && !priceOverride && <span className="rounded-r bg-foreground px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-background">Flash</span>}
             {book.isBestseller && <span className="rounded-r bg-accent px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-accent-foreground">Bestseller</span>}
             {book.isNewArrival && !book.isBestseller && <span className="rounded-r bg-card px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-foreground">New</span>}
           </div>

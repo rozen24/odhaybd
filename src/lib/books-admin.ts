@@ -18,6 +18,8 @@ export type BookInput = {
   price?: number;     // selling price shown to customers
   oldPrice?: number;  // list price (shown struck through when higher than price)
   stock?: number;
+  variants?: { name: string; price: number; oldPrice: number; flashPrice?: number; stock: number }[];
+  flashSale?: { price: number; endsAt: string } | null;
   status?: "PUBLISHED" | "UNPUBLISHED";
   publisherId?: string | null;
   sellerId?: string | null;        // staff only
@@ -111,7 +113,41 @@ export function parseBookInput(
     input.stock = 0;
   }
 
+  if (b.variants !== undefined || !opts.partial) {
+    if (!Array.isArray(b.variants) || b.variants.length !== 2) return { error: "Add both paperback and hardcover prices" };
+    const variants: NonNullable<BookInput["variants"]> = [];
+    for (const raw of b.variants as Record<string, unknown>[]) {
+      const name = str(raw?.name, 80);
+      const price = Number(raw?.price);
+      const oldPrice = Number(raw?.oldPrice ?? 0);
+      const flashPrice = raw?.flashPrice === undefined || raw?.flashPrice === "" ? 0 : Number(raw.flashPrice);
+      const stock = intOrNull(raw?.stock);
+      if (!name || !Number.isFinite(price) || price <= 0 || price > 10_000_000 ||
+          !Number.isFinite(oldPrice) || oldPrice < 0 || oldPrice > 10_000_000 ||
+          !Number.isFinite(flashPrice) || flashPrice < 0 || flashPrice >= price ||
+          stock === "bad" || stock === null) {
+        return { error: "Enter valid prices, flash sale prices, and stock" };
+      }
+      variants.push({ name, price, oldPrice, flashPrice: flashPrice || undefined, stock });
+    }
+    input.variants = variants;
+  }
+
   if (b.status !== undefined) input.status = str(b.status, 20).toLowerCase() === "unpublished" ? "UNPUBLISHED" : "PUBLISHED";
+
+  if (b.flashSale !== undefined) {
+    if (b.flashSale === null) {
+      input.flashSale = null;
+    } else if (typeof b.flashSale === "object" && b.flashSale !== null) {
+      const flash = b.flashSale as Record<string, unknown>;
+      const price = Number(flash.price);
+      const endsAt = str(flash.endsAt, 60);
+      if (!Number.isFinite(price) || price <= 0 || !endsAt || Number.isNaN(new Date(endsAt).getTime())) return { error: "Enter a valid flash sale" };
+      input.flashSale = { price, endsAt };
+    } else {
+      return { error: "Enter a valid flash sale" };
+    }
+  }
 
   if (b.publisherId !== undefined) {
     const id = str(b.publisherId, 40);

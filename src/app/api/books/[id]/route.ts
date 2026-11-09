@@ -1,7 +1,7 @@
 import type { Prisma } from "@/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
 import { requireRole } from "@/lib/guards";
-import { checkRefs, parseBookInput, pricing, uniqueProductSlug } from "@/lib/books-admin";
+import { checkRefs, newSku, parseBookInput, pricing, uniqueProductSlug } from "@/lib/books-admin";
 import { prismaRepositories } from "@/services/prisma-repositories";
 import { fail, handle, isUuid, ok, readJson } from "@/lib/api-route";
 
@@ -55,11 +55,15 @@ export const PUT = handle(async (request: Request, { params }: Ctx) => {
   if (input.newRelease !== undefined) data.newRelease = input.newRelease;
   if (input.editorChoice !== undefined) data.editorChoice = input.editorChoice;
   if (input.awardWinner !== undefined) data.awardWinner = input.awardWinner;
+  if (input.flashSale === null) data.salePrice = null;
+  if (input.flashSale === null) data.flashSaleEndsAt = null;
+  if (input.flashSale && input.flashSale !== null) data.flashSaleEndsAt = new Date(input.flashSale.endsAt);
 
-  if (input.price !== undefined || input.oldPrice !== undefined) {
+  if (input.price !== undefined || input.oldPrice !== undefined || input.variants !== undefined) {
     const currentSelling = Number(existing.salePrice ?? existing.regularPrice);
     const currentList = Number(existing.regularPrice);
-    const { regularPrice, salePrice } = pricing(input.price ?? currentSelling, input.oldPrice ?? currentList);
+    const paperback = input.variants?.[0];
+    const { regularPrice, salePrice } = pricing(paperback?.price ?? input.price ?? currentSelling, paperback?.oldPrice ?? input.oldPrice ?? currentList);
     data.regularPrice = regularPrice;
     data.salePrice = salePrice;
   }
@@ -84,6 +88,30 @@ export const PUT = handle(async (request: Request, { params }: Ctx) => {
         update: { quantity: input.stock },
         create: { productId: id, quantity: input.stock },
       });
+    }
+    if (input.variants) {
+      await tx.productVariant.deleteMany({ where: { productId: id } });
+      await tx.productVariant.createMany({
+        data: input.variants.map((variant) => {
+          const priced = pricing(variant.price, variant.oldPrice);
+          return {
+            productId: id,
+            sku: `${newSku()}-${variant.name.toLowerCase().includes("hard") ? "HC" : "PB"}`,
+            name: variant.name,
+            basePrice: variant.price,
+            regularPrice: priced.regularPrice,
+            salePrice: input.flashSale === null ? null : variant.flashPrice ?? null,
+          };
+        }),
+      });
+      const createdVariants = await tx.productVariant.findMany({ where: { productId: id }, select: { id: true, name: true } });
+      for (const variant of input.variants) {
+        const created = createdVariants.find((v) => v.name === variant.name);
+        if (created) await tx.inventory.create({ data: { variantId: created.id, quantity: variant.stock } });
+      }
+    }
+    if (input.flashSale === null) {
+      await tx.productVariant.updateMany({ where: { productId: id }, data: { salePrice: null } });
     }
   });
 

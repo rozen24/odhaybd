@@ -22,7 +22,8 @@ import { Progress } from "../ui/progress";
 import { cn } from "../ui/utils";
 
 export const COUPON_KEY = "bp.coupon";
-const priceOf = (b: Book) => b.flashSale?.price ?? b.price;
+const variantOf = (b: Book, variantId?: string) => b.variants?.find((variant) => variant.id === variantId) ?? b.variants?.[0];
+const priceOf = (b: Book, variantId?: string) => variantOf(b, variantId)?.flashPrice ?? variantOf(b, variantId)?.price ?? b.flashSale?.price ?? b.price;
 
   export function CartPage() {
   const { cart, bookCache, setQty, removeFromCart, toggleWishlist, inWishlist } = useStore();
@@ -40,7 +41,7 @@ const priceOf = (b: Book) => b.flashSale?.price ?? b.price;
   const lines = cart.map((c) => ({ item: c, book: bookCache[c.bookId] })).filter((l): l is { item: typeof l.item; book: Book } => !!l.book);
   const resolving = cart.length > 0 && lines.length < cart.length;
   const subtotal = lines.reduce((s, l) => s + priceOf(l.book) * l.item.qty, 0);
-  const savings = lines.reduce((s, l) => s + Math.max(0, (l.book.oldPrice || 0) - priceOf(l.book)) * l.item.qty, 0);
+  const savings = lines.reduce((s, l) => s + Math.max(0, (variantOf(l.book, l.item.variantId)?.oldPrice || l.book.oldPrice) - priceOf(l.book, l.item.variantId)) * l.item.qty, 0);
   const shipping = subtotal >= settings.freeShippingThreshold || subtotal === 0 ? 0 : settings.shippingFee;
   const discount = applied?.discount ?? 0;
   const total = Math.max(0, subtotal - discount) + shipping;
@@ -102,16 +103,16 @@ const priceOf = (b: Book) => b.flashSale?.price ?? b.price;
                         <div className="min-w-0">
                           <Link to={`/book/${book.slug}`}><h3 className="font-display font-semibold leading-snug hover:text-primary">{book.title}</h3></Link>
                           {author && <p className="text-xs text-muted-foreground">{author}</p>}
-                          <p className={cn("mt-1 text-xs", book.stock > 0 ? "text-accent" : "text-destructive")}>{book.stock > 0 ? "In stock" : "Out of stock"}</p>
+                          <p className={cn("mt-1 text-xs", (variantOf(book, item.variantId)?.stock ?? book.stock) > 0 ? "text-accent" : "text-destructive")}>{(variantOf(book, item.variantId)?.stock ?? book.stock) > 0 ? "In stock" : "Out of stock"}</p>
                         </div>
-                        <p className="shrink-0 font-semibold tabular-nums">{formatTk(priceOf(book) * item.qty)}</p>
+                        <p className="shrink-0 font-semibold tabular-nums">{formatTk(priceOf(book, item.variantId) * item.qty)}</p>
                       </div>
-                      <div className="mt-1"><PriceTag price={priceOf(book)} oldPrice={book.oldPrice} size="sm" /></div>
+                      <div className="mt-1"><p className="text-xs text-muted-foreground">{variantOf(book, item.variantId)?.name ?? "Paperback (Premium)"}</p><PriceTag price={priceOf(book, item.variantId)} oldPrice={variantOf(book, item.variantId)?.oldPrice ?? book.oldPrice} size="sm" /></div>
                       <div className="mt-auto flex flex-wrap items-center justify-between gap-2 pt-3">
-                        <QuantityStepper value={item.qty} onChange={(v) => setQty(item.bookId, v)} max={book.stock} />
+                        <QuantityStepper value={item.qty} onChange={(v) => setQty(item.bookId, v, item.variantId)} max={variantOf(book, item.variantId)?.stock ?? book.stock} />
                         <div className="flex items-center gap-3 text-xs">
-                          <button onClick={() => { if (!inWishlist(book.id)) toggleWishlist(book); removeFromCart(item.bookId); }} className="flex items-center gap-1 text-muted-foreground hover:text-foreground"><Heart size={13} /> Save for later</button>
-                          <button onClick={() => removeFromCart(item.bookId)} className="flex items-center gap-1 text-muted-foreground hover:text-destructive"><Trash2 size={13} /> Remove</button>
+                          <button onClick={() => { if (!inWishlist(book.id)) toggleWishlist(book); removeFromCart(item.bookId, item.variantId); }} className="flex items-center gap-1 text-muted-foreground hover:text-foreground"><Heart size={13} /> Save for later</button>
+                          <button onClick={() => removeFromCart(item.bookId, item.variantId)} className="flex items-center gap-1 text-muted-foreground hover:text-destructive"><Trash2 size={13} /> Remove</button>
                         </div>
                       </div>
                     </div>

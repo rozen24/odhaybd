@@ -28,6 +28,7 @@ const productInclude = {
   seller: true,
   images: { orderBy: { sortOrder: "asc" as const } },
   inventory: true,
+  variants: { include: { inventory: true }, orderBy: { name: "asc" as const } },
   dealProducts: {
     where: { active: true, campaign: { active: true } },
     orderBy: { displayOrder: "asc" as const },
@@ -44,10 +45,33 @@ function numberValue(value: Prisma.Decimal | number | null | undefined): number 
 function toBook(product: ProductRecord): Book {
   const deal = product.dealProducts[0];
   const now = Date.now();
+  const variantFlashIsLive = !!product.flashSaleEndsAt && product.flashSaleEndsAt.getTime() > now;
   const dealIsLive = deal &&
     new Date(deal.campaign.startAt).getTime() <= now &&
     (!deal.campaign.endAt || new Date(deal.campaign.endAt).getTime() > now);
-  const price = numberValue(product.salePrice ?? product.regularPrice);
+  const variantRecords = [...product.variants].sort((a, b) => {
+    const aPaperback = a.name.toLowerCase().includes("paperback");
+    const bPaperback = b.name.toLowerCase().includes("paperback");
+    return aPaperback === bPaperback ? a.name.localeCompare(b.name) : aPaperback ? -1 : 1;
+  });
+  const variants = variantRecords.length > 0
+    ? variantRecords.map((variant) => ({
+        id: variant.id,
+        name: variant.name,
+        price: numberValue(variant.basePrice || (variant.salePrice ?? variant.regularPrice)),
+        oldPrice: numberValue(variant.regularPrice),
+        flashPrice: variantFlashIsLive && variant.salePrice ? numberValue(variant.salePrice) : undefined,
+        stock: Math.max(0, (variant.inventory?.quantity ?? 0) - (variant.inventory?.reserved ?? 0)),
+      }))
+    : [{
+        id: "",
+        name: "Paperback (Premium)",
+        price: numberValue(product.salePrice ?? product.regularPrice),
+        oldPrice: numberValue(product.regularPrice),
+        flashPrice: variantFlashIsLive && product.salePrice ? numberValue(product.salePrice) : undefined,
+        stock: Math.max(0, (product.inventory?.quantity ?? 0) - (product.inventory?.reserved ?? 0)),
+      }];
+  const defaultVariant = variants[0];
 
   return {
     id: product.id,
@@ -64,9 +88,10 @@ function toBook(product: ProductRecord): Book {
     language: (product.language ?? "English") as Book["language"],
     binding: (product.binding ?? "Paperback") as Book["binding"],
     weightGrams: product.weightGrams ?? 0,
-    price,
-    oldPrice: numberValue(product.regularPrice),
-    stock: Math.max(0, (product.inventory?.quantity ?? 0) - (product.inventory?.reserved ?? 0)),
+    price: defaultVariant.price,
+    oldPrice: defaultVariant.oldPrice,
+    stock: defaultVariant.stock,
+    variants,
     coverUrl: product.images[0]?.url ?? "",
     images: product.images.map((image) => image.url),
     description: product.description,
@@ -77,9 +102,17 @@ function toBook(product: ProductRecord): Book {
     isNewArrival: product.newRelease,
     isEditorsChoice: product.editorChoice,
     isAwardWinner: product.awardWinner,
-    flashSale: dealIsLive ? { price: numberValue(deal.dealPrice), endsAt: deal.campaign.endAt?.toISOString() ?? new Date(now + 86400000).toISOString() } : undefined,
+    flashSale: dealIsLive
+      ? { price: numberValue(deal.dealPrice), endsAt: deal.campaign.endAt?.toISOString() ?? new Date(now + 86400000).toISOString() }
+      : variantFlashIsLive && defaultVariant.flashPrice
+        ? { price: defaultVariant.flashPrice, endsAt: product.flashSaleEndsAt!.toISOString() }
+        : undefined,
     createdAt: product.createdAt.toISOString(),
   };
+}
+
+function variantsHaveSale(variants: ProductRecord["variants"]) {
+  return variants.some((variant) => variant.salePrice !== null);
 }
 
 function productWhere(query: BookQuery): Prisma.ProductWhereInput {
@@ -109,7 +142,12 @@ function productWhere(query: BookQuery): Prisma.ProductWhereInput {
     ...(query.flag === "new" ? { newRelease: true } : {}),
     ...(query.flag === "editors" ? { editorChoice: true } : {}),
     ...(query.flag === "award" ? { awardWinner: true } : {}),
-    ...(query.flag === "flash" ? { dealProducts: { some: { active: true, campaign: { active: true } } } } : {}),
+    ...(query.flag === "flash" ? {
+      OR: [
+        { dealProducts: { some: { active: true, campaign: { active: true } } } },
+        { flashSaleEndsAt: { gt: new Date() }, variants: { some: { salePrice: { not: null } } } },
+      ],
+    } : {}),
   };
   return where;
 }

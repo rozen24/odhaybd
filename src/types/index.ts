@@ -64,6 +64,7 @@ export interface Book {
   price: number;
   oldPrice: number;
   stock: number;
+  variants?: ProductVariant[];
   coverUrl: string;
   images: string[];
   description: string;
@@ -76,6 +77,15 @@ export interface Book {
   isAwardWinner: boolean;
   flashSale?: { price: number; endsAt: string };
   createdAt: string;
+}
+
+export interface ProductVariant {
+  id?: string;
+  name: "Paperback (Premium)" | "Hardcover (Regular)" | string;
+  price: number;
+  oldPrice: number;
+  flashPrice?: number;
+  stock: number;
 }
 
 export interface Seller {
@@ -129,6 +139,8 @@ export type PaymentMethod = "cod" | "bkash" | "nagad" | "rocket" | "sslcommerz" 
 
 export interface OrderItem {
   bookId: string;
+  variantId?: string;
+  variantName?: string;
   title: string;
   coverUrl: string;
   price: number;

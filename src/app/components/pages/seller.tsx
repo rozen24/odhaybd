@@ -148,11 +148,16 @@ type BookForm = {
   publisherId: string;
   authorIds: string[];
   categoryIds: string[];
+  variants: { name: "Paperback (Premium)" | "Hardcover (Regular)"; price: number; oldPrice: number; flashPrice: number; stock: number }[];
 };
 
 const emptyBookForm = (): BookForm => ({
   title: "", price: 0, oldPrice: 0, stock: 0, description: "", pages: 0,
   coverUrl: "", status: "published", publisherId: "", authorIds: [], categoryIds: [],
+  variants: [
+    { name: "Paperback (Premium)", price: 0, oldPrice: 0, flashPrice: 0, stock: 0 },
+    { name: "Hardcover (Regular)", price: 0, oldPrice: 0, flashPrice: 0, stock: 0 },
+  ],
 });
 
 function toLocalInput(iso?: string) {
@@ -181,11 +186,15 @@ export function BookFormDialog({ book, onSaved, asAdmin }: { book?: Book; onSave
           publisherId: book.publisherId ?? "",
           authorIds: book.authorIds ?? [],
           categoryIds: book.categoryIds ?? [],
+          variants: (book.variants?.length ? book.variants : [
+            { name: "Paperback (Premium)", price: book.price, oldPrice: book.oldPrice, flashPrice: book.variants?.[0]?.flashPrice ?? 0, stock: book.stock },
+            { name: "Hardcover (Regular)", price: book.price, oldPrice: book.oldPrice, flashPrice: book.variants?.[1]?.flashPrice ?? 0, stock: book.stock },
+          ]).map((variant) => ({ ...variant, flashPrice: variant.flashPrice ?? 0, name: variant.name as "Paperback (Premium)" | "Hardcover (Regular)" })),
         }
       : emptyBookForm(),
   );
-  const [flash, setFlash] = useState({ price: book?.flashSale?.price ?? 0, endsAt: toLocalInput(book?.flashSale?.endsAt) });
-  const [flashOn, setFlashOn] = useState(!!book?.flashSale);
+  const [flashEndsAt, setFlashEndsAt] = useState("");
+  const [flashOn, setFlashOn] = useState(!!book?.variants?.some((variant) => variant.flashPrice));
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
@@ -210,21 +219,29 @@ export function BookFormDialog({ book, onSaved, asAdmin }: { book?: Book; onSave
   const save = async (e: React.FormEvent) => {
     e.preventDefault();
     if (form.categoryIds.length === 0) { toast.error("Please choose at least one category"); return; }
-    let flashSale: { price: number; endsAt: string } | null = null;
     if (flashOn) {
-      if (!flash.price || flash.price <= 0 || !flash.endsAt) { toast.error("Flash sale needs a price and an end time"); return; }
-      if (flash.price >= form.price) { toast.error("Flash sale price must be below the regular price"); return; }
-      flashSale = { price: flash.price, endsAt: new Date(flash.endsAt).toISOString() };
+      if (!form.variants.every((variant) => variant.flashPrice > 0) || !flashEndsAt) { toast.error("Enter both flash sale prices and an end time"); return; }
     }
     setSaving(true);
     try {
+      const variants = form.variants.map((variant) => ({ ...variant, flashPrice: flashOn ? variant.flashPrice : 0 }));
       if (book) {
-        // null clears an existing flash sale on the server (merge-patch).
-        await services.books.update(book.id, { ...form, flashSale } as unknown as Partial<Book>);
+        await services.books.update(book.id, {
+          ...form,
+          variants,
+          price: variants[0].price,
+          oldPrice: variants[0].oldPrice,
+          stock: variants[0].stock,
+          ...(flashOn ? { flashSale: { price: variants[0].flashPrice, endsAt: new Date(flashEndsAt).toISOString() } } : { flashSale: null }),
+        } as unknown as Partial<Book>);
       } else {
         await services.books.create({
           ...form,
-          ...(flashSale ? { flashSale } : {}),
+          variants,
+          price: variants[0].price,
+          oldPrice: variants[0].oldPrice,
+          stock: variants[0].stock,
+          ...(flashOn ? { flashSale: { price: variants[0].flashPrice, endsAt: new Date(flashEndsAt).toISOString() } } : {}),
           images: form.coverUrl ? [form.coverUrl] : [],
         });
       }
@@ -232,7 +249,7 @@ export function BookFormDialog({ book, onSaved, asAdmin }: { book?: Book; onSave
       if (!book) {
         // Start the next "Add product" with an empty form.
         setForm(emptyBookForm());
-        setFlash({ price: 0, endsAt: "" });
+        setFlashEndsAt("");
         setFlashOn(false);
       }
       setOpen(false);
@@ -255,10 +272,18 @@ export function BookFormDialog({ book, onSaved, asAdmin }: { book?: Book; onSave
         <DialogHeader><DialogTitle className="font-display">{book ? "Edit product" : "New product"}{asAdmin && " (admin)"}</DialogTitle></DialogHeader>
         <form onSubmit={save} className="space-y-3">
           <div className="space-y-1.5"><Label>Title</Label><Input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} required /></div>
-          <div className="grid grid-cols-3 gap-3">
-            <div className="space-y-1.5"><Label>Price</Label><Input type="number" min={0} value={form.price} onChange={(e) => setForm({ ...form, price: Number(e.target.value) })} required /></div>
-            <div className="space-y-1.5"><Label>Old price</Label><Input type="number" min={0} value={form.oldPrice} onChange={(e) => setForm({ ...form, oldPrice: Number(e.target.value) })} /></div>
-            <div className="space-y-1.5"><Label>Stock</Label><Input type="number" min={0} value={form.stock} onChange={(e) => setForm({ ...form, stock: Number(e.target.value) })} /></div>
+          <div className="space-y-2">
+            <Label>Prices and stock</Label>
+            {form.variants.map((variant, index) => (
+              <div key={variant.name} className="rounded-md border border-border p-3">
+                <p className="mb-2 text-sm font-medium">{variant.name}</p>
+                <div className="grid grid-cols-3 gap-3">
+                  <div className="space-y-1.5"><Label>Price</Label><Input type="number" min={0} value={variant.price} onChange={(e) => setForm({ ...form, variants: form.variants.map((v, i) => i === index ? { ...v, price: Number(e.target.value) } : v) })} required /></div>
+                  <div className="space-y-1.5"><Label>Old price</Label><Input type="number" min={0} value={variant.oldPrice} onChange={(e) => setForm({ ...form, variants: form.variants.map((v, i) => i === index ? { ...v, oldPrice: Number(e.target.value) } : v) })} /></div>
+                  <div className="space-y-1.5"><Label>Stock</Label><Input type="number" min={0} value={variant.stock} onChange={(e) => setForm({ ...form, variants: form.variants.map((v, i) => i === index ? { ...v, stock: Number(e.target.value) } : v) })} /></div>
+                </div>
+              </div>
+            ))}
           </div>
           <div className="space-y-1.5"><Label>Pages</Label><Input type="number" min={0} value={form.pages} onChange={(e) => setForm({ ...form, pages: Number(e.target.value) })} /></div>
           <div className="space-y-1.5">
@@ -296,12 +321,18 @@ export function BookFormDialog({ book, onSaved, asAdmin }: { book?: Book; onSave
               Flash sale
             </label>
             {flashOn && (
-              <div className="mt-3 grid grid-cols-2 gap-3">
-                <div className="space-y-1.5"><Label>Sale price (৳)</Label><Input type="number" min={1} value={flash.price} onChange={(e) => setFlash({ ...flash, price: Number(e.target.value) })} /></div>
-                <div className="space-y-1.5"><Label>Ends at</Label><Input type="datetime-local" value={flash.endsAt} onChange={(e) => setFlash({ ...flash, endsAt: e.target.value })} /></div>
+              <div className="mt-3 space-y-3">
+                <div className="grid grid-cols-2 gap-3">
+                  {form.variants.map((variant, index) => (
+                    <div key={variant.name} className="space-y-1.5">
+                      <Label>{variant.name} flash price (৳)</Label>
+                      <Input type="number" min={1} value={variant.flashPrice} onChange={(e) => setForm({ ...form, variants: form.variants.map((v, i) => i === index ? { ...v, flashPrice: Number(e.target.value) } : v) })} />
+                    </div>
+                  ))}
+                </div>
+                <div className="space-y-1.5"><Label>Ends at</Label><Input type="datetime-local" value={flashEndsAt} onChange={(e) => setFlashEndsAt(e.target.value)} /></div>
               </div>
             )}
-            {!flashOn && book?.flashSale && <p className="mt-2 text-xs text-muted-foreground">Saving will clear the current flash sale.</p>}
           </fieldset>
 
           <label className="flex items-center gap-2 text-sm">

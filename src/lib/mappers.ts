@@ -18,6 +18,8 @@ export function toOrder(o: OrderRecord): Order {
     userId: o.userId,
     items: o.items.map((i) => ({
       bookId: i.productId,
+      variantId: i.variantId ?? undefined,
+      variantName: i.variantName ?? undefined,
       title: i.title,
       coverUrl: i.coverUrl ?? "",
       price: Number(i.price),

@@ -3405,6 +3405,7 @@ export const ProductScalarFieldEnum = {
   weightGrams: 'weightGrams',
   regularPrice: 'regularPrice',
   salePrice: 'salePrice',
+  flashSaleEndsAt: 'flashSaleEndsAt',
   status: 'status',
   featured: 'featured',
   bestseller: 'bestseller',
@@ -3438,6 +3439,7 @@ export const ProductVariantScalarFieldEnum = {
   productId: 'productId',
   sku: 'sku',
   name: 'name',
+  basePrice: 'basePrice',
   regularPrice: 'regularPrice',
   salePrice: 'salePrice'
 } as const
@@ -3599,6 +3601,8 @@ export const OrderItemScalarFieldEnum = {
   id: 'id',
   orderId: 'orderId',
   productId: 'productId',
+  variantId: 'variantId',
+  variantName: 'variantName',
   title: 'title',
   coverUrl: 'coverUrl',
   price: 'price',

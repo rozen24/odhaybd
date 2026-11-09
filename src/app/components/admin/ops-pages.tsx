@@ -57,18 +57,36 @@ function toLocalInput(iso?: string) {
 function FlashSaleDialog({ books, book, onSaved }: { books: Book[]; book?: Book; onSaved: () => void }) {
   const [open, setOpen] = useState(false);
   const [bookId, setBookId] = useState(book?.id ?? "");
-  const [price, setPrice] = useState(book?.flashSale?.price ?? 0);
+  const initialPaperback = book?.variants?.find((variant) => variant.name.toLowerCase().includes("paperback"));
+  const initialHardcover = book?.variants?.find((variant) => variant.name.toLowerCase().includes("hardcover"));
+  const [paperbackPrice, setPaperbackPrice] = useState(initialPaperback?.flashPrice ?? 0);
+  const [hardcoverPrice, setHardcoverPrice] = useState(initialHardcover?.flashPrice ?? 0);
   const [endsAt, setEndsAt] = useState(toLocalInput(book?.flashSale?.endsAt ?? new Date(Date.now() + 3 * 86400000).toISOString()));
   const [saving, setSaving] = useState(false);
   const target = books.find((b) => b.id === bookId);
   const save = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!target) { toast.error("Choose a book"); return; }
-    if (price <= 0 || price >= target.price) { toast.error("Sale price must be between 0 and the regular price"); return; }
+    const variants = target.variants ?? [];
+    const paperback = variants.find((variant) => variant.name.toLowerCase().includes("paperback"));
+    const hardcover = variants.find((variant) => variant.name.toLowerCase().includes("hardcover"));
+    if (!paperback || !hardcover) { toast.error("This product needs paperback and hardcover prices first"); return; }
+    if (paperbackPrice <= 0 || paperbackPrice >= paperback.price || hardcoverPrice <= 0 || hardcoverPrice >= hardcover.price) {
+      toast.error("Each flash sale price must be below its regular price"); return;
+    }
     if (!endsAt || new Date(endsAt).getTime() <= Date.now()) { toast.error("End time must be in the future"); return; }
     setSaving(true);
     try {
-      await services.books.update(target.id, { flashSale: { price, endsAt: new Date(endsAt).toISOString() } });
+      await services.books.update(target.id, {
+        variants: variants.map((variant) => ({
+          name: variant.name,
+          price: variant.price,
+          oldPrice: variant.oldPrice,
+          stock: variant.stock,
+          flashPrice: variant.name.toLowerCase().includes("paperback") ? paperbackPrice : variant.name.toLowerCase().includes("hardcover") ? hardcoverPrice : 0,
+        })),
+        flashSale: { price: paperbackPrice, endsAt: new Date(endsAt).toISOString() },
+      });
       toast.success(`Flash sale set on "${target.title}"`);
       setOpen(false);
       onSaved();
@@ -83,16 +101,16 @@ function FlashSaleDialog({ books, book, onSaved }: { books: Book[]; book?: Book;
         <form onSubmit={save} className="space-y-3">
           <div className="space-y-1.5">
             <Label>Book</Label>
-            <Select value={bookId} onValueChange={(v) => { setBookId(v); const b = books.find((x) => x.id === v); if (b && !price) setPrice(Math.round(b.price * 0.8)); }} disabled={!!book}>
+            <Select value={bookId} onValueChange={(v) => { setBookId(v); }} disabled={!!book}>
               <SelectTrigger><SelectValue placeholder="Choose a book" /></SelectTrigger>
               <SelectContent className="max-h-72">{books.map((b) => <SelectItem key={b.id} value={b.id}>{b.title} · {formatTk(b.price)}</SelectItem>)}</SelectContent>
             </Select>
           </div>
           <div className="grid grid-cols-2 gap-3">
-            <div className="space-y-1.5"><Label>Sale price (৳)</Label><Input type="number" min={1} value={price} onChange={(e) => setPrice(Number(e.target.value))} /></div>
+            <div className="space-y-1.5"><Label>Paperback flash price (৳)</Label><Input type="number" min={1} value={paperbackPrice} onChange={(e) => setPaperbackPrice(Number(e.target.value))} /></div>
+            <div className="space-y-1.5"><Label>Hardcover flash price (৳)</Label><Input type="number" min={1} value={hardcoverPrice} onChange={(e) => setHardcoverPrice(Number(e.target.value))} /></div>
             <div className="space-y-1.5"><Label>Ends at</Label><Input type="datetime-local" value={endsAt} onChange={(e) => setEndsAt(e.target.value)} /></div>
           </div>
-          {target && price > 0 && price < target.price && <p className="text-xs text-muted-foreground">{Math.round((1 - price / target.price) * 100)}% off the regular {formatTk(target.price)}.</p>}
           <DialogFooter><Button type="submit" disabled={saving}>{saving ? "Saving…" : "Save"}</Button></DialogFooter>
         </form>
       </DialogContent>

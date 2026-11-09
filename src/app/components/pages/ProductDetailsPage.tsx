@@ -22,7 +22,7 @@ import { useStoreSettings } from "../product/useStoreSettings";
 import { CONTAINER, Breadcrumbs, ErrorState, Eyebrow } from "../catalog/states";
 import { EmptyState } from "../common/EmptyState";
 import { discountPercent, formatDate, formatTk } from "../../../lib/format";
-import type { Book } from "../../../types";
+import type { Book, ProductVariant } from "../../../types";
 import { Button } from "../ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import { cn } from "../ui/utils";
@@ -34,12 +34,13 @@ export default function ProductDetailsPage() {
   const { addToCart, toggleWishlist, inWishlist, toggleCompare, inCompare, pushRecent, recent, bookCache } = useStore();
   const settings = useStoreSettings();
   const [qty, setQty] = useState(1);
+  const [variantId, setVariantId] = useState("");
   const [tab, setTab] = useState("description");
 
   const bookQ = useQuery(["book", slug], () => services.books.getBySlug(slug!), { enabled: !!slug });
   const book = bookQ.data;
 
-  useEffect(() => { if (book) pushRecent(book); setQty(1); }, [book, pushRecent]);
+  useEffect(() => { if (book) { pushRecent(book); setQty(1); setVariantId(book.variants?.[0]?.id ?? ""); } }, [book, pushRecent]);
 
   const related = useQuery(["book", slug, "related"], () => services.books.related(book!), { enabled: !!book });
   const fbt = useQuery(["book", slug, "fbt"], () => services.books.frequentlyBoughtTogether(book!), { enabled: !!book });
@@ -59,12 +60,15 @@ export default function ProductDetailsPage() {
   const publisher = publisherById(book.publisherId);
   const seller = sellerById(book.sellerId);
   const category = book.categoryIds.map((id) => categoryById(id)).find(Boolean);
-  const price = book.flashSale?.price ?? book.price;
-  const pct = discountPercent(price, book.oldPrice);
+  const variant = book.variants?.find((candidate) => candidate.id === variantId) ?? book.variants?.[0];
+  const price = variant?.flashPrice ?? variant?.price ?? book.flashSale?.price ?? book.price;
+  const oldPrice = variant?.oldPrice ?? book.oldPrice;
+  const stock = variant?.stock ?? book.stock;
+  const pct = discountPercent(price, oldPrice);
   const wished = inWishlist(book.id);
   const compared = inCompare(book.id);
-  const outOfStock = book.stock <= 0;
-  const lowStock = !outOfStock && book.stock <= 5;
+  const outOfStock = stock <= 0;
+  const lowStock = !outOfStock && stock <= 5;
   const freeShip = price * qty >= settings.freeShippingThreshold;
 
   const recentBooks = recent.map((id) => bookCache[id]).filter((b): b is Book => !!b && b.id !== book.id).slice(0, 12);
@@ -76,7 +80,7 @@ export default function ProductDetailsPage() {
       else { await navigator.clipboard.writeText(url); toast.success("Link copied to clipboard"); }
     } catch { /* cancelled */ }
   };
-  const buyNow = () => { addToCart(book, qty); navigate("/checkout"); };
+  const buyNow = () => { addToCart(book, qty, variant); navigate("/checkout"); };
   const onCompare = () => { toggleCompare(book); toast(compared ? "Removed from compare" : "Added to compare", { action: compared ? undefined : { label: "View", onClick: () => navigate("/compare") } }); };
 
   const specs: [string, React.ReactNode][] = [
@@ -145,7 +149,8 @@ export default function ProductDetailsPage() {
 
             {/* Price block for mobile/tablet + mid layout */}
             <div className="mt-6 border-y border-border py-5 xl:hidden">
-              <PriceBlock book={book} price={price} pct={pct} />
+              <VariantSelector variants={book.variants ?? []} value={variant?.id ?? ""} onChange={setVariantId} />
+              <PriceBlock book={book} price={price} oldPrice={oldPrice} stock={stock} pct={pct} />
             </div>
 
             <div className="mt-6">
@@ -167,7 +172,7 @@ export default function ProductDetailsPage() {
               <BuyActions
                 book={book} qty={qty} setQty={setQty} outOfStock={outOfStock}
                 wished={wished} compared={compared}
-                onAdd={() => addToCart(book, qty)} onBuy={buyNow}
+                onAdd={() => addToCart(book, qty, variant)} onBuy={buyNow}
                 onWish={() => toggleWishlist(book)} onCompare={onCompare} onShare={share}
               />
             </div>
@@ -176,12 +181,13 @@ export default function ProductDetailsPage() {
           {/* Sticky buy box (xl) */}
           <aside className="hidden xl:block">
             <div className="sticky top-28 rounded-lg border border-border bg-card p-5">
-              <PriceBlock book={book} price={price} pct={pct} />
+              <VariantSelector variants={book.variants ?? []} value={variant?.id ?? ""} onChange={setVariantId} />
+              <PriceBlock book={book} price={price} oldPrice={oldPrice} stock={stock} pct={pct} />
               <div className="mt-5">
                 <BuyActions
                   book={book} qty={qty} setQty={setQty} outOfStock={outOfStock}
                   wished={wished} compared={compared}
-                  onAdd={() => addToCart(book, qty)} onBuy={buyNow}
+                  onAdd={() => addToCart(book, qty, variant)} onBuy={buyNow}
                   onWish={() => toggleWishlist(book)} onCompare={onCompare} onShare={share}
                 />
               </div>
@@ -267,12 +273,12 @@ export default function ProductDetailsPage() {
         <div className="mx-auto flex max-w-[1320px] items-center gap-3">
           <div className="min-w-0 flex-1">
             <p className="font-display text-lg font-semibold leading-none tabular-nums">{formatTk(price)}</p>
-            {pct > 0 && <p className="text-xs tabular-nums text-muted-foreground"><span className="line-through">{formatTk(book.oldPrice)}</span> · -{pct}%</p>}
+            {pct > 0 && <p className="text-xs tabular-nums text-muted-foreground"><span className="line-through">{formatTk(oldPrice)}</span> · -{pct}%</p>}
           </div>
           <Button variant="outline" size="icon" aria-label={wished ? "Remove from wishlist" : "Add to wishlist"} onClick={() => toggleWishlist(book)}>
             <Heart size={17} fill={wished ? "currentColor" : "none"} className={wished ? "text-primary" : ""} />
           </Button>
-          <Button variant="outline" disabled={outOfStock} onClick={() => addToCart(book, qty)} aria-label="Add to cart"><ShoppingCart size={16} /></Button>
+          <Button variant="outline" disabled={outOfStock} onClick={() => addToCart(book, qty, variant)} aria-label="Add to cart"><ShoppingCart size={16} /></Button>
           <Button disabled={outOfStock} onClick={buyNow}>{outOfStock ? "Out of stock" : "Buy now"}</Button>
         </div>
       </div>
@@ -289,26 +295,43 @@ function SectionTitle({ eyebrow, title }: { eyebrow: string; title: string }) {
   );
 }
 
-function PriceBlock({ book, price, pct }: { book: Book; price: number; pct: number }) {
-  const outOfStock = book.stock <= 0;
+function VariantSelector({ variants, value, onChange }: { variants: ProductVariant[]; value: string; onChange: (id: string) => void }) {
+  if (variants.length < 2) return null;
+  return (
+    <div className="mb-4">
+      <p className="mb-2 text-sm font-medium">Choose format</p>
+      <div className="grid gap-2 sm:grid-cols-2">
+        {variants.map((variant) => (
+          <button key={variant.id ?? variant.name} type="button" onClick={() => onChange(variant.id ?? "")} className={cn("rounded-md border px-3 py-2 text-left text-sm", value === variant.id ? "border-primary bg-primary/5" : "border-border")}>
+            <span className="block font-medium">{variant.name}</span>
+            <span className="text-xs text-muted-foreground">{formatTk(variant.price)} · {variant.stock > 0 ? `${variant.stock} in stock` : "Out of stock"}</span>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function PriceBlock({ book, price, oldPrice, stock, pct }: { book: Book; price: number; oldPrice: number; stock: number; pct: number }) {
+  const outOfStock = stock <= 0;
   return (
     <div>
       <div className="flex flex-wrap items-baseline gap-3">
         <span className="font-display text-3xl font-semibold tabular-nums">{formatTk(price)}</span>
         {pct > 0 && (
           <>
-            <span className="text-base tabular-nums text-muted-foreground line-through">{formatTk(book.oldPrice)}</span>
+            <span className="text-base tabular-nums text-muted-foreground line-through">{formatTk(oldPrice)}</span>
             <span className="rounded bg-primary px-1.5 py-0.5 text-xs font-semibold tabular-nums text-primary-foreground">-{pct}%</span>
           </>
         )}
       </div>
-      {pct > 0 && <p className="mt-1 text-sm tabular-nums text-primary">You save {formatTk(book.oldPrice - price)}</p>}
+      {pct > 0 && <p className="mt-1 text-sm tabular-nums text-primary">You save {formatTk(oldPrice - price)}</p>}
       {book.flashSale && (
         <p className="mt-2 flex items-center gap-1.5 text-xs text-muted-foreground"><Zap size={13} className="text-primary" /> Flash sale price until {formatDate(book.flashSale.endsAt)}</p>
       )}
       <p className={cn("mt-3 flex items-center gap-1.5 text-sm font-medium", outOfStock ? "text-destructive" : "text-accent")}>
         <span className={cn("h-2 w-2 rounded-full", outOfStock ? "bg-destructive" : "bg-accent")} />
-        {outOfStock ? "Out of stock" : book.stock <= 5 ? `Only ${book.stock} left in stock` : "In stock"}
+        {outOfStock ? "Out of stock" : stock <= 5 ? `Only ${stock} left in stock` : "In stock"}
       </p>
     </div>
   );
@@ -327,7 +350,7 @@ function BuyActions({
         <div className="inline-flex items-center rounded-md border border-border bg-card">
           <button aria-label="Decrease quantity" className="flex h-9 w-9 items-center justify-center disabled:opacity-40" disabled={qty <= 1} onClick={() => setQty((q) => q - 1)}><Minus size={14} /></button>
           <span className="w-9 text-center text-sm tabular-nums" aria-live="polite">{qty}</span>
-          <button aria-label="Increase quantity" className="flex h-9 w-9 items-center justify-center disabled:opacity-40" disabled={qty >= book.stock} onClick={() => setQty((q) => q + 1)}><Plus size={14} /></button>
+          <button aria-label="Increase quantity" className="flex h-9 w-9 items-center justify-center disabled:opacity-40" disabled={outOfStock} onClick={() => setQty((q) => q + 1)}><Plus size={14} /></button>
         </div>
       </div>
       <div className="grid grid-cols-2 gap-2">

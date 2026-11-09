@@ -7,7 +7,7 @@
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { services } from "../../services";
-import type { Book } from "../../types";
+import type { Book, ProductVariant } from "../../types";
 import type { LocalCartItem } from "../../services/repositories";
 import { toast } from "sonner";
 
@@ -19,9 +19,9 @@ interface StoreState {
   recent: string[];
   bookCache: Record<string, Book>;
   cartDrawerOpen: boolean;
-  addToCart(book: Book, qty?: number): void;
-  setQty(bookId: string, qty: number): void;
-  removeFromCart(bookId: string): void;
+  addToCart(book: Book, qty?: number, variant?: ProductVariant): void;
+  setQty(bookId: string, qty: number, variantId?: string): void;
+  removeFromCart(bookId: string, variantId?: string): void;
   clearCart(): void;
   toggleWishlist(book: Book): void;
   inWishlist(bookId: string): boolean;
@@ -64,14 +64,14 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   const openCartDrawer = useCallbackFn(() => setCartDrawerOpen(true));
   const closeCartDrawer = useCallbackFn(() => setCartDrawerOpen(false));
 
-  const addToCart = useCallbackFn((book: Book, qty = 1) => {
+  const addToCart = useCallbackFn((book: Book, qty = 1, variant?: ProductVariant) => {
     cache([book]);
-    setCart(services.cart.add(book.id, qty));
-    toast.success(`Added "${book.title}" to cart`);
+    setCart(services.cart.add(book.id, qty, variant?.id));
+    toast.success(`Added "${book.title}" (${variant?.name ?? "Paperback (Premium)"}) to cart`);
     setCartDrawerOpen(true);
   });
-  const setQty = useCallbackFn((bookId: string, qty: number) => setCart(services.cart.setQty(bookId, qty)));
-  const removeFromCart = useCallbackFn((bookId: string) => setCart(services.cart.remove(bookId)));
+  const setQty = useCallbackFn((bookId: string, qty: number, variantId?: string) => setCart(services.cart.setQty(bookId, qty, variantId)));
+  const removeFromCart = useCallbackFn((bookId: string, variantId?: string) => setCart(services.cart.remove(bookId, variantId)));
   const clearCart = useCallbackFn(() => setCart(services.cart.clear()));
 
   const toggleWishlist = useCallbackFn((book: Book) => {
