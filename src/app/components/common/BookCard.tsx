@@ -148,8 +148,10 @@ const BOOK_CARD_CSS = `
 
    .book-card__quick-view-icon {
      position: absolute;
+     top: 50%;
+     left: 50%;
      opacity: 0;
-     transform: translateY(100%);
+     transform: translate(-50%, 100%);
    }
 
    .book-card__quick-view:hover .book-card__quick-view-label,
@@ -161,20 +163,71 @@ const BOOK_CARD_CSS = `
    .book-card__quick-view:hover .book-card__quick-view-icon,
    .book-card__quick-view:focus-visible .book-card__quick-view-icon {
      opacity: 1;
-     transform: translateY(0);
+     transform: translate(-50%, -50%);
    }
 
-   @media (hover: none) {
-     .book-card__actions,
-     .book-card__cta { opacity: 1; }
+     .book-card__add-to-cart {
+       position: relative;
+       overflow: hidden;
    }
 
-   @media (prefers-reduced-motion: reduce) {
+     .book-card__add-to-cart-label,
+     .book-card__add-to-cart-icon {
+       transition:
+         opacity 1.5s ease,
+         transform 1.5s ease;
+   }
+
+     .book-card__add-to-cart-label {
+       transform: translateY(0);
+     }
+
+     .book-card__add-to-cart-icon {
+       position: absolute;
+       top: 50%;
+       left: 50%;
+       opacity: 0;
+       transform: translate(-50%, 100%);
+     }
+
+     .book-card__add-to-cart:hover .book-card__add-to-cart-label,
+     .book-card__add-to-cart:focus-visible .book-card__add-to-cart-label {
+       opacity: 0;
+       transform: translateY(-100%);
+     }
+
+     .book-card__add-to-cart:hover .book-card__add-to-cart-icon,
+     .book-card__add-to-cart:focus-visible .book-card__add-to-cart-icon {
+       opacity: 1;
+       transform: translate(-50%, -50%);
+     }
+
+     @media (hover: none) {
+       .book-card__actions,
+       .book-card__cta { opacity: 1; }
+
+       .book-card__add-to-cart-label {
+         opacity: 0;
+         transform: translateY(-100%);
+       }
+
+       .book-card__add-to-cart-icon {
+         opacity: 1;
+         transform: translate(-50%, -50%);
+       }
+     }
+
+     @media (prefers-reduced-motion: reduce) {
      .book-card__quick-view-label,
      .book-card__quick-view-icon {
-       transition: none;
+         transition: none;
+       }
+
+       .book-card__add-to-cart-label,
+       .book-card__add-to-cart-icon {
+         transition: none;
+       }
      }
-   }
 
 `;
 
@@ -339,10 +392,11 @@ export function BookCard({
                     addToCart(book, qty);   // see note below
                     setQty(1);
                   }}
-                  className="ml-1 flex-1 whitespace-nowrap rounded-full px-3 py-1.5 text-sm font-semibold
+                  className="book-card__add-to-cart ml-1 flex-1 whitespace-nowrap rounded-full px-3 py-1.5 text-sm font-semibold
                             transition-colors hover:bg-[#000000]"
                 >
-                  Add to cart
+                  <span className="book-card__add-to-cart-label">Add to cart</span>
+                  <ShoppingCart className="book-card__add-to-cart-icon" size={17} />
                 </button>
               </div>
             )}
