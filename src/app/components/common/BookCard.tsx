@@ -356,7 +356,7 @@ export function BookCard({
             {/* Qty stepper + Add to cart */}
             {!outOfStock && (
               <div
-                className="flex w-full max-w-[230px] items-center gap-1 rounded-full bg-[#8f0a0a] p-1 pl-1 text-white shadow-lg"
+                className="flex w-full max-w-[230px] items-center gap-1 rounded-full bg-[#8f0a0a] p-1 text-white shadow-lg"
                 onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}
               >
                 <button
@@ -364,13 +364,13 @@ export function BookCard({
                   aria-label="Decrease quantity"
                   disabled={qty <= 1}
                   onClick={() => setQty((q) => Math.max(1, q - 1))}
-                  className="flex h-7 w-7 items-center justify-center rounded-full transition-colors
+                  className="flex h-7 w-5 items-center justify-center rounded-full transition-colors
                             hover:bg-white/15 disabled:opacity-40 disabled:hover:bg-transparent"
                 >
                   <Minus size={14} />
                 </button>
 
-                <span className="min-w-5 text-center text-sm font-semibold tabular-nums" aria-live="polite">
+                <span className="min-w-4 text-center text-sm font-semibold tabular-nums" aria-live="polite">
                   {qty}
                 </span>
 
@@ -378,7 +378,7 @@ export function BookCard({
                   type="button"
                   aria-label="Increase quantity"
                   onClick={() => setQty((q) => q + 1)}
-                  className="flex h-7 w-7 items-center justify-center rounded-full transition-colors hover:bg-white/15"
+                  className="flex h-7 w-5 items-center justify-center rounded-full transition-colors hover:bg-white/15"
                 >
                   <Plus size={14} />
                 </button>
@@ -392,7 +392,7 @@ export function BookCard({
                     addToCart(book, qty);   // see note below
                     setQty(1);
                   }}
-                  className="book-card__add-to-cart ml-1 flex-1 whitespace-nowrap rounded-full px-3 py-1.5 text-sm font-semibold
+                  className="book-card__add-to-cart flex-1 whitespace-nowrap rounded-full px-3 py-1.5 text-sm font-semibold
                             transition-colors hover:bg-[#000000]"
                 >
                   <span className="book-card__add-to-cart-label">Add to cart</span>
