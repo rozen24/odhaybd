@@ -14,6 +14,7 @@ import { CatalogProvider } from "./contexts/CatalogContext";
 import { StoreProvider } from "./contexts/StoreContext";
 import { QuickViewProvider } from "./contexts/QuickViewContext";
 import { PwaClient } from "./components/pwa/PwaClient";
+import { CartCelebration } from "./components/cart/CartCelebration";
 
 export function Providers({ children }: { children: React.ReactNode }) {
   useEffect(() => {
@@ -28,6 +29,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
             <StoreProvider>
               <QuickViewProvider>
                 {children}
+                <CartCelebration />
                 <Toaster position="top-center" richColors closeButton />
                 <PwaClient />
               </QuickViewProvider>

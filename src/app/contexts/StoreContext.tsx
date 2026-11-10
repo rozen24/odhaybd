@@ -19,6 +19,7 @@ interface StoreState {
   recent: string[];
   bookCache: Record<string, Book>;
   cartDrawerOpen: boolean;
+  cartCelebration: { title: string; key: number } | null;
   addToCart(book: Book, qty?: number, variant?: ProductVariant): void;
   setQty(bookId: string, qty: number, variantId?: string): void;
   removeFromCart(bookId: string, variantId?: string): void;
@@ -31,6 +32,7 @@ interface StoreState {
   pushRecent(book: Book): void;
   openCartDrawer(): void;
   closeCartDrawer(): void;
+  dismissCartCelebration(): void;
 }
 
 const StoreContext = createContext<StoreState | null>(null);
@@ -42,6 +44,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   const [recent, setRecent] = useState<string[]>(() => services.recent.ids());
   const [bookCache, setBookCache] = useState<Record<string, Book>>({});
   const [cartDrawerOpen, setCartDrawerOpen] = useState(false);
+  const [cartCelebration, setCartCelebration] = useState<StoreState["cartCelebration"]>(null);
 
   const cache = useCallbackFn((books: Book[]) => {
     setBookCache((prev) => {
@@ -63,10 +66,12 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
 
   const openCartDrawer = useCallbackFn(() => setCartDrawerOpen(true));
   const closeCartDrawer = useCallbackFn(() => setCartDrawerOpen(false));
+  const dismissCartCelebration = useCallbackFn(() => setCartCelebration(null));
 
   const addToCart = useCallbackFn((book: Book, qty = 1, variant?: ProductVariant) => {
     cache([book]);
     setCart(services.cart.add(book.id, qty, variant?.id));
+    setCartCelebration({ title: book.title, key: Date.now() });
     toast.success(`Added "${book.title}" (${variant?.name ?? "Paperback (Premium)"}) to cart`);
     setCartDrawerOpen(true);
   });
@@ -101,6 +106,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     recent,
     bookCache,
     cartDrawerOpen,
+    cartCelebration,
     addToCart,
     setQty,
     removeFromCart,
@@ -113,7 +119,8 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     pushRecent,
     openCartDrawer,
     closeCartDrawer,
-  }), [cart, wishlist, compare, recent, bookCache, cartDrawerOpen, addToCart, setQty, removeFromCart, clearCart, toggleWishlist, toggleCompare, removeCompare, pushRecent, openCartDrawer, closeCartDrawer]);
+    dismissCartCelebration,
+  }), [cart, wishlist, compare, recent, bookCache, cartDrawerOpen, cartCelebration, addToCart, setQty, removeFromCart, clearCart, toggleWishlist, toggleCompare, removeCompare, pushRecent, openCartDrawer, closeCartDrawer, dismissCartCelebration]);
 
   return <StoreContext.Provider value={value}>{children}</StoreContext.Provider>;
 }
