@@ -4,7 +4,7 @@
 
 import { useMemo, useRef, useState } from "react";
 import {
-  Boxes, DollarSign, Package, TrendingUp, Plus, Pencil, Upload, X, Star, Store, AlertTriangle, MessageSquare,
+  ArrowDown, ArrowUp, Boxes, DollarSign, Package, TrendingUp, Plus, Pencil, Upload, X, Star, Store, AlertTriangle, MessageSquare,
 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -37,7 +37,7 @@ import { BookRelationsFields } from "../admin/BookRelationsFields";
 function useSellerBooks() {
   const { user } = useAuth();
   return useQuery(["books", "seller", user?.sellerId ?? "all"], () =>
-    services.books.list({ sellerId: user?.sellerId, sort: "newest", pageSize: 200, includeUnpublished: true }),
+    services.books.list({ sellerId: user?.sellerId, sort: "order", pageSize: 200, includeUnpublished: true }),
   );
 }
 
@@ -50,6 +50,23 @@ function useSellerOrders() {
 function sellerOrderValue(o: Order, ids: Set<string> | null) {
   if (!ids || ids.size === 0) return o.total;
   return o.items.filter((i) => ids.has(i.bookId)).reduce((s, i) => s + i.price * i.quantity, 0);
+}
+
+function move<T>(arr: T[], i: number, dir: -1 | 1): T[] {
+  const j = i + dir;
+  if (j < 0 || j >= arr.length) return arr;
+  const out = arr.slice();
+  [out[i], out[j]] = [out[j], out[i]];
+  return out;
+}
+
+function ReorderButtons({ index, count, onMove, label, disabled }: { index: number; count: number; onMove: (dir: -1 | 1) => void; label: string; disabled?: boolean }) {
+  return (
+    <div className="flex shrink-0 gap-0.5">
+      <Button type="button" variant="outline" size="icon" className="size-8" title={`Move ${label} up`} disabled={disabled || index === 0} onClick={() => onMove(-1)} aria-label={`Move ${label} up`}><ArrowUp size={14} /></Button>
+      <Button type="button" variant="outline" size="icon" className="size-8" title={`Move ${label} down`} disabled={disabled || index === count - 1} onClick={() => onMove(1)} aria-label={`Move ${label} down`}><ArrowDown size={14} /></Button>
+    </div>
+  );
 }
 
 function SalesChart({ orders, ids }: { orders: Order[]; ids: Set<string> | null }) {
@@ -357,7 +374,18 @@ export function SellerProducts() {
   const remove = async (b: Book) => {
     try { await services.books.remove(b.id); toast.success("Product deleted"); products.refetch(); } catch (err) { toast.error((err as Error).message); }
   };
-  const items = (products.data?.items ?? []).filter((b) => b.title.toLowerCase().includes(q.toLowerCase()));
+  const allItems = products.data?.items ?? [];
+  const items = allItems.filter((b) => b.title.toLowerCase().includes(q.toLowerCase()));
+  const reorder = async (index: number, dir: -1 | 1) => {
+    const next = move(allItems, index, dir);
+    try {
+      await services.books.reorder(next.map((book) => book.id));
+      toast.success("Order saved");
+      products.refetch();
+    } catch (err) {
+      toast.error((err as Error).message);
+    }
+  };
 
   return (
     <div>
@@ -365,18 +393,22 @@ export function SellerProducts() {
         actions={<><Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search titles…" className="h-8 w-48" aria-label="Search products" /><BookFormDialog onSaved={() => products.refetch()} /></>} />
       {products.error ? <ErrorState error={products.error} onRetry={products.refetch} /> : (
         <ProductTable books={products.data ? items : undefined} loading={products.loading} onRefetch={() => products.refetch()} onDelete={remove}
+          onMove={q ? undefined : reorder}
+          reorderHint={q ? "Clear the search to reorder products." : undefined}
           empty={<EmptyState icon={Boxes} title="No products yet" description="Add your first product to start selling." action={<BookFormDialog onSaved={() => products.refetch()} />} />} />
       )}
     </div>
   );
 }
 
-export function ProductTable({ books, loading, onRefetch, onDelete, empty, asAdmin }: { books?: Book[]; loading?: boolean; onRefetch: () => void; onDelete: (b: Book) => Promise<void>; empty?: React.ReactNode; asAdmin?: boolean }) {
+export function ProductTable({ books, loading, onRefetch, onDelete, empty, asAdmin, onMove, reorderHint }: { books?: Book[]; loading?: boolean; onRefetch: () => void; onDelete: (b: Book) => Promise<void>; empty?: React.ReactNode; asAdmin?: boolean; onMove?: (index: number, dir: -1 | 1) => void; reorderHint?: string }) {
   if (loading) return <TableSkeleton />;
   if (!books || books.length === 0) return <>{empty ?? <EmptyState icon={Boxes} title="No products" />}</>;
   return (
-    <DataTable head={["Book", "Price", "Stock", "Status", "Actions"]} minWidth={680}>
-      {books.map((b) => (
+    <>
+      {reorderHint && <p className="mb-2 text-xs text-muted-foreground">{reorderHint}</p>}
+      <DataTable head={["Book", "Price", "Stock", "Status", "Actions"]} minWidth={680}>
+      {books.map((b, index) => (
         <tr key={b.id}>
           <td>
             <div className="flex items-center gap-3">
@@ -391,13 +423,15 @@ export function ProductTable({ books, loading, onRefetch, onDelete, empty, asAdm
           <td><Pill tone={(b.status ?? "published") === "published" ? "positive" : "neutral"}>{b.status ?? "published"}</Pill></td>
           <td>
             <div className="flex justify-end gap-2">
+              {onMove && <ReorderButtons index={index} count={books.length} onMove={(dir) => onMove(index, dir)} label={b.title} />}
               <BookFormDialog book={b} onSaved={onRefetch} asAdmin={asAdmin} />
               <ConfirmDelete title={`Delete "${b.title}"?`} description="The product will be removed. A book that already has orders is unpublished instead, so past orders keep working." onConfirm={() => onDelete(b)} />
             </div>
           </td>
         </tr>
       ))}
-    </DataTable>
+      </DataTable>
+    </>
   );
 }
 

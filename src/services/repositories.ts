@@ -48,6 +48,7 @@ export interface BooksRepository {
   getMany(ids: string[]): Promise<Book[]>;
   related(book: Book): Promise<Book[]>;
   frequentlyBoughtTogether(book: Book): Promise<Book[]>;
+  reorder(ids: string[]): Promise<void>;
   create(book: Partial<Book>): Promise<Book>;
   update(id: string, patch: Partial<Book>): Promise<Book>;
   remove(id: string): Promise<void>;

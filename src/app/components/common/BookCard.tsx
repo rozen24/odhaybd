@@ -8,8 +8,7 @@
 //  - cover shadow grows
 
 import { Link } from "@/lib/navigation";
-import { Heart, GitCompare, Minus, Plus, ShoppingCart } from "lucide-react";
-// Eye and ShoppingCart are no longer needed here
+import { Eye, Heart, GitCompare, Minus, Plus, ShoppingCart } from "lucide-react";
 import { BookCover } from "./BookCover";
 import { PriceTag } from "./PriceTag";
 import { RatingStars } from "./RatingStars";
@@ -136,6 +135,44 @@ const BOOK_CARD_CSS = `
      .book-card__cta { opacity: 1; }
    }
 
+   .book-card__cta-action {
+     overflow: hidden;
+     background-color: #111;
+     transition: background-color 0.2s ease;
+   }
+
+   .book-card__cta-action:hover,
+   .book-card__cta-action:focus-visible {
+     background-color: #000;
+   }
+
+   .book-card__cta-icon {
+     opacity: 0;
+     transform: translateY(100%);
+     transition:
+       opacity 2.5s ease,
+       transform 2.5s ease;
+   }
+
+   .book-card__cta-action:hover .book-card__cta-icon,
+   .book-card__cta-action:focus-visible .book-card__cta-icon {
+     opacity: 1;
+     transform: translateY(0);
+   }
+
+   @media (hover: none) {
+     .book-card__cta-icon {
+       opacity: 1;
+       transform: translateY(0);
+     }
+   }
+
+   @media (prefers-reduced-motion: reduce) {
+     .book-card__cta-icon {
+       transition: none;
+     }
+   }
+
 `;
 
 // Inject once (and refresh on hot reload) so no separate CSS file is needed.
@@ -213,7 +250,6 @@ export function BookCard({
 
           {/* Action buttons: hidden until the card is hovered or focused
               (fade handled by the injected CSS). Always shown on touch screens. */}
-          // 2. Replace your actions block with this
           {/* Icon buttons (wishlist + compare), top-right */}
           <div className="book-card__actions absolute right-2 top-2 flex flex-col gap-1.5">
             <Tooltip>
@@ -252,17 +288,17 @@ export function BookCard({
                 e.stopPropagation();
                 quickView.open(book);
               }}
-              className="rounded-full bg-[#8f0a0a] px-6 py-2.5 text-sm font-semibold text-white shadow-lg
-                        transition-colors hover:bg-[#6f0707] focus-visible:outline-none
-                        focus-visible:ring-2 focus-visible:ring-white/80"
+              className="book-card__cta-action flex h-10 w-10 items-center justify-center rounded-full
+                        text-white shadow-lg focus-visible:outline-none focus-visible:ring-2
+                        focus-visible:ring-white/80"
             >
-              Quick view
+              <Eye className="book-card__cta-icon" size={18} />
             </button>
 
             {/* Qty stepper + Add to cart */}
             {!outOfStock && (
               <div
-                className="flex w-full max-w-[230px] items-center gap-1 rounded-full bg-[#8f0a0a] p-1 pl-1 text-white shadow-lg"
+                className="flex w-full max-w-[230px] items-center gap-1 rounded-full bg-[#111] p-1 pl-1 text-white shadow-lg"
                 onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}
               >
                 <button
@@ -295,13 +331,13 @@ export function BookCard({
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
-                    addToCart(book, qty);   // see note below
+                    addToCart(book, qty);
                     setQty(1);
                   }}
-                  className="ml-1 flex-1 whitespace-nowrap rounded-full px-3 py-1.5 text-sm font-semibold
-                            transition-colors hover:bg-white/15"
+                  className="book-card__cta-action ml-1 flex h-8 flex-1 items-center justify-center
+                            rounded-full font-semibold text-white"
                 >
-                  Add to cart
+                  <ShoppingCart className="book-card__cta-icon" size={17} />
                 </button>
               </div>
             )}

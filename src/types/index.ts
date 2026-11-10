@@ -70,6 +70,7 @@ export interface Book {
   description: string;
   ratingAvg: number;
   ratingCount: number;
+  displayOrder?: number;
   sellerId: string;
   isBestseller: boolean;
   isNewArrival: boolean;
@@ -261,7 +262,7 @@ export interface BookQuery {
   inStock?: boolean;
   includeUnpublished?: boolean;
   flag?: "bestseller" | "new" | "editors" | "award" | "flash";
-  sort?: "popularity" | "newest" | "price_asc" | "price_desc" | "rating" | "discount";
+  sort?: "popularity" | "newest" | "order" | "price_asc" | "price_desc" | "rating" | "discount";
   page?: number;
   pageSize?: number;
 }

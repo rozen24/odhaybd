@@ -216,6 +216,7 @@ export const ProductScalarFieldEnum = {
   awardWinner: 'awardWinner',
   ratingAverage: 'ratingAverage',
   ratingCount: 'ratingCount',
+  displayOrder: 'displayOrder',
   sellerId: 'sellerId',
   publisherId: 'publisherId',
   createdAt: 'createdAt',

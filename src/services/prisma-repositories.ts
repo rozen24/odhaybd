@@ -93,6 +93,7 @@ function toBook(product: ProductRecord): Book {
     description: product.description,
     ratingAvg: numberValue(product.ratingAverage),
     ratingCount: product.ratingCount,
+    displayOrder: product.displayOrder,
     sellerId: product.sellerId ?? "",
     isBestseller: product.bestseller,
     isNewArrival: product.newRelease,
@@ -152,8 +153,9 @@ const booksRepository: BooksRepository = {
     const page = Math.max(1, query.page ?? 1);
     const pageSize = Math.min(100, Math.max(1, query.pageSize ?? 12));
     const where = productWhere(query);
-    const orderBy: Prisma.ProductOrderByWithRelationInput =
+    const orderBy: Prisma.ProductOrderByWithRelationInput | Prisma.ProductOrderByWithRelationInput[] =
       query.sort === "newest" ? { createdAt: "desc" } :
+      query.sort === "order" ? [{ displayOrder: "asc" }, { createdAt: "asc" }] :
       query.sort === "price_asc" ? { regularPrice: "asc" } :
       query.sort === "price_desc" ? { regularPrice: "desc" } :
       query.sort === "rating" ? { ratingAverage: "desc" } :
@@ -194,6 +196,7 @@ const booksRepository: BooksRepository = {
     return booksRepository.related(book);
   },
 
+  reorder: async () => { throw new Error("Prisma catalog writes are not enabled yet"); },
   create: async () => { throw new Error("Prisma catalog writes are not enabled yet"); },
   update: async () => { throw new Error("Prisma catalog writes are not enabled yet"); },
   remove: async () => { throw new Error("Prisma catalog writes are not enabled yet"); },

@@ -82,6 +82,10 @@ export const POST = handle(async (request: Request) => {
   if (!paperback) return fail("Paperback pricing is required", 400);
   const { regularPrice, salePrice } = pricing(paperback.price, paperback.oldPrice);
   const images = input.images ?? [];
+  const lastOrder = await prisma.product.aggregate({
+    where: { sellerId: input.sellerId ?? null },
+    _max: { displayOrder: true },
+  });
   const created = await prisma.product.create({
     data: {
       slug: await uniqueProductSlug(input.slug ?? (input.title as string)),
@@ -103,6 +107,7 @@ export const POST = handle(async (request: Request) => {
       newRelease: input.newRelease ?? false,
       editorChoice: input.editorChoice ?? false,
       awardWinner: input.awardWinner ?? false,
+      displayOrder: (lastOrder._max.displayOrder ?? -1) + 1,
       sellerId: input.sellerId ?? null,
       publisherId: input.publisherId ?? null,
       images: { create: images.map((url, sortOrder) => ({ url, sortOrder })) },

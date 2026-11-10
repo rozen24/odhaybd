@@ -38,6 +38,7 @@ const booksRepo: BooksRepository = {
   getMany: (ids) => (ids.length ? api.get<Book[]>(`/books/by-ids?ids=${ids.join(",")}`) : Promise.resolve([])),
   related: (book) => api.get<Book[]>(`/books/id/${book.id}/related`),
   frequentlyBoughtTogether: (book) => api.get<Book[]>(`/books/id/${book.id}/fbt`),
+  reorder: async (ids) => { await api.put(`/books/reorder`, { ids }); },
   create: (book) => api.post<Book>(`/books`, book),
   update: (id, patch) => api.put<Book>(`/books/${id}`, patch),
   remove: (id) => api.del<void>(`/books/${id}`),

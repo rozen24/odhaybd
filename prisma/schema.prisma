@@ -202,6 +202,7 @@ model Product {
   awardWinner      Boolean               @default(false)
   ratingAverage    Decimal               @default(0) @db.Decimal(3, 2)
   ratingCount      Int                   @default(0)
+  displayOrder     Int                   @default(0)
   sellerId         String?               @db.Uuid
   publisherId      String?               @db.Uuid
   seller           Seller?               @relation(fields: [sellerId], references: [id], onDelete: SetNull)
@@ -225,6 +226,7 @@ model Product {
   @@index([status, createdAt])
   @@index([bestseller, newRelease, featured])
   @@index([sellerId])
+  @@index([sellerId, displayOrder])
   @@index([publisherId])
 }
 

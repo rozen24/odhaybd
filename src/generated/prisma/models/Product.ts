@@ -33,6 +33,7 @@ export type ProductAvgAggregateOutputType = {
   salePrice: runtime.Decimal | null
   ratingAverage: runtime.Decimal | null
   ratingCount: number | null
+  displayOrder: number | null
 }
 
 export type ProductSumAggregateOutputType = {
@@ -42,6 +43,7 @@ export type ProductSumAggregateOutputType = {
   salePrice: runtime.Decimal | null
   ratingAverage: runtime.Decimal | null
   ratingCount: number | null
+  displayOrder: number | null
 }
 
 export type ProductMinAggregateOutputType = {
@@ -69,6 +71,7 @@ export type ProductMinAggregateOutputType = {
   awardWinner: boolean | null
   ratingAverage: runtime.Decimal | null
   ratingCount: number | null
+  displayOrder: number | null
   sellerId: string | null
   publisherId: string | null
   createdAt: Date | null
@@ -100,6 +103,7 @@ export type ProductMaxAggregateOutputType = {
   awardWinner: boolean | null
   ratingAverage: runtime.Decimal | null
   ratingCount: number | null
+  displayOrder: number | null
   sellerId: string | null
   publisherId: string | null
   createdAt: Date | null
@@ -131,6 +135,7 @@ export type ProductCountAggregateOutputType = {
   awardWinner: number
   ratingAverage: number
   ratingCount: number
+  displayOrder: number
   sellerId: number
   publisherId: number
   createdAt: number
@@ -146,6 +151,7 @@ export type ProductAvgAggregateInputType = {
   salePrice?: true
   ratingAverage?: true
   ratingCount?: true
+  displayOrder?: true
 }
 
 export type ProductSumAggregateInputType = {
@@ -155,6 +161,7 @@ export type ProductSumAggregateInputType = {
   salePrice?: true
   ratingAverage?: true
   ratingCount?: true
+  displayOrder?: true
 }
 
 export type ProductMinAggregateInputType = {
@@ -182,6 +189,7 @@ export type ProductMinAggregateInputType = {
   awardWinner?: true
   ratingAverage?: true
   ratingCount?: true
+  displayOrder?: true
   sellerId?: true
   publisherId?: true
   createdAt?: true
@@ -213,6 +221,7 @@ export type ProductMaxAggregateInputType = {
   awardWinner?: true
   ratingAverage?: true
   ratingCount?: true
+  displayOrder?: true
   sellerId?: true
   publisherId?: true
   createdAt?: true
@@ -244,6 +253,7 @@ export type ProductCountAggregateInputType = {
   awardWinner?: true
   ratingAverage?: true
   ratingCount?: true
+  displayOrder?: true
   sellerId?: true
   publisherId?: true
   createdAt?: true
@@ -362,6 +372,7 @@ export type ProductGroupByOutputType = {
   awardWinner: boolean
   ratingAverage: runtime.Decimal
   ratingCount: number
+  displayOrder: number
   sellerId: string | null
   publisherId: string | null
   createdAt: Date
@@ -416,6 +427,7 @@ export type ProductWhereInput = {
   awardWinner?: Prisma.BoolFilter<"Product"> | boolean
   ratingAverage?: Prisma.DecimalFilter<"Product"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   ratingCount?: Prisma.IntFilter<"Product"> | number
+  displayOrder?: Prisma.IntFilter<"Product"> | number
   sellerId?: Prisma.UuidNullableFilter<"Product"> | string | null
   publisherId?: Prisma.UuidNullableFilter<"Product"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Product"> | Date | string
@@ -462,6 +474,7 @@ export type ProductOrderByWithRelationInput = {
   awardWinner?: Prisma.SortOrder
   ratingAverage?: Prisma.SortOrder
   ratingCount?: Prisma.SortOrder
+  displayOrder?: Prisma.SortOrder
   sellerId?: Prisma.SortOrderInput | Prisma.SortOrder
   publisherId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -511,6 +524,7 @@ export type ProductWhereUniqueInput = Prisma.AtLeast<{
   awardWinner?: Prisma.BoolFilter<"Product"> | boolean
   ratingAverage?: Prisma.DecimalFilter<"Product"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   ratingCount?: Prisma.IntFilter<"Product"> | number
+  displayOrder?: Prisma.IntFilter<"Product"> | number
   sellerId?: Prisma.UuidNullableFilter<"Product"> | string | null
   publisherId?: Prisma.UuidNullableFilter<"Product"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Product"> | Date | string
@@ -557,6 +571,7 @@ export type ProductOrderByWithAggregationInput = {
   awardWinner?: Prisma.SortOrder
   ratingAverage?: Prisma.SortOrder
   ratingCount?: Prisma.SortOrder
+  displayOrder?: Prisma.SortOrder
   sellerId?: Prisma.SortOrderInput | Prisma.SortOrder
   publisherId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -596,6 +611,7 @@ export type ProductScalarWhereWithAggregatesInput = {
   awardWinner?: Prisma.BoolWithAggregatesFilter<"Product"> | boolean
   ratingAverage?: Prisma.DecimalWithAggregatesFilter<"Product"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   ratingCount?: Prisma.IntWithAggregatesFilter<"Product"> | number
+  displayOrder?: Prisma.IntWithAggregatesFilter<"Product"> | number
   sellerId?: Prisma.UuidNullableWithAggregatesFilter<"Product"> | string | null
   publisherId?: Prisma.UuidNullableWithAggregatesFilter<"Product"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Product"> | Date | string
@@ -627,6 +643,7 @@ export type ProductCreateInput = {
   awardWinner?: boolean
   ratingAverage?: runtime.Decimal | runtime.DecimalJsLike | number | string
   ratingCount?: number
+  displayOrder?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   seller?: Prisma.SellerCreateNestedOneWithoutProductsInput
@@ -671,6 +688,7 @@ export type ProductUncheckedCreateInput = {
   awardWinner?: boolean
   ratingAverage?: runtime.Decimal | runtime.DecimalJsLike | number | string
   ratingCount?: number
+  displayOrder?: number
   sellerId?: string | null
   publisherId?: string | null
   createdAt?: Date | string
@@ -715,6 +733,7 @@ export type ProductUpdateInput = {
   awardWinner?: Prisma.BoolFieldUpdateOperationsInput | boolean
   ratingAverage?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   ratingCount?: Prisma.IntFieldUpdateOperationsInput | number
+  displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   seller?: Prisma.SellerUpdateOneWithoutProductsNestedInput
@@ -759,6 +778,7 @@ export type ProductUncheckedUpdateInput = {
   awardWinner?: Prisma.BoolFieldUpdateOperationsInput | boolean
   ratingAverage?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   ratingCount?: Prisma.IntFieldUpdateOperationsInput | number
+  displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
   sellerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   publisherId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -803,6 +823,7 @@ export type ProductCreateManyInput = {
   awardWinner?: boolean
   ratingAverage?: runtime.Decimal | runtime.DecimalJsLike | number | string
   ratingCount?: number
+  displayOrder?: number
   sellerId?: string | null
   publisherId?: string | null
   createdAt?: Date | string
@@ -834,6 +855,7 @@ export type ProductUpdateManyMutationInput = {
   awardWinner?: Prisma.BoolFieldUpdateOperationsInput | boolean
   ratingAverage?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   ratingCount?: Prisma.IntFieldUpdateOperationsInput | number
+  displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -863,6 +885,7 @@ export type ProductUncheckedUpdateManyInput = {
   awardWinner?: Prisma.BoolFieldUpdateOperationsInput | boolean
   ratingAverage?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   ratingCount?: Prisma.IntFieldUpdateOperationsInput | number
+  displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
   sellerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   publisherId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -904,6 +927,7 @@ export type ProductCountOrderByAggregateInput = {
   awardWinner?: Prisma.SortOrder
   ratingAverage?: Prisma.SortOrder
   ratingCount?: Prisma.SortOrder
+  displayOrder?: Prisma.SortOrder
   sellerId?: Prisma.SortOrder
   publisherId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -917,6 +941,7 @@ export type ProductAvgOrderByAggregateInput = {
   salePrice?: Prisma.SortOrder
   ratingAverage?: Prisma.SortOrder
   ratingCount?: Prisma.SortOrder
+  displayOrder?: Prisma.SortOrder
 }
 
 export type ProductMaxOrderByAggregateInput = {
@@ -944,6 +969,7 @@ export type ProductMaxOrderByAggregateInput = {
   awardWinner?: Prisma.SortOrder
   ratingAverage?: Prisma.SortOrder
   ratingCount?: Prisma.SortOrder
+  displayOrder?: Prisma.SortOrder
   sellerId?: Prisma.SortOrder
   publisherId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -975,6 +1001,7 @@ export type ProductMinOrderByAggregateInput = {
   awardWinner?: Prisma.SortOrder
   ratingAverage?: Prisma.SortOrder
   ratingCount?: Prisma.SortOrder
+  displayOrder?: Prisma.SortOrder
   sellerId?: Prisma.SortOrder
   publisherId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -988,6 +1015,7 @@ export type ProductSumOrderByAggregateInput = {
   salePrice?: Prisma.SortOrder
   ratingAverage?: Prisma.SortOrder
   ratingCount?: Prisma.SortOrder
+  displayOrder?: Prisma.SortOrder
 }
 
 export type ProductScalarRelationFilter = {
@@ -1309,6 +1337,7 @@ export type ProductCreateWithoutSellerInput = {
   awardWinner?: boolean
   ratingAverage?: runtime.Decimal | runtime.DecimalJsLike | number | string
   ratingCount?: number
+  displayOrder?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   publisher?: Prisma.PublisherCreateNestedOneWithoutProductsInput
@@ -1352,6 +1381,7 @@ export type ProductUncheckedCreateWithoutSellerInput = {
   awardWinner?: boolean
   ratingAverage?: runtime.Decimal | runtime.DecimalJsLike | number | string
   ratingCount?: number
+  displayOrder?: number
   publisherId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1424,6 +1454,7 @@ export type ProductScalarWhereInput = {
   awardWinner?: Prisma.BoolFilter<"Product"> | boolean
   ratingAverage?: Prisma.DecimalFilter<"Product"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   ratingCount?: Prisma.IntFilter<"Product"> | number
+  displayOrder?: Prisma.IntFilter<"Product"> | number
   sellerId?: Prisma.UuidNullableFilter<"Product"> | string | null
   publisherId?: Prisma.UuidNullableFilter<"Product"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Product"> | Date | string
@@ -1455,6 +1486,7 @@ export type ProductCreateWithoutImagesInput = {
   awardWinner?: boolean
   ratingAverage?: runtime.Decimal | runtime.DecimalJsLike | number | string
   ratingCount?: number
+  displayOrder?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   seller?: Prisma.SellerCreateNestedOneWithoutProductsInput
@@ -1498,6 +1530,7 @@ export type ProductUncheckedCreateWithoutImagesInput = {
   awardWinner?: boolean
   ratingAverage?: runtime.Decimal | runtime.DecimalJsLike | number | string
   ratingCount?: number
+  displayOrder?: number
   sellerId?: string | null
   publisherId?: string | null
   createdAt?: Date | string
@@ -1557,6 +1590,7 @@ export type ProductUpdateWithoutImagesInput = {
   awardWinner?: Prisma.BoolFieldUpdateOperationsInput | boolean
   ratingAverage?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   ratingCount?: Prisma.IntFieldUpdateOperationsInput | number
+  displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   seller?: Prisma.SellerUpdateOneWithoutProductsNestedInput
@@ -1600,6 +1634,7 @@ export type ProductUncheckedUpdateWithoutImagesInput = {
   awardWinner?: Prisma.BoolFieldUpdateOperationsInput | boolean
   ratingAverage?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   ratingCount?: Prisma.IntFieldUpdateOperationsInput | number
+  displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
   sellerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   publisherId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1643,6 +1678,7 @@ export type ProductCreateWithoutVariantsInput = {
   awardWinner?: boolean
   ratingAverage?: runtime.Decimal | runtime.DecimalJsLike | number | string
   ratingCount?: number
+  displayOrder?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   seller?: Prisma.SellerCreateNestedOneWithoutProductsInput
@@ -1686,6 +1722,7 @@ export type ProductUncheckedCreateWithoutVariantsInput = {
   awardWinner?: boolean
   ratingAverage?: runtime.Decimal | runtime.DecimalJsLike | number | string
   ratingCount?: number
+  displayOrder?: number
   sellerId?: string | null
   publisherId?: string | null
   createdAt?: Date | string
@@ -1745,6 +1782,7 @@ export type ProductUpdateWithoutVariantsInput = {
   awardWinner?: Prisma.BoolFieldUpdateOperationsInput | boolean
   ratingAverage?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   ratingCount?: Prisma.IntFieldUpdateOperationsInput | number
+  displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   seller?: Prisma.SellerUpdateOneWithoutProductsNestedInput
@@ -1788,6 +1826,7 @@ export type ProductUncheckedUpdateWithoutVariantsInput = {
   awardWinner?: Prisma.BoolFieldUpdateOperationsInput | boolean
   ratingAverage?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   ratingCount?: Prisma.IntFieldUpdateOperationsInput | number
+  displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
   sellerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   publisherId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1831,6 +1870,7 @@ export type ProductCreateWithoutInventoryInput = {
   awardWinner?: boolean
   ratingAverage?: runtime.Decimal | runtime.DecimalJsLike | number | string
   ratingCount?: number
+  displayOrder?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   seller?: Prisma.SellerCreateNestedOneWithoutProductsInput
@@ -1874,6 +1914,7 @@ export type ProductUncheckedCreateWithoutInventoryInput = {
   awardWinner?: boolean
   ratingAverage?: runtime.Decimal | runtime.DecimalJsLike | number | string
   ratingCount?: number
+  displayOrder?: number
   sellerId?: string | null
   publisherId?: string | null
   createdAt?: Date | string
@@ -1933,6 +1974,7 @@ export type ProductUpdateWithoutInventoryInput = {
   awardWinner?: Prisma.BoolFieldUpdateOperationsInput | boolean
   ratingAverage?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   ratingCount?: Prisma.IntFieldUpdateOperationsInput | number
+  displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   seller?: Prisma.SellerUpdateOneWithoutProductsNestedInput
@@ -1976,6 +2018,7 @@ export type ProductUncheckedUpdateWithoutInventoryInput = {
   awardWinner?: Prisma.BoolFieldUpdateOperationsInput | boolean
   ratingAverage?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   ratingCount?: Prisma.IntFieldUpdateOperationsInput | number
+  displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
   sellerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   publisherId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2019,6 +2062,7 @@ export type ProductCreateWithoutPublisherInput = {
   awardWinner?: boolean
   ratingAverage?: runtime.Decimal | runtime.DecimalJsLike | number | string
   ratingCount?: number
+  displayOrder?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   seller?: Prisma.SellerCreateNestedOneWithoutProductsInput
@@ -2062,6 +2106,7 @@ export type ProductUncheckedCreateWithoutPublisherInput = {
   awardWinner?: boolean
   ratingAverage?: runtime.Decimal | runtime.DecimalJsLike | number | string
   ratingCount?: number
+  displayOrder?: number
   sellerId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -2131,6 +2176,7 @@ export type ProductCreateWithoutAuthorsInput = {
   awardWinner?: boolean
   ratingAverage?: runtime.Decimal | runtime.DecimalJsLike | number | string
   ratingCount?: number
+  displayOrder?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   seller?: Prisma.SellerCreateNestedOneWithoutProductsInput
@@ -2174,6 +2220,7 @@ export type ProductUncheckedCreateWithoutAuthorsInput = {
   awardWinner?: boolean
   ratingAverage?: runtime.Decimal | runtime.DecimalJsLike | number | string
   ratingCount?: number
+  displayOrder?: number
   sellerId?: string | null
   publisherId?: string | null
   createdAt?: Date | string
@@ -2233,6 +2280,7 @@ export type ProductUpdateWithoutAuthorsInput = {
   awardWinner?: Prisma.BoolFieldUpdateOperationsInput | boolean
   ratingAverage?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   ratingCount?: Prisma.IntFieldUpdateOperationsInput | number
+  displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   seller?: Prisma.SellerUpdateOneWithoutProductsNestedInput
@@ -2276,6 +2324,7 @@ export type ProductUncheckedUpdateWithoutAuthorsInput = {
   awardWinner?: Prisma.BoolFieldUpdateOperationsInput | boolean
   ratingAverage?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   ratingCount?: Prisma.IntFieldUpdateOperationsInput | number
+  displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
   sellerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   publisherId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2319,6 +2368,7 @@ export type ProductCreateWithoutCategoriesInput = {
   awardWinner?: boolean
   ratingAverage?: runtime.Decimal | runtime.DecimalJsLike | number | string
   ratingCount?: number
+  displayOrder?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   seller?: Prisma.SellerCreateNestedOneWithoutProductsInput
@@ -2362,6 +2412,7 @@ export type ProductUncheckedCreateWithoutCategoriesInput = {
   awardWinner?: boolean
   ratingAverage?: runtime.Decimal | runtime.DecimalJsLike | number | string
   ratingCount?: number
+  displayOrder?: number
   sellerId?: string | null
   publisherId?: string | null
   createdAt?: Date | string
@@ -2421,6 +2472,7 @@ export type ProductUpdateWithoutCategoriesInput = {
   awardWinner?: Prisma.BoolFieldUpdateOperationsInput | boolean
   ratingAverage?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   ratingCount?: Prisma.IntFieldUpdateOperationsInput | number
+  displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   seller?: Prisma.SellerUpdateOneWithoutProductsNestedInput
@@ -2464,6 +2516,7 @@ export type ProductUncheckedUpdateWithoutCategoriesInput = {
   awardWinner?: Prisma.BoolFieldUpdateOperationsInput | boolean
   ratingAverage?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   ratingCount?: Prisma.IntFieldUpdateOperationsInput | number
+  displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
   sellerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   publisherId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2507,6 +2560,7 @@ export type ProductCreateWithoutTagsInput = {
   awardWinner?: boolean
   ratingAverage?: runtime.Decimal | runtime.DecimalJsLike | number | string
   ratingCount?: number
+  displayOrder?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   seller?: Prisma.SellerCreateNestedOneWithoutProductsInput
@@ -2550,6 +2604,7 @@ export type ProductUncheckedCreateWithoutTagsInput = {
   awardWinner?: boolean
   ratingAverage?: runtime.Decimal | runtime.DecimalJsLike | number | string
   ratingCount?: number
+  displayOrder?: number
   sellerId?: string | null
   publisherId?: string | null
   createdAt?: Date | string
@@ -2609,6 +2664,7 @@ export type ProductUpdateWithoutTagsInput = {
   awardWinner?: Prisma.BoolFieldUpdateOperationsInput | boolean
   ratingAverage?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   ratingCount?: Prisma.IntFieldUpdateOperationsInput | number
+  displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   seller?: Prisma.SellerUpdateOneWithoutProductsNestedInput
@@ -2652,6 +2708,7 @@ export type ProductUncheckedUpdateWithoutTagsInput = {
   awardWinner?: Prisma.BoolFieldUpdateOperationsInput | boolean
   ratingAverage?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   ratingCount?: Prisma.IntFieldUpdateOperationsInput | number
+  displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
   sellerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   publisherId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2695,6 +2752,7 @@ export type ProductCreateWithoutCartItemsInput = {
   awardWinner?: boolean
   ratingAverage?: runtime.Decimal | runtime.DecimalJsLike | number | string
   ratingCount?: number
+  displayOrder?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   seller?: Prisma.SellerCreateNestedOneWithoutProductsInput
@@ -2738,6 +2796,7 @@ export type ProductUncheckedCreateWithoutCartItemsInput = {
   awardWinner?: boolean
   ratingAverage?: runtime.Decimal | runtime.DecimalJsLike | number | string
   ratingCount?: number
+  displayOrder?: number
   sellerId?: string | null
   publisherId?: string | null
   createdAt?: Date | string
@@ -2797,6 +2856,7 @@ export type ProductUpdateWithoutCartItemsInput = {
   awardWinner?: Prisma.BoolFieldUpdateOperationsInput | boolean
   ratingAverage?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   ratingCount?: Prisma.IntFieldUpdateOperationsInput | number
+  displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   seller?: Prisma.SellerUpdateOneWithoutProductsNestedInput
@@ -2840,6 +2900,7 @@ export type ProductUncheckedUpdateWithoutCartItemsInput = {
   awardWinner?: Prisma.BoolFieldUpdateOperationsInput | boolean
   ratingAverage?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   ratingCount?: Prisma.IntFieldUpdateOperationsInput | number
+  displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
   sellerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   publisherId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2883,6 +2944,7 @@ export type ProductCreateWithoutWishlistItemsInput = {
   awardWinner?: boolean
   ratingAverage?: runtime.Decimal | runtime.DecimalJsLike | number | string
   ratingCount?: number
+  displayOrder?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   seller?: Prisma.SellerCreateNestedOneWithoutProductsInput
@@ -2926,6 +2988,7 @@ export type ProductUncheckedCreateWithoutWishlistItemsInput = {
   awardWinner?: boolean
   ratingAverage?: runtime.Decimal | runtime.DecimalJsLike | number | string
   ratingCount?: number
+  displayOrder?: number
   sellerId?: string | null
   publisherId?: string | null
   createdAt?: Date | string
@@ -2985,6 +3048,7 @@ export type ProductUpdateWithoutWishlistItemsInput = {
   awardWinner?: Prisma.BoolFieldUpdateOperationsInput | boolean
   ratingAverage?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   ratingCount?: Prisma.IntFieldUpdateOperationsInput | number
+  displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   seller?: Prisma.SellerUpdateOneWithoutProductsNestedInput
@@ -3028,6 +3092,7 @@ export type ProductUncheckedUpdateWithoutWishlistItemsInput = {
   awardWinner?: Prisma.BoolFieldUpdateOperationsInput | boolean
   ratingAverage?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   ratingCount?: Prisma.IntFieldUpdateOperationsInput | number
+  displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
   sellerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   publisherId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3071,6 +3136,7 @@ export type ProductCreateWithoutCompareItemsInput = {
   awardWinner?: boolean
   ratingAverage?: runtime.Decimal | runtime.DecimalJsLike | number | string
   ratingCount?: number
+  displayOrder?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   seller?: Prisma.SellerCreateNestedOneWithoutProductsInput
@@ -3114,6 +3180,7 @@ export type ProductUncheckedCreateWithoutCompareItemsInput = {
   awardWinner?: boolean
   ratingAverage?: runtime.Decimal | runtime.DecimalJsLike | number | string
   ratingCount?: number
+  displayOrder?: number
   sellerId?: string | null
   publisherId?: string | null
   createdAt?: Date | string
@@ -3173,6 +3240,7 @@ export type ProductUpdateWithoutCompareItemsInput = {
   awardWinner?: Prisma.BoolFieldUpdateOperationsInput | boolean
   ratingAverage?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   ratingCount?: Prisma.IntFieldUpdateOperationsInput | number
+  displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   seller?: Prisma.SellerUpdateOneWithoutProductsNestedInput
@@ -3216,6 +3284,7 @@ export type ProductUncheckedUpdateWithoutCompareItemsInput = {
   awardWinner?: Prisma.BoolFieldUpdateOperationsInput | boolean
   ratingAverage?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   ratingCount?: Prisma.IntFieldUpdateOperationsInput | number
+  displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
   sellerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   publisherId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3259,6 +3328,7 @@ export type ProductCreateWithoutOrderItemsInput = {
   awardWinner?: boolean
   ratingAverage?: runtime.Decimal | runtime.DecimalJsLike | number | string
   ratingCount?: number
+  displayOrder?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   seller?: Prisma.SellerCreateNestedOneWithoutProductsInput
@@ -3302,6 +3372,7 @@ export type ProductUncheckedCreateWithoutOrderItemsInput = {
   awardWinner?: boolean
   ratingAverage?: runtime.Decimal | runtime.DecimalJsLike | number | string
   ratingCount?: number
+  displayOrder?: number
   sellerId?: string | null
   publisherId?: string | null
   createdAt?: Date | string
@@ -3361,6 +3432,7 @@ export type ProductUpdateWithoutOrderItemsInput = {
   awardWinner?: Prisma.BoolFieldUpdateOperationsInput | boolean
   ratingAverage?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   ratingCount?: Prisma.IntFieldUpdateOperationsInput | number
+  displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   seller?: Prisma.SellerUpdateOneWithoutProductsNestedInput
@@ -3404,6 +3476,7 @@ export type ProductUncheckedUpdateWithoutOrderItemsInput = {
   awardWinner?: Prisma.BoolFieldUpdateOperationsInput | boolean
   ratingAverage?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   ratingCount?: Prisma.IntFieldUpdateOperationsInput | number
+  displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
   sellerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   publisherId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3447,6 +3520,7 @@ export type ProductCreateWithoutReviewsInput = {
   awardWinner?: boolean
   ratingAverage?: runtime.Decimal | runtime.DecimalJsLike | number | string
   ratingCount?: number
+  displayOrder?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   seller?: Prisma.SellerCreateNestedOneWithoutProductsInput
@@ -3490,6 +3564,7 @@ export type ProductUncheckedCreateWithoutReviewsInput = {
   awardWinner?: boolean
   ratingAverage?: runtime.Decimal | runtime.DecimalJsLike | number | string
   ratingCount?: number
+  displayOrder?: number
   sellerId?: string | null
   publisherId?: string | null
   createdAt?: Date | string
@@ -3549,6 +3624,7 @@ export type ProductUpdateWithoutReviewsInput = {
   awardWinner?: Prisma.BoolFieldUpdateOperationsInput | boolean
   ratingAverage?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   ratingCount?: Prisma.IntFieldUpdateOperationsInput | number
+  displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   seller?: Prisma.SellerUpdateOneWithoutProductsNestedInput
@@ -3592,6 +3668,7 @@ export type ProductUncheckedUpdateWithoutReviewsInput = {
   awardWinner?: Prisma.BoolFieldUpdateOperationsInput | boolean
   ratingAverage?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   ratingCount?: Prisma.IntFieldUpdateOperationsInput | number
+  displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
   sellerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   publisherId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3635,6 +3712,7 @@ export type ProductCreateWithoutDealProductsInput = {
   awardWinner?: boolean
   ratingAverage?: runtime.Decimal | runtime.DecimalJsLike | number | string
   ratingCount?: number
+  displayOrder?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   seller?: Prisma.SellerCreateNestedOneWithoutProductsInput
@@ -3678,6 +3756,7 @@ export type ProductUncheckedCreateWithoutDealProductsInput = {
   awardWinner?: boolean
   ratingAverage?: runtime.Decimal | runtime.DecimalJsLike | number | string
   ratingCount?: number
+  displayOrder?: number
   sellerId?: string | null
   publisherId?: string | null
   createdAt?: Date | string
@@ -3737,6 +3816,7 @@ export type ProductUpdateWithoutDealProductsInput = {
   awardWinner?: Prisma.BoolFieldUpdateOperationsInput | boolean
   ratingAverage?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   ratingCount?: Prisma.IntFieldUpdateOperationsInput | number
+  displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   seller?: Prisma.SellerUpdateOneWithoutProductsNestedInput
@@ -3780,6 +3860,7 @@ export type ProductUncheckedUpdateWithoutDealProductsInput = {
   awardWinner?: Prisma.BoolFieldUpdateOperationsInput | boolean
   ratingAverage?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   ratingCount?: Prisma.IntFieldUpdateOperationsInput | number
+  displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
   sellerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   publisherId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3823,6 +3904,7 @@ export type ProductCreateWithoutSectionItemsInput = {
   awardWinner?: boolean
   ratingAverage?: runtime.Decimal | runtime.DecimalJsLike | number | string
   ratingCount?: number
+  displayOrder?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   seller?: Prisma.SellerCreateNestedOneWithoutProductsInput
@@ -3866,6 +3948,7 @@ export type ProductUncheckedCreateWithoutSectionItemsInput = {
   awardWinner?: boolean
   ratingAverage?: runtime.Decimal | runtime.DecimalJsLike | number | string
   ratingCount?: number
+  displayOrder?: number
   sellerId?: string | null
   publisherId?: string | null
   createdAt?: Date | string
@@ -3925,6 +4008,7 @@ export type ProductUpdateWithoutSectionItemsInput = {
   awardWinner?: Prisma.BoolFieldUpdateOperationsInput | boolean
   ratingAverage?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   ratingCount?: Prisma.IntFieldUpdateOperationsInput | number
+  displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   seller?: Prisma.SellerUpdateOneWithoutProductsNestedInput
@@ -3968,6 +4052,7 @@ export type ProductUncheckedUpdateWithoutSectionItemsInput = {
   awardWinner?: Prisma.BoolFieldUpdateOperationsInput | boolean
   ratingAverage?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   ratingCount?: Prisma.IntFieldUpdateOperationsInput | number
+  displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
   sellerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   publisherId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -4011,6 +4096,7 @@ export type ProductCreateManySellerInput = {
   awardWinner?: boolean
   ratingAverage?: runtime.Decimal | runtime.DecimalJsLike | number | string
   ratingCount?: number
+  displayOrder?: number
   publisherId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -4041,6 +4127,7 @@ export type ProductUpdateWithoutSellerInput = {
   awardWinner?: Prisma.BoolFieldUpdateOperationsInput | boolean
   ratingAverage?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   ratingCount?: Prisma.IntFieldUpdateOperationsInput | number
+  displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   publisher?: Prisma.PublisherUpdateOneWithoutProductsNestedInput
@@ -4084,6 +4171,7 @@ export type ProductUncheckedUpdateWithoutSellerInput = {
   awardWinner?: Prisma.BoolFieldUpdateOperationsInput | boolean
   ratingAverage?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   ratingCount?: Prisma.IntFieldUpdateOperationsInput | number
+  displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
   publisherId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -4127,6 +4215,7 @@ export type ProductUncheckedUpdateManyWithoutSellerInput = {
   awardWinner?: Prisma.BoolFieldUpdateOperationsInput | boolean
   ratingAverage?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   ratingCount?: Prisma.IntFieldUpdateOperationsInput | number
+  displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
   publisherId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -4157,6 +4246,7 @@ export type ProductCreateManyPublisherInput = {
   awardWinner?: boolean
   ratingAverage?: runtime.Decimal | runtime.DecimalJsLike | number | string
   ratingCount?: number
+  displayOrder?: number
   sellerId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -4187,6 +4277,7 @@ export type ProductUpdateWithoutPublisherInput = {
   awardWinner?: Prisma.BoolFieldUpdateOperationsInput | boolean
   ratingAverage?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   ratingCount?: Prisma.IntFieldUpdateOperationsInput | number
+  displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   seller?: Prisma.SellerUpdateOneWithoutProductsNestedInput
@@ -4230,6 +4321,7 @@ export type ProductUncheckedUpdateWithoutPublisherInput = {
   awardWinner?: Prisma.BoolFieldUpdateOperationsInput | boolean
   ratingAverage?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   ratingCount?: Prisma.IntFieldUpdateOperationsInput | number
+  displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
   sellerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -4273,6 +4365,7 @@ export type ProductUncheckedUpdateManyWithoutPublisherInput = {
   awardWinner?: Prisma.BoolFieldUpdateOperationsInput | boolean
   ratingAverage?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   ratingCount?: Prisma.IntFieldUpdateOperationsInput | number
+  displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
   sellerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -4433,6 +4526,7 @@ export type ProductSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   awardWinner?: boolean
   ratingAverage?: boolean
   ratingCount?: boolean
+  displayOrder?: boolean
   sellerId?: boolean
   publisherId?: boolean
   createdAt?: boolean
@@ -4480,6 +4574,7 @@ export type ProductSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   awardWinner?: boolean
   ratingAverage?: boolean
   ratingCount?: boolean
+  displayOrder?: boolean
   sellerId?: boolean
   publisherId?: boolean
   createdAt?: boolean
@@ -4513,6 +4608,7 @@ export type ProductSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   awardWinner?: boolean
   ratingAverage?: boolean
   ratingCount?: boolean
+  displayOrder?: boolean
   sellerId?: boolean
   publisherId?: boolean
   createdAt?: boolean
@@ -4546,13 +4642,14 @@ export type ProductSelectScalar = {
   awardWinner?: boolean
   ratingAverage?: boolean
   ratingCount?: boolean
+  displayOrder?: boolean
   sellerId?: boolean
   publisherId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type ProductOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "slug" | "sku" | "isbn" | "title" | "description" | "shortDescription" | "translator" | "edition" | "pages" | "language" | "binding" | "weightGrams" | "regularPrice" | "salePrice" | "flashSaleEndsAt" | "status" | "featured" | "bestseller" | "newRelease" | "editorChoice" | "awardWinner" | "ratingAverage" | "ratingCount" | "sellerId" | "publisherId" | "createdAt" | "updatedAt", ExtArgs["result"]["product"]>
+export type ProductOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "slug" | "sku" | "isbn" | "title" | "description" | "shortDescription" | "translator" | "edition" | "pages" | "language" | "binding" | "weightGrams" | "regularPrice" | "salePrice" | "flashSaleEndsAt" | "status" | "featured" | "bestseller" | "newRelease" | "editorChoice" | "awardWinner" | "ratingAverage" | "ratingCount" | "displayOrder" | "sellerId" | "publisherId" | "createdAt" | "updatedAt", ExtArgs["result"]["product"]>
 export type ProductInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   seller?: boolean | Prisma.Product$sellerArgs<ExtArgs>
   publisher?: boolean | Prisma.Product$publisherArgs<ExtArgs>
@@ -4624,6 +4721,7 @@ export type $ProductPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     awardWinner: boolean
     ratingAverage: runtime.Decimal
     ratingCount: number
+    displayOrder: number
     sellerId: string | null
     publisherId: string | null
     createdAt: Date
@@ -5090,6 +5188,7 @@ export interface ProductFieldRefs {
   readonly awardWinner: Prisma.FieldRef<"Product", 'Boolean'>
   readonly ratingAverage: Prisma.FieldRef<"Product", 'Decimal'>
   readonly ratingCount: Prisma.FieldRef<"Product", 'Int'>
+  readonly displayOrder: Prisma.FieldRef<"Product", 'Int'>
   readonly sellerId: Prisma.FieldRef<"Product", 'String'>
   readonly publisherId: Prisma.FieldRef<"Product", 'String'>
   readonly createdAt: Prisma.FieldRef<"Product", 'DateTime'>

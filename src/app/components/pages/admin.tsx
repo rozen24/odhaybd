@@ -3,7 +3,7 @@
 // Catalogue CRUD and operations pages live in ../admin/.
 
 import { useMemo, useState } from "react";
-import { DollarSign, Package, Users, Star, Plus, Check, X, ShieldCheck, Ban, Tag, TrendingUp, Boxes } from "lucide-react";
+import { ArrowDown, ArrowUp, DollarSign, Package, Users, Star, Plus, Check, X, ShieldCheck, Ban, Tag, TrendingUp, Boxes } from "lucide-react";
 import { toast } from "sonner";
 import {
   Area, AreaChart, Bar, BarChart, CartesianGrid, Cell, ResponsiveContainer, Tooltip, XAxis, YAxis,
@@ -97,7 +97,7 @@ export function AdminDashboard() {
 
 export function AdminProducts() {
   // Admins see every product, including unpublished ones.
-  const products = useQuery(["books", "admin"], () => services.books.list({ sort: "newest", pageSize: 200, includeUnpublished: true }));
+  const products = useQuery(["books", "admin"], () => services.books.list({ sort: "order", pageSize: 200, includeUnpublished: true }));
   const { authorById } = useCatalog();
   const [q, setQ] = useState("");
 
@@ -110,7 +110,21 @@ export function AdminProducts() {
     try { await services.books.update(b.id, { status: next } as any); toast.success(`"${b.title}" ${next}`); products.refetch(); }
     catch (err) { toast.error((err as Error).message); }
   };
-  const items = (products.data?.items ?? []).filter((b) => b.title.toLowerCase().includes(q.toLowerCase()));
+  const allItems = products.data?.items ?? [];
+  const items = allItems.filter((b) => b.title.toLowerCase().includes(q.toLowerCase()));
+  const moveProduct = async (index: number, dir: -1 | 1) => {
+    const next = allItems.slice();
+    const target = index + dir;
+    if (target < 0 || target >= next.length) return;
+    [next[index], next[target]] = [next[target], next[index]];
+    try {
+      await services.books.reorder(next.map((book) => book.id));
+      toast.success("Order saved");
+      products.refetch();
+    } catch (err) {
+      toast.error((err as Error).message);
+    }
+  };
 
   return (
     <div>
@@ -131,6 +145,10 @@ export function AdminProducts() {
                 <td><Pill tone={published ? "positive" : "neutral"}>{b.status ?? "published"}</Pill></td>
                 <td>
                   <div className="flex justify-end gap-2">
+                    {!q && <div className="flex shrink-0 gap-0.5">
+                      <Button type="button" variant="outline" size="icon" className="size-8" title={`Move ${b.title} up`} disabled={items.indexOf(b) === 0} onClick={() => moveProduct(items.indexOf(b), -1)} aria-label={`Move ${b.title} up`}><ArrowUp size={14} /></Button>
+                      <Button type="button" variant="outline" size="icon" className="size-8" title={`Move ${b.title} down`} disabled={items.indexOf(b) === items.length - 1} onClick={() => moveProduct(items.indexOf(b), 1)} aria-label={`Move ${b.title} down`}><ArrowDown size={14} /></Button>
+                    </div>}
                     <Button variant="outline" size="sm" onClick={() => togglePublish(b)}>{published ? "Unpublish" : "Publish"}</Button>
                     <BookFormDialog book={b} asAdmin onSaved={() => products.refetch()} />
                     <ConfirmDelete title={`Delete "${b.title}"?`} onConfirm={() => remove(b.id)} />

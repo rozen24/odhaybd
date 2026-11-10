@@ -12,6 +12,11 @@ import { ACADEMIC_KEYS, ISLAMIC_KEYS } from "../common/catalogHelpers";
 import { QueryRailSection, Section, useBooks } from "./shared";
 import type { Category, HomeSection } from "../../../types";
 import { cn } from "../ui/utils";
+import { CarouselArrows } from "./CarouselArrows";
+import { useEmblaControls } from "./useEmblaControls";
+
+const CATEGORY_TILE_BASIS = "min-w-0 shrink-0 grow-0 basis-1/2 pl-3 lg:basis-1/4";
+const CATEGORY_TILE_CLASS = "group flex min-h-24 flex-col justify-between rounded-lg border border-border bg-accent p-4 text-accent-foreground transition-shadow hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40";
 
 function iconFor(c: Category) {
   return (c.icon && (Icons as unknown as Record<string, Icons.LucideIcon>)[c.icon]) || Icons.BookOpen;
@@ -19,39 +24,52 @@ function iconFor(c: Category) {
 
 export function CategoryTiles() {
   const { topCategories, childrenOf, loading } = useCatalog();
+  const { viewportRef, canPrev, canNext, prev, next, onKeyDown } = useEmblaControls();
   if (loading && topCategories.length === 0) {
     return <Section><SectionHeader eyebrow="Browse" title="Shop by category" /><TileGridSkeleton /></Section>;
   }
   if (topCategories.length === 0) return null;
   return (
     <Section>
-      <SectionHeader eyebrow="Browse" title="Shop by category" href="/books" hrefLabel="All books" />
-      <div className="grid auto-rows-[minmax(96px,auto)] grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-6">
-        {topCategories.map((c, idx) => {
-          const Icon = iconFor(c);
-          const feature = idx === 0 && topCategories.length >= 5;
-          const subs = childrenOf(c.id);
-          return (
-            <Link
-              key={c.id}
-              to={`/category/${c.slug}`}
-              className={cn(
-                "group flex flex-col justify-between rounded-lg border border-border bg-card p-4 transition-shadow hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40",
-                feature && "col-span-2 row-span-2 bg-accent text-accent-foreground",
-              )}
-            >
-              <Icon size={feature ? 28 : 20} className={feature ? "" : "text-primary"} />
-              <div className="mt-3">
-                <span className={cn("block font-medium leading-tight", feature ? "font-display text-2xl font-semibold tracking-tight" : "text-sm")}>{c.name}</span>
-                {subs.length > 0 && (
-                  <span className={cn("mt-1 block text-xs", feature ? "text-accent-foreground/80" : "text-muted-foreground")}>
-                    {feature ? subs.slice(0, 4).map((s) => s.name).join(" · ") : `${subs.length} subcategories`}
-                  </span>
-                )}
-              </div>
-            </Link>
-          );
-        })}
+      <SectionHeader
+        eyebrow="Browse"
+        title="Shop by category"
+        href="/books"
+        hrefLabel="All books"
+        action={(canPrev || canNext) && <CarouselArrows canPrev={canPrev} canNext={canNext} prev={prev} next={next} label="categories" />}
+      />
+      <div
+        role="region"
+        aria-roledescription="carousel"
+        aria-label="Shop by category"
+        tabIndex={0}
+        onKeyDown={onKeyDown}
+        className="rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
+      >
+        <div className="overflow-hidden" ref={viewportRef}>
+          <div className="-ml-3 flex touch-pan-y">
+            {topCategories.map((c, idx) => {
+              const Icon = iconFor(c);
+              const subs = childrenOf(c.id);
+              return (
+                <div key={c.id} role="group" aria-roledescription="slide" aria-label={`${idx + 1} of ${topCategories.length}`} className={CATEGORY_TILE_BASIS}>
+                  <Link
+                    to={`/category/${c.slug}`}
+                    className={CATEGORY_TILE_CLASS}
+                  >
+                    <Icon size={28} />
+                    <div className="mt-3">
+                      <span className="block font-display text-2xl font-semibold leading-tight tracking-tight">{c.name}</span>
+                      {subs.length > 0 && (
+                        <span className="mt-1 block text-xs text-accent-foreground/80">{subs.slice(0, 4).map((s) => s.name).join(" · ")}</span>
+                      )}
+                    </div>
+                  </Link>
+                </div>
+              );
+            })}
+          </div>
+        </div>
       </div>
     </Section>
   );
@@ -127,7 +145,7 @@ function CategoryTilesSection({ title, category, subs }: { title: string; catego
     <Section>
       <SectionHeader eyebrow="Category" title={title} href={`/category/${category.slug}`} />
       {subs.length > 0 && <SubcategoryChips subs={subs} />}
-      <div className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 lg:grid-cols-6">
+      <div className="grid grid-cols-3 gap-x-4 gap-y-8 sm:grid-cols-3 lg:grid-cols-3">
         {books.map((b) => <BookCard key={b.id} book={b} compact />)}
       </div>
     </Section>

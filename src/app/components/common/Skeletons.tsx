@@ -49,7 +49,7 @@ export function SectionSkeleton({ className }: { className?: string }) {
 
 export function TileGridSkeleton({ count = 8, className }: { count?: number; className?: string }) {
   return (
-    <div className={cn("grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-6", className)} aria-hidden>
+    <div className={cn("grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-4", className)} aria-hidden>
       {Array.from({ length: count }).map((_, i) => (
         <Skeleton key={i} className="h-24 rounded-lg bg-muted" />
       ))}
