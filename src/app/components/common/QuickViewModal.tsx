@@ -61,7 +61,7 @@ export function QuickViewModal() {
 
   return (
     <Dialog open={!!book} onOpenChange={(o) => !o && close()}>
-      <DialogContent className="sm:max-w-2xl lg:min-w-5xl overflow-hidden p-0">
+      <DialogContent className="sm:max-w-2xl lg:min-w-5xl max-h-[90dvh] overflow-y-auto p-0">
         <div className="grid gap-0 sm:grid-cols-2">
           <div className="aspect-[2/3] lg:aspect-[1/1] sm:aspect-auto">
             <BookCover title={book.title} author={authorName} coverUrl={book.coverUrl} />
