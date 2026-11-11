@@ -23,8 +23,9 @@ export default function HomePage() {
         <PopularSearchChips className="mb-4" />
         <HeroSection />
       </div>
-      <LazySection><CategoryCollectionSlider /></LazySection> 
       <CategoryTiles />
+      <LazySection><CategoryCollectionSlider /></LazySection> 
+      
       <FlashSale />
       <QuickDeal />
                   

@@ -312,6 +312,7 @@ export function BookCard({
             <Tooltip>
               <TooltipTrigger asChild>
                 <IconBtn
+                  className="bg-[#8f0a0a] text-white hover:bg-[#0c0101]"
                   label={wished ? "Remove from wishlist" : "Add to wishlist"}
                   active={wished}
                   onClick={() => toggleWishlist(book)}
@@ -326,7 +327,7 @@ export function BookCard({
 
             <Tooltip>
               <TooltipTrigger asChild>
-                <IconBtn label="Compare" active={compared} onClick={() => toggleCompare(book)}>
+                <IconBtn label="Compare" className="bg-[#8f0a0a]  text-white hover:bg-[#0c0101]" active={compared} onClick={() => toggleCompare(book)}>
                   <GitCompare size={15} />
                 </IconBtn>
               </TooltipTrigger>
@@ -349,7 +350,8 @@ export function BookCard({
                         transition-colors hover:bg-[#0c0101] focus-visible:outline-none
                         focus-visible:ring-2 focus-visible:ring-white/80"
             >
-              <span className="book-card__quick-view-label">Quick view</span>
+              <span className="book-card__quick-view-label hidden md:block">Quick view</span>
+              <span className="book-card__quick-view-label md:hidden"><Eye className="text-white" size={18} /></span>
               <Eye className="book-card__quick-view-icon" size={18} />
             </button>
 
