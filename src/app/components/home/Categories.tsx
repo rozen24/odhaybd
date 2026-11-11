@@ -32,6 +32,7 @@ export function CategoryTiles() {
   return (
     <Section>
       <SectionHeader
+        className="hidden md:flex"
         eyebrow="Browse"
         title="Shop by category"
         href="/books"
