@@ -221,11 +221,11 @@ const catalogRepository: CatalogRepository = {
   },
   async categories(): Promise<Category[]> {
     const categories = await prisma.category.findMany({ orderBy: { name: "asc" } });
-    return categories.map((category) => ({ id: category.id, slug: category.slug, name: category.name, parentId: category.parentId, icon: category.icon ?? undefined }));
+    return categories.map((category) => ({ id: category.id, slug: category.slug, name: category.name, parentId: category.parentId, icon: category.icon ?? undefined, imageUrl: category.imageUrl ?? null }));
   },
   async categoryBySlug(slug) {
     const category = await prisma.category.findUnique({ where: { slug } });
-    return category ? { id: category.id, slug: category.slug, name: category.name, parentId: category.parentId, icon: category.icon ?? undefined } : undefined;
+    return category ? { id: category.id, slug: category.slug, name: category.name, parentId: category.parentId, icon: category.icon ?? undefined, imageUrl: category.imageUrl ?? null } : undefined;
   },
   async sellers(): Promise<Seller[]> {
     const sellers = await prisma.seller.findMany({ orderBy: { name: "asc" } });
@@ -358,7 +358,7 @@ const homeSectionsRepository: HomeSectionsRepository = {
           display_order: section.displayOrder,
           is_active: section.active,
         },
-        category: { id: firstCategory.id, slug: firstCategory.slug, name: firstCategory.name, parentId: firstCategory.parentId, icon: firstCategory.icon ?? undefined },
+        category: { id: firstCategory.id, slug: firstCategory.slug, name: firstCategory.name, parentId: firstCategory.parentId, icon: firstCategory.icon ?? undefined, imageUrl: firstCategory.imageUrl ?? null },
         books,
       });
     }

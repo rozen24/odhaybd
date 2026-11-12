@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { requireRole } from "@/lib/guards";
-import { toCategory, uniqueSlug } from "@/lib/catalog-admin";
+import { safeUrl, toCategory, uniqueSlug } from "@/lib/catalog-admin";
 import { prismaRepositories } from "@/services/prisma-repositories";
 import { fail, handle, isUuid, ok, readJson, str } from "@/lib/api-route";
 
@@ -24,6 +24,7 @@ export const POST = handle(async (request: Request) => {
       name,
       slug: await uniqueSlug("category", str(b.slug, 60) || name),
       icon: str(b.icon, 60) || null,
+      imageUrl: safeUrl(str(b.imageUrl, 500)),
       parentId,
     },
   });

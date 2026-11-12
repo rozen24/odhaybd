@@ -208,6 +208,7 @@ function CategoryDialog({ category, all, onSaved, defaultParent }: { category?: 
   // Only top-level categories can be parents (two-level tree), never itself.
   const parents = all.filter((c) => !c.parentId && c.id !== category?.id);
   const hasChildren = !!category && all.some((c) => c.parentId === category.id);
+  
   const save = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);

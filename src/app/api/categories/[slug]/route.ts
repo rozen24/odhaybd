@@ -3,7 +3,7 @@
 import type { Prisma } from "@/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
 import { requireRole } from "@/lib/guards";
-import { toCategory, uniqueSlug } from "@/lib/catalog-admin";
+import { safeUrl, toCategory, uniqueSlug } from "@/lib/catalog-admin";
 import { prismaRepositories } from "@/services/prisma-repositories";
 import { fail, handle, isUuid, ok, readJson, str } from "@/lib/api-route";
 
@@ -29,6 +29,7 @@ export const PUT = handle(async (request: Request, { params }: Ctx) => {
   if (name) data.name = name;
   if (b.slug !== undefined && str(b.slug, 60)) data.slug = await uniqueSlug("category", str(b.slug, 60), id);
   if (b.icon !== undefined) data.icon = str(b.icon, 60) || null;
+  if (b.imageUrl !== undefined) data.imageUrl = safeUrl(str(b.imageUrl, 500));
 
   if (b.parentId !== undefined) {
     const parentId = str(b.parentId, 40) || null;

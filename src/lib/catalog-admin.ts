@@ -45,9 +45,9 @@ export function toPublisher(p: { id: string; slug: string; name: string }, bookC
 }
 
 export function toCategory(c: {
-  id: string; slug: string; name: string; parentId: string | null; icon: string | null;
+  id: string; slug: string; name: string; parentId: string | null; icon: string | null; imageUrl?: string | null;
 }): Category {
-  return { id: c.id, slug: c.slug, name: c.name, parentId: c.parentId, icon: c.icon ?? undefined };
+  return { id: c.id, slug: c.slug, name: c.name, parentId: c.parentId, icon: c.icon ?? undefined, imageUrl: c.imageUrl ?? null };
 }
 
 export function toBanner(b: {

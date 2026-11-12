@@ -17,20 +17,64 @@ import { CarouselArrows } from "./CarouselArrows";
 import { useCallback, useEffect, useState } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 
-const CATEGORY_TILE_BASIS = "min-w-0 shrink-0 grow-0 basis-1/2 pl-3 lg:basis-1/4";
-const CATEGORY_TILE_CLASS = "group flex min-h-24 flex-col justify-between rounded-lg border border-border bg-accent p-4 text-accent-foreground transition-shadow hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40";
 
 function iconFor(c: Category) {
   return (c.icon && (Icons as unknown as Record<string, Icons.LucideIcon>)[c.icon]) || Icons.BookOpen;
 }
 
+const AUTOPLAY_MS = 3500;
+// 2 per row on mobile, 4 on tablet, 6 on desktop
+const TILE_BASIS = "min-w-0 shrink-0 grow-0 basis-1/2 pl-3 md:basis-1/4 lg:basis-1/6";
+
+function useCategoryCarousel() {
+  const [viewportRef, api] = useEmblaCarousel({ loop: true, align: "start", slidesToScroll: 1 });
+  const [paused, setPaused] = useState(false);
+  const [scrollable, setScrollable] = useState(false);
+
+  useEffect(() => {
+    if (!api) return;
+    const update = () => setScrollable(api.canScrollNext() || api.canScrollPrev());
+    update();
+    api.on("reInit", update);
+    return () => { api.off("reInit", update); };
+  }, [api]);
+
+  // Auto-slide: pauses on hover/focus/touch, skipped for reduced-motion users.
+  useEffect(() => {
+    if (!api || paused || !scrollable) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const id = window.setInterval(() => api.scrollNext(), AUTOPLAY_MS);
+    return () => window.clearInterval(id);
+  }, [api, paused, scrollable]);
+
+  const prev = useCallback(() => api?.scrollPrev(), [api]);
+  const next = useCallback(() => api?.scrollNext(), [api]);
+  const onKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (e.key === "ArrowLeft") prev();
+    if (e.key === "ArrowRight") next();
+  }, [prev, next]);
+
+  const hoverProps = {
+    onMouseEnter: () => setPaused(true),
+    onMouseLeave: () => setPaused(false),
+    onFocus: () => setPaused(true),
+    onBlur: () => setPaused(false),
+    onTouchStart: () => setPaused(true),
+    onTouchEnd: () => setPaused(false),
+  };
+
+  return { viewportRef, scrollable, prev, next, onKeyDown, hoverProps };
+}
+
 export function CategoryTiles() {
-  const { topCategories, childrenOf, loading } = useCatalog();
-  const { viewportRef, canPrev, canNext, prev, next, onKeyDown } = useEmblaControls();
+  const { topCategories, loading } = useCatalog();
+  const { viewportRef, scrollable, prev, next, onKeyDown, hoverProps } = useCategoryCarousel();
+
   if (loading && topCategories.length === 0) {
     return <Section><SectionHeader eyebrow="Browse" title="Shop by category" /><TileGridSkeleton /></Section>;
   }
   if (topCategories.length === 0) return null;
+
   return (
     <Section>
       <SectionHeader
@@ -39,7 +83,7 @@ export function CategoryTiles() {
         title="Shop by category"
         href="/books"
         hrefLabel="All books"
-        action={(canPrev || canNext) && <CarouselArrows canPrev={canPrev} canNext={canNext} prev={prev} next={next} label="categories" />}
+        action={scrollable && <CarouselArrows canPrev canNext prev={prev} next={next} label="categories" />}
       />
       <div
         role="region"
@@ -47,25 +91,39 @@ export function CategoryTiles() {
         aria-label="Shop by category"
         tabIndex={0}
         onKeyDown={onKeyDown}
-        className="rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
+        {...hoverProps}
+        className="rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
       >
-        <div className="overflow-hidden" ref={viewportRef}>
+        <div className="overflow-hidden py-2" ref={viewportRef}>
           <div className="-ml-3 flex touch-pan-y">
             {topCategories.map((c, idx) => {
               const Icon = iconFor(c);
-              const subs = childrenOf(c.id);
               return (
-                <div key={c.id} role="group" aria-roledescription="slide" aria-label={`${idx + 1} of ${topCategories.length}`} className={CATEGORY_TILE_BASIS}>
+                <div key={c.id} role="group" aria-roledescription="slide" aria-label={`${idx + 1} of ${topCategories.length}`} className={TILE_BASIS}>
                   <Link
                     to={`/category/${c.slug}`}
-                    className={CATEGORY_TILE_CLASS}
+                    draggable={false}
+                    className="group relative block aspect-[4/5] overflow-hidden rounded-2xl bg-muted shadow-sm ring-1 ring-border transition-all duration-300 hover:-translate-y-1 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60"
                   >
-                    <Icon size={28} />
-                    <div className="mt-3">
-                      <span className="block font-display text-2xl font-semibold leading-tight tracking-tight">{c.name}</span>
-                      {subs.length > 0 && (
-                        <span className="mt-1 block text-xs text-accent-foreground/80">{subs.slice(0, 4).map((s) => s.name).join(" · ")}</span>
-                      )}
+                    {c.imageUrl ? (
+                      <img
+                        src={c.imageUrl}
+                        alt=""
+                        loading="lazy"
+                        draggable={false}
+                        className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-110"
+                      />
+                    ) : (
+                      <div className="absolute inset-0 grid place-items-center bg-gradient-to-br from-accent to-accent/60 text-accent-foreground">
+                        <Icon size={40} strokeWidth={1.5} />
+                      </div>
+                    )}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
+                    <div className="absolute inset-x-0 bottom-0 p-3 sm:p-4">
+                      <span className="line-clamp-2 block font-display text-base font-semibold leading-tight text-white sm:text-lg">{c.name}</span>
+                      <span className="mt-1 inline-flex items-center gap-1 text-xs font-medium text-white/80 transition-all duration-300 group-hover:gap-2 group-hover:text-white">
+                        Explore <Icons.ArrowRight size={12} />
+                      </span>
                     </div>
                   </Link>
                 </div>

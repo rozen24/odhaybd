@@ -288,6 +288,7 @@ model Category {
   slug             String            @unique
   name             String
   icon             String?
+  imageUrl         String?
   parentId         String?           @db.Uuid
   parent           Category?         @relation("CategoryTree", fields: [parentId], references: [id], onDelete: SetNull)
   children         Category[]        @relation("CategoryTree")
