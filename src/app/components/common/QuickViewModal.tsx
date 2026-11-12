@@ -66,7 +66,7 @@ export function QuickViewModal() {
           <div className="aspect-[2/3] lg:aspect-[1/1] sm:aspect-auto">
             <BookCover title={book.title} author={authorName} coverUrl={book.coverUrl} />
           </div>
-          <div className="flex flex-col p-6">
+          <div className="flex flex-col p-6 pb-0">
             <DialogTitle className="font-display text-2xl font-semibold tracking-tight">{book.title}</DialogTitle>
             <DialogDescription className="mt-1 text-sm">
               {authorName}

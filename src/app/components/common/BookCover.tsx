@@ -38,7 +38,7 @@ export function BookCover({
       <ImageWithFallback
         src={coverUrl}
         alt={title}
-        className={cn("h-full w-full object-cover", className)}
+        className={cn("h-full w-full", className)}
       />
     );
   }

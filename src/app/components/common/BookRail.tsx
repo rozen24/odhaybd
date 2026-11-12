@@ -43,7 +43,7 @@ export function BookRail({
     <div className="relative">
       <div ref={ref} className="[scrollbar-width:none] [&::-webkit-scrollbar]:hidden -mx-1 flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth px-1 pb-2">
         {books.map((book) => (
-          <div key={book.id} className="w-36 shrink-0 snap-start sm:w-44">
+          <div key={book.id} className="w-[50%] shrink-0 snap-start sm:w-54">
             <BookCard book={book} compact />
           </div>
         ))}
