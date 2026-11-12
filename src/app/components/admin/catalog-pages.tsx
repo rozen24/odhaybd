@@ -49,7 +49,7 @@ function ReorderButtons({ index, count, onMove, label }: { index: number; count:
   );
 }
 
-function ImagePicker({ value, onChange, label, aspect = "aspect-square w-16" }: { value: string; onChange: (url: string) => void; label: string; aspect?: string }) {
+function ImagePicker({ value, onChange, label, aspect = "aspect-square w-16" }: { value: string | null; onChange: (url: string) => void; label: string; aspect?: string }) {
   const ref = useRef<HTMLInputElement>(null);
   const [busy, setBusy] = useState(false);
   const pick = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -202,8 +202,8 @@ const NO_PARENT = "__none";
 
 function CategoryDialog({ category, all, onSaved, defaultParent }: { category?: Category; all: Category[]; onSaved: () => void; defaultParent?: string }) {
   const [open, setOpen] = useState(false);
-  const blank = { name: "", slug: "", parentId: defaultParent ?? NO_PARENT, icon: "" };
-  const [form, setForm] = useState(category ? { name: category.name, slug: category.slug, parentId: category.parentId ?? NO_PARENT, icon: category.icon ?? "" } : blank);
+  const blank = { name: "", slug: "", parentId: defaultParent ?? NO_PARENT, icon: "", imageUrl: null };
+  const [form, setForm] = useState(category ? { name: category.name, slug: category.slug, parentId: category.parentId ?? NO_PARENT, icon: category.icon ?? "", imageUrl: category.imageUrl ?? null } : blank);
   const [saving, setSaving] = useState(false);
   // Only top-level categories can be parents (two-level tree), never itself.
   const parents = all.filter((c) => !c.parentId && c.id !== category?.id);
@@ -211,7 +211,11 @@ function CategoryDialog({ category, all, onSaved, defaultParent }: { category?: 
   const save = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
-    const payload: Partial<Category> = { name: form.name, slug: form.slug || undefined, icon: form.icon || undefined, parentId: form.parentId === NO_PARENT ? null : form.parentId };
+    const payload: Partial<Category> = { name: form.name,
+       slug: form.slug || undefined, 
+       icon: form.icon || undefined, 
+       imageUrl: form.imageUrl || null, // null so "Remove" actually clears it on update
+       parentId: form.parentId === NO_PARENT ? null : form.parentId };
     const ok = await attempt(() => (category ? services.catalogAdmin.updateCategory(category.id, payload) : services.catalogAdmin.createCategory(payload)), category ? "Category updated" : "Category created", onSaved);
     setSaving(false);
     if (ok) { setOpen(false); if (!category) setForm(blank); }
@@ -223,7 +227,7 @@ function CategoryDialog({ category, all, onSaved, defaultParent }: { category?: 
           : defaultParent ? <Button variant="ghost" size="sm" className="h-7 gap-1 text-xs"><Plus size={12} /> Subcategory</Button>
           : <Button size="sm" className="gap-2"><Plus size={15} /> New category</Button>}
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="max-h-[90vh] overflow-y-auto">
         <DialogHeader><DialogTitle className="font-display">{category ? "Edit category" : "New category"}</DialogTitle></DialogHeader>
         <form onSubmit={save} className="space-y-3">
           <div className="space-y-1.5"><Label>Name</Label><Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required /></div>
@@ -240,6 +244,9 @@ function CategoryDialog({ category, all, onSaved, defaultParent }: { category?: 
             {hasChildren && <p className="text-xs text-muted-foreground">This category has subcategories, so it stays top level.</p>}
           </div>
           <div className="space-y-1.5"><Label>Icon name (optional)</Label><Input value={form.icon} onChange={(e) => setForm({ ...form, icon: e.target.value })} placeholder="e.g. BookOpen" /></div>
+          <div className="space-y-1.5"><Label>Icon name (optional)</Label><Input value={form.icon} onChange={(e) => setForm({ ...form, icon: e.target.value })} placeholder="e.g. BookOpen" /></div>
+          <ImagePicker label="Image (optional)" value={form.imageUrl} onChange={(imageUrl) => setForm((f) => ({ ...f, imageUrl }))} />
+          <DialogFooter>...</DialogFooter>
           <DialogFooter><Button type="submit" disabled={saving}>{saving ? "Saving…" : "Save"}</Button></DialogFooter>
         </form>
       </DialogContent>
@@ -256,13 +263,22 @@ export function AdminCategories() {
 
   const row = (c: Category, child: boolean) => (
     <tr key={c.id}>
+      <td className={child ? "pl-9" : "font-medium"}>
+        <div className="flex items-center gap-2">
+          {child && <span className="text-muted-foreground">└</span>}
+          <div className="h-7 w-7 shrink-0 overflow-hidden rounded bg-muted">
+            {c.imageUrl && <img src={c.imageUrl} alt="" className="h-full w-full object-cover" />}
+          </div>
+          {c.name}
+        </div>
+      </td>
       <td className={child ? "pl-9" : "font-medium"}>{child && <span className="mr-1.5 text-muted-foreground">└</span>}{c.name}</td>
       <td className="text-muted-foreground">{c.slug}</td>
       <td>{child ? <Pill>Subcategory</Pill> : <Pill tone="primary">Top level</Pill>}</td>
       <td>
         <div className="flex items-center justify-end gap-1">
           {!child && <CategoryDialog all={all} onSaved={list.refresh} defaultParent={c.id} />}
-          <CategoryDialog key={c.id + c.name + c.parentId} category={c} all={all} onSaved={list.refresh} />
+          <CategoryDialog key={c.id + c.name + c.parentId + c.imageUrl} category={c} all={all} onSaved={list.refresh} />
           <ConfirmDelete iconOnly title={`Delete ${c.name}?`} description={child ? undefined : "Subcategories must be deleted or moved first."} onConfirm={() => { del(c); }} />
         </div>
       </td>

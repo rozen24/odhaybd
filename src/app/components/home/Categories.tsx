@@ -13,7 +13,9 @@ import { QueryRailSection, Section, useBooks } from "./shared";
 import type { Category, HomeSection } from "../../../types";
 import { cn } from "../ui/utils";
 import { CarouselArrows } from "./CarouselArrows";
-import { useEmblaControls } from "./useEmblaControls";
+// import { useEmblaControls } from "./useEmblaControls";
+import { useCallback, useEffect, useState } from "react";
+import useEmblaCarousel from "embla-carousel-react";
 
 const CATEGORY_TILE_BASIS = "min-w-0 shrink-0 grow-0 basis-1/2 pl-3 lg:basis-1/4";
 const CATEGORY_TILE_CLASS = "group flex min-h-24 flex-col justify-between rounded-lg border border-border bg-accent p-4 text-accent-foreground transition-shadow hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40";
