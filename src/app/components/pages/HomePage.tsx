@@ -25,10 +25,12 @@ export default function HomePage() {
       </div>
       <CategoryTiles />
       <FlashSale />
+
+      <QuickDeal />
       <LazySection><CategoryCollectionSlider /></LazySection> 
       
       
-      <QuickDeal />
+     
                   
       <LazySection>
         <QueryRailSection eyebrow="Most loved" title="Best sellers" subtitle="What everyone's reading right now" href="/books?flag=bestseller" query={{ flag: "bestseller" }} />
