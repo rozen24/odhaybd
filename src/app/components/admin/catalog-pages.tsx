@@ -73,7 +73,7 @@ function ImagePicker({ value, onChange, label, aspect = "aspect-square w-16" }: 
             <Button type="button" variant="outline" size="sm" className="gap-1.5" disabled={busy} onClick={() => ref.current?.click()}><Upload size={14} /> {busy ? "Uploading…" : value ? "Replace" : "Upload"}</Button>
             {value && <Button type="button" variant="ghost" size="sm" className="gap-1.5 text-destructive" onClick={() => onChange("")}><X size={14} /> Remove</Button>}
           </div>
-          <Input value={value} onChange={(e) => onChange(e.target.value)} placeholder="…or paste an image URL" />
+          <Input value={value ?? ""} onChange={(e) => onChange(e.target.value)} placeholder="…or paste an image URL" />
         </div>
       </div>
     </div>
