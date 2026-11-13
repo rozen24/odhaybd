@@ -235,3 +235,73 @@
 @media (prefers-reduced-motion: reduce) {
   .fs-bar, .fs-bar::after, .fs-bar-icon, .fs-bar-icon::before, .fs-bar-icon svg { animation: none !important; }
 }
+
+
+/* ───────── Add-to-cart CTA attention animation ───────── */
+.cta-add {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  animation: cta-ring 2.2s ease-out infinite, cta-breathe 2.2s ease-in-out infinite;
+}
+
+/* expanding pulse ring (oxblood) */
+@keyframes cta-ring {
+  0%   { box-shadow: 0 0 0 0 color-mix(in srgb, var(--primary) 55%, transparent); }
+  70%, 100% { box-shadow: 0 0 0 12px transparent; }
+}
+
+/* subtle breathing scale */
+@keyframes cta-breathe {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.03); }
+}
+
+/* light sheen sweeping across the button */
+.cta-add::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(
+    105deg,
+    transparent 35%,
+    color-mix(in srgb, var(--primary-foreground) 40%, transparent) 50%,
+    transparent 65%
+  );
+  transform: translateX(-120%);
+  animation: cta-sheen 2.8s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes cta-sheen {
+  0%       { transform: translateX(-120%); }
+  55%, 100% { transform: translateX(120%); }
+}
+
+/* cart icon wiggles once per cycle, then rests */
+.cta-add svg {
+  transform-origin: 50% 60%;
+  animation: cta-cart 2.8s ease-in-out infinite;
+}
+@keyframes cta-cart {
+  0%, 60%, 100% { transform: translateX(0) rotate(0); }
+  66% { transform: translateX(-2px) rotate(-12deg); }
+  74% { transform: translateX(3px) rotate(10deg); }
+  82% { transform: translateX(-2px) rotate(-6deg); }
+  90% { transform: translateX(1px) rotate(3deg); }
+}
+
+/* calm down on hover so the click feels solid */
+.cta-add:hover { animation-play-state: paused; }
+
+/* no animation when the book can't be bought */
+.cta-add:disabled,
+.cta-add[disabled] { animation: none; }
+.cta-add:disabled::after,
+.cta-add[disabled]::after { display: none; }
+.cta-add:disabled svg,
+.cta-add[disabled] svg { animation: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .cta-add, .cta-add::after, .cta-add svg { animation: none !important; }
+}

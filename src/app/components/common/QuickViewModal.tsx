@@ -66,7 +66,7 @@ export function QuickViewModal() {
           <div className="aspect-[2/3] lg:aspect-[1/1] sm:aspect-auto">
             <BookCover title={book.title} author={authorName} coverUrl={book.coverUrl} />
           </div>
-          <div className="flex flex-col p-6 pb-0">
+          <div className="flex flex-col p-6 pb-3">
             <DialogTitle className="font-display text-2xl font-semibold tracking-tight">{book.title}</DialogTitle>
             <DialogDescription className="mt-1 text-sm">
               {authorName}
@@ -84,13 +84,13 @@ export function QuickViewModal() {
                   className={cn("rounded-md border px-3 py-2 text-left", (candidate.id ?? candidate.name) === (variant.id ?? variant.name) && "border-primary bg-primary/5")}
                 >
                   <p className="text-xs font-medium text-muted-foreground">{candidate.name}</p>
-                  <PriceTag price={candidate.flashPrice ?? candidate.price} oldPrice={candidate.oldPrice} size="lg" />
+                  <PriceTag price={candidate.flashPrice ?? candidate.price} oldPrice={candidate.oldPrice} size="sm" />
                   <p className="mt-1 text-xs text-muted-foreground">{candidate.stock > 0 ? `${candidate.stock} in stock` : "Out of stock"}</p>
                 </button>
               ))}
             </div>
             <div className="mt-4">
-              {savings > 0 && <p className="mt-1 text-sm text-primary">You save {formatTk(savings)}{discount > 0 ? ` · ${discount}% off` : ""}</p>}
+              {savings > 0 && <p className="mt-1 text-lg text-primary">You save {formatTk(savings)}{discount > 0 ? ` · ${discount}% off` : ""}</p>}
               {book.flashSale && variant.flashPrice && (
                 <p className="mt-2 flex items-center gap-1.5 text-xs text-muted-foreground"><Zap size={13} className="text-primary" /> Flash sale price until {formatDate(book.flashSale.endsAt)}</p>
               )}
@@ -106,7 +106,7 @@ export function QuickViewModal() {
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-2">
-                <Button className="gap-2" disabled={outOfStock} onClick={() => { addToCart(book, qty, variant); close(); }}>
+                <Button className="cta-add gap-2" disabled={outOfStock} onClick={() => { addToCart(book, qty, variant); close(); }}>
                   <ShoppingCart size={16} /> Add to cart
                 </Button>
                 <Button variant="outline" disabled={outOfStock} onClick={buyNow}>Buy now</Button>
