@@ -1,0 +1,169 @@
+/* ───────── Flash Sale animations (Boierpata theme) ───────── */
+@property --fs-angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+.fs-wrap {
+  /* mapped to theme tokens: oxblood, gold, bottle-green */
+  --fs-1: var(--primary);
+  --fs-2: var(--chart-3);
+  --fs-3: var(--accent);
+  --fs-blob-opacity: 0.16;
+  --fs-border: conic-gradient(from var(--fs-angle), var(--fs-1), var(--fs-2), var(--fs-3), var(--fs-2), var(--fs-1));
+
+  position: relative;
+  border-radius: calc(var(--radius) + 0.5rem);
+  padding: 2px;
+  background: var(--fs-border);
+  animation: fs-spin 5s linear infinite;
+  isolation: isolate;
+}
+.dark .fs-wrap { --fs-blob-opacity: 0.24; }
+
+/* soft glow that follows the border */
+.fs-wrap::before {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  z-index: -1;
+  border-radius: inherit;
+  background: var(--fs-border);
+  filter: blur(18px);
+  opacity: 0.4;
+  animation: fs-glow 2.6s ease-in-out infinite;
+}
+@keyframes fs-spin { to { --fs-angle: 360deg; } }
+@keyframes fs-glow { 0%, 100% { opacity: 0.22; } 50% { opacity: 0.55; } }
+
+.fs-inner {
+  position: relative;
+  overflow: hidden;
+  border-radius: calc(var(--radius) + 0.5rem - 2px);
+}
+
+/* Aurora blobs: oxblood, green, gold on warm paper */
+.fs-blob {
+  position: absolute;
+  width: 320px;
+  height: 320px;
+  border-radius: 9999px;
+  filter: blur(70px);
+  opacity: var(--fs-blob-opacity);
+  pointer-events: none;
+}
+.fs-blob-a { top: -120px; left: -80px; background: var(--fs-1); animation: fs-float-a 9s ease-in-out infinite; }
+.fs-blob-b { top: -60px; right: -100px; background: var(--fs-3); animation: fs-float-b 11s ease-in-out infinite; }
+.fs-blob-c { bottom: -140px; left: 35%; background: var(--fs-2); animation: fs-float-c 13s ease-in-out infinite; }
+@keyframes fs-float-a { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(120px,60px) scale(1.25); } }
+@keyframes fs-float-b { 0%,100% { transform: translate(0,0) scale(1.1); } 50% { transform: translate(-140px,80px) scale(0.9); } }
+@keyframes fs-float-c { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(-100px,-50px) scale(1.3); } }
+
+/* Sparkles (gold) */
+.fs-spark {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+  background: var(--fs-2);
+  box-shadow: 0 0 10px 2px color-mix(in srgb, var(--fs-2) 70%, transparent);
+  pointer-events: none;
+  animation: fs-twinkle 2.6s ease-in-out infinite;
+}
+@keyframes fs-twinkle {
+  0%,100% { opacity: 0; transform: scale(0.4) translateY(0); }
+  50% { opacity: 1; transform: scale(1.1) translateY(-10px); }
+}
+
+/* Sliding ribbon: oxblood + gold */
+.fs-stripes {
+  height: 6px;
+  background: repeating-linear-gradient(-45deg, var(--fs-1) 0 12px, var(--fs-2) 12px 24px);
+  background-size: 34px 100%;
+  animation: fs-slide 1s linear infinite;
+}
+@keyframes fs-slide { to { background-position: 34px 0; } }
+
+/* Header sheen sweep */
+.fs-header { position: relative; overflow: hidden; border-radius: var(--radius); }
+.fs-header::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 35%, color-mix(in srgb, var(--card) 70%, transparent) 50%, transparent 65%);
+  transform: translateX(-120%);
+  animation: fs-sheen 3.5s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes fs-sheen { 0% { transform: translateX(-120%); } 60%,100% { transform: translateX(120%); } }
+
+/* Bolt icon with ripple rings */
+.fs-bolt {
+  position: relative;
+  background: linear-gradient(135deg, var(--fs-1), var(--fs-2));
+  color: var(--primary-foreground);
+  animation: fs-bolt 1.6s ease-in-out infinite;
+}
+.fs-bolt::before, .fs-bolt::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  border: 2px solid var(--fs-1);
+  animation: fs-ping 2s cubic-bezier(0,0,0.2,1) infinite;
+}
+.fs-bolt::after { animation-delay: 1s; border-color: var(--fs-2); }
+.fs-bolt svg { animation: fs-zap 1.6s ease-in-out infinite; filter: drop-shadow(0 0 4px color-mix(in srgb, var(--primary-foreground) 80%, transparent)); }
+@keyframes fs-ping { 0% { transform: scale(1); opacity: 0.8; } 100% { transform: scale(2.1); opacity: 0; } }
+@keyframes fs-bolt {
+  0%,100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--fs-1) 60%, transparent); }
+  50% { box-shadow: 0 0 22px 6px color-mix(in srgb, var(--fs-2) 60%, transparent); }
+}
+@keyframes fs-zap { 0%,100% { transform: rotate(0) scale(1); } 20% { transform: rotate(-12deg) scale(1.2); } 40% { transform: rotate(10deg) scale(1.1); } 60% { transform: rotate(0) scale(1); } }
+
+/* Shimmering gradient title: oxblood → gold → green */
+.fs-title {
+  background: linear-gradient(90deg, var(--fs-1), var(--fs-2), var(--fs-3), var(--fs-2), var(--fs-1));
+  background-size: 250% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: fs-text 5s linear infinite;
+}
+@keyframes fs-text { to { background-position: 250% 0; } }
+
+/* LIVE badge */
+.fs-live { position: relative; display: inline-flex; align-items: center; gap: 6px; }
+.fs-live-dot { width: 8px; height: 8px; border-radius: 9999px; background: var(--fs-1); animation: fs-blink 1s ease-in-out infinite; }
+@keyframes fs-blink {
+  0%,100% { opacity: 1; box-shadow: 0 0 0 0 color-mix(in srgb, var(--fs-1) 70%, transparent); }
+  50% { opacity: 0.45; box-shadow: 0 0 0 6px transparent; }
+}
+
+/* Timer boxes: ink on paper, inverted in dark mode, gold glow */
+.fs-tbox {
+  background: var(--foreground);
+  color: var(--background);
+  border: 1px solid color-mix(in srgb, var(--fs-2) 45%, transparent);
+  animation: fs-tglow 2s ease-in-out infinite;
+}
+.fs-tbox:nth-child(2) { animation-delay: 0.25s; }
+.fs-tbox:nth-child(3) { animation-delay: 0.5s; }
+.fs-tbox:nth-child(4) { animation-delay: 0.75s; }
+@keyframes fs-tglow {
+  0%,100% { box-shadow: 0 0 0 transparent; }
+  50% { box-shadow: 0 0 14px color-mix(in srgb, var(--fs-2) 55%, transparent); }
+}
+.fs-tick { display: inline-block; animation: fs-tick 1s ease-out infinite; }
+@keyframes fs-tick { 0% { transform: translateY(-40%) scale(1.25); opacity: 0.3; } 25%,100% { transform: translateY(0) scale(1); opacity: 1; } }
+
+/* "View all" arrow nudge */
+.fs-arrow { display: inline-block; animation: fs-nudge 1.2s ease-in-out infinite; }
+@keyframes fs-nudge { 0%,100% { transform: translateX(0); } 50% { transform: translateX(5px); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .fs-wrap, .fs-wrap::before, .fs-blob, .fs-spark, .fs-stripes, .fs-header::after,
+  .fs-bolt, .fs-bolt::before, .fs-bolt::after, .fs-bolt svg, .fs-title, .fs-live-dot,
+  .fs-tbox, .fs-tick, .fs-arrow { animation: none !important; }
+}

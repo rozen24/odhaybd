@@ -24,9 +24,10 @@ export default function HomePage() {
         <HeroSection />
       </div>
       <CategoryTiles />
+      <FlashSale />
       <LazySection><CategoryCollectionSlider /></LazySection> 
       
-      <FlashSale />
+      
       <QuickDeal />
                   
       <LazySection>

@@ -44,33 +44,71 @@ export function FlashSale() {
   if (r.error) return <Section><SectionHeader eyebrow="Limited time" title="Flash sale" /><ErrorState compact onRetry={r.refetch} /></Section>;
   if (books.length === 0) return null;
 
+  const SPARKS = [
+    { l: "8%",  t: "30%", d: "0s" },
+    { l: "22%", t: "70%", d: "0.6s" },
+    { l: "48%", t: "20%", d: "1.2s" },
+    { l: "66%", t: "75%", d: "1.8s" },
+    { l: "82%", t: "35%", d: "0.9s" },
+    { l: "94%", t: "65%", d: "2.1s" },
+  ];
+
   return (
     <Section>
-      <div className="rounded-lg border border-primary/25 bg-card p-5 md:p-6">
-        <div className="mb-5 flex flex-wrap items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-primary-foreground"><Zap size={18} /></span>
-            <div>
-              <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-muted-foreground">Limited time</p>
-              <h2 className="font-display text-2xl font-semibold tracking-tight">Flash sale</h2>
-            </div>
-          </div>
-          <div className="flex items-center gap-4">
-            {t && !t.done && (
-              <div className="flex items-center gap-1.5" role="timer" aria-label="Time left">
-                <span className="mr-1 text-xs text-muted-foreground">Ends in</span>
-                {([["d", t.d], ["h", t.h], ["m", t.m], ["s", t.s]] as const).filter(([l, v]) => l !== "d" || v > 0).map(([label, v]) => (
-                  <span key={label} className="flex min-w-[44px] flex-col items-center rounded-md bg-foreground px-2 py-1 text-background">
-                    <span className="font-display text-lg font-semibold tabular-nums leading-none">{String(v).padStart(2, "0")}</span>
-                    <span className="text-[10px] uppercase opacity-70">{label}</span>
-                  </span>
-                ))}
+      <div className="fs-wrap">
+        <div className="fs-inner bg-card">
+          {/* animated background */}
+          <div className="fs-stripes" aria-hidden />
+          <span className="fs-blob fs-blob-a" aria-hidden />
+          <span className="fs-blob fs-blob-b" aria-hidden />
+          <span className="fs-blob fs-blob-c" aria-hidden />
+          {SPARKS.map((s, i) => (
+            <span key={i} className="fs-spark" aria-hidden style={{ left: s.l, top: s.t, animationDelay: s.d }} />
+          ))}
+
+          <div className="relative p-5 md:p-6">
+            {/* header */}
+            <div className="fs-header mb-5 flex flex-wrap items-center justify-between gap-4 bg-background/40 p-3 backdrop-blur-sm">
+              <div className="flex items-center gap-3">
+                <span className="fs-bolt flex h-11 w-11 items-center justify-center rounded-full">
+                  <Zap size={20} />
+                </span>
+                <div>
+                  <p className="fs-live text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                    <span className="fs-live-dot" /> Live · Limited time
+                  </p>
+                  <h2 className="fs-title font-display text-3xl font-bold tracking-tight">Flash sale</h2>
+                </div>
               </div>
-            )}
-            <Link to="/books?flag=flash" className="text-sm font-medium text-primary hover:underline">View all →</Link>
+
+              <div className="flex items-center gap-4">
+                {t && !t.done && (
+                  <div className="flex items-center gap-1.5" role="timer" aria-label="Time left">
+                    <span className="mr-1 text-xs font-medium text-muted-foreground">Ends in</span>
+                    {([["d", t.d], ["h", t.h], ["m", t.m], ["s", t.s]] as const)
+                      .filter(([l, v]) => l !== "d" || v > 0)
+                      .map(([label, v]) => (
+                        <span key={label} className="fs-tbox flex min-w-[46px] flex-col items-center rounded-md px-2 py-1">
+                          <span
+                            key={label === "s" ? v : label}
+                            className={`font-display text-lg font-semibold tabular-nums leading-none ${label === "s" ? "fs-tick" : ""}`}
+                          >
+                            {String(v).padStart(2, "0")}
+                          </span>
+                          <span className="text-[10px] uppercase opacity-70">{label}</span>
+                        </span>
+                      ))}
+                  </div>
+                )}
+                <Link to="/books?flag=flash" className="text-sm font-semibold text-primary hover:underline">
+                  View all <span className="fs-arrow">→</span>
+                </Link>
+              </div>
+            </div>
+
+            <BookRail books={books} />
           </div>
         </div>
-        <BookRail books={books} />
       </div>
     </Section>
   );
