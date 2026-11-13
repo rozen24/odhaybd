@@ -41,9 +41,6 @@ export interface Category {
   parentId: string | null;
   icon?: string;
   imageUrl?: string | null;
-  bookCount: number;
-  displayOrder?: number;
-  createdAt: string;
 }
 
 export type BookLanguage = "Bangla" | "English" | "Arabic" | "Hindi";
