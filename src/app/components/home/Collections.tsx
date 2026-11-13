@@ -1,9 +1,10 @@
 // Flash sale, top authors/publishers, recently sold, campaign collection,
 // recommendations and the Explore tabs.
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link } from "@/lib/navigation";
 import { Zap } from "lucide-react";
+import useEmblaCarousel from "embla-carousel-react";
 import { useQuery } from "../../../lib/query";
 import { services } from "../../../services";
 import { timeLeft } from "../../../lib/format";
@@ -19,6 +20,7 @@ import { ImageWithFallback } from "../figma/ImageWithFallback";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import { BooksRailSection, QueryRailSection, Section, hrefToQuery, useBooks } from "./shared";
 import { CampaignBanner } from "./Hero";
+import { CarouselArrows } from "./CarouselArrows";
 import type { Banner, Book, BookQuery } from "../../../types";
 
 /* ---------------- Flash sale ---------------- */
@@ -79,25 +81,77 @@ export function FlashSale() {
 export function TopAuthors() {
   const { authors, loading } = useCatalog();
   const top = useMemo(() => [...authors].filter((a) => a.bookCount > 0).sort((a, b) => b.bookCount - a.bookCount).slice(0, 12), [authors]);
+  const [viewportRef, api] = useEmblaCarousel({ loop: true, align: "start", slidesToScroll: 1 });
+  const [paused, setPaused] = useState(false);
+  const [scrollable, setScrollable] = useState(false);
+
+  useEffect(() => {
+    if (!api) return;
+    const update = () => setScrollable(api.canScrollNext() || api.canScrollPrev());
+    update();
+    api.on("reInit", update);
+    return () => { api.off("reInit", update); };
+  }, [api]);
+
+  useEffect(() => {
+    if (!api || paused || !scrollable || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const id = window.setInterval(() => api.scrollNext(), 3500);
+    return () => window.clearInterval(id);
+  }, [api, paused, scrollable]);
+
+  const prev = useCallback(() => api?.scrollPrev(), [api]);
+  const next = useCallback(() => api?.scrollNext(), [api]);
+  const onKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (e.key === "ArrowLeft") prev();
+    if (e.key === "ArrowRight") next();
+  }, [next, prev]);
+
   if (loading && authors.length === 0) return <Section><SectionSkeleton /></Section>;
   if (top.length === 0) return null;
   return (
     <Section band>
-      <SectionHeader eyebrow="Writers" title="Top authors" href="/authors" />
-      <div className="[scrollbar-width:none] [&::-webkit-scrollbar]:hidden -mx-1 flex snap-x gap-5 overflow-x-auto px-1 pb-2">
-        {top.map((a) => (
-          <Link key={a.id} to={`/author/${a.slug}`} className="group w-28 shrink-0 snap-start text-center focus-visible:outline-none">
-            <span className="mx-auto block h-24 w-24 overflow-hidden rounded-full bg-muted ring-1 ring-border transition-shadow group-hover:shadow-sm group-focus-visible:ring-2 group-focus-visible:ring-ring/40">
-              {a.photoUrl ? (
-                <ImageWithFallback src={a.photoUrl} alt={a.name} className="h-full w-full object-cover" />
-              ) : (
-                <span className="flex h-full w-full items-center justify-center font-display text-2xl font-semibold text-muted-foreground">{a.name.charAt(0)}</span>
-              )}
-            </span>
-            <span className="mt-2 block truncate text-sm font-medium group-hover:text-primary">{a.name}</span>
-            <span className="block text-xs tabular-nums text-muted-foreground">{a.bookCount} {a.bookCount === 1 ? "book" : "books"}</span>
-          </Link>
-        ))}
+      <SectionHeader
+        eyebrow="Writers"
+        title="Top authors"
+        href="/authors"
+        action={scrollable && <CarouselArrows canPrev canNext prev={prev} next={next} label="authors" />}
+      />
+      <div
+        role="region"
+        aria-roledescription="carousel"
+        aria-label="Top authors"
+        tabIndex={0}
+        onKeyDown={onKeyDown}
+        onMouseEnter={() => setPaused(true)}
+        onMouseLeave={() => setPaused(false)}
+        onFocus={() => setPaused(true)}
+        onBlur={() => setPaused(false)}
+        onTouchStart={() => setPaused(true)}
+        onTouchEnd={() => setPaused(false)}
+        className="rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
+      >
+        <div className="overflow-hidden py-2" ref={viewportRef}>
+          <div className="-ml-3 flex touch-pan-y">
+            {top.map((a, idx) => (
+              <div key={a.id} role="group" aria-roledescription="slide" aria-label={`${idx + 1} of ${top.length}`} className="min-w-0 shrink-0 grow-0 basis-1/2 pl-3 sm:basis-1/4 md:basis-1/6">
+                <Link
+                  to={`/author/${a.slug}`}
+                  className="group relative block rounded-2xl border border-transparent bg-card/60 p-3 text-center transition-all duration-300 hover:-translate-y-1 hover:border-primary/20 hover:bg-card hover:shadow-[0_12px_30px_-14px_hsl(var(--primary)/0.55)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
+                >
+                  <span className="mx-auto block aspect-square w-full max-w-24 overflow-hidden rounded-full bg-muted ring-1 ring-border transition-all duration-300 group-hover:scale-105 group-hover:ring-2 group-hover:ring-primary/40 group-hover:shadow-[0_0_0_6px_hsl(var(--primary)/0.08)] group-focus-visible:ring-2 group-focus-visible:ring-ring/40">
+                    {a.photoUrl ? (
+                      <ImageWithFallback src={a.photoUrl} alt={a.name} className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-110" />
+                    ) : (
+                      <span className="flex h-full w-full items-center justify-center font-display text-2xl font-semibold text-muted-foreground transition-colors group-hover:text-primary">{a.name.charAt(0)}</span>
+                    )}
+                  </span>
+                  <span className="mt-2 block truncate text-sm font-medium transition-colors group-hover:text-primary">{a.name}</span>
+                  <span className="block text-xs tabular-nums text-muted-foreground">{a.bookCount} {a.bookCount === 1 ? "book" : "books"}</span>
+                </Link>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </Section>
   );
