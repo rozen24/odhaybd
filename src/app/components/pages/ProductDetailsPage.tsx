@@ -304,7 +304,8 @@ function VariantSelector({ variants, value, onChange }: { variants: ProductVaria
         {variants.map((variant) => (
           <button key={variant.id ?? variant.name} type="button" onClick={() => onChange(variant.id ?? "")} className={cn("rounded-md border px-3 py-2 text-left text-sm", value === variant.id ? "border-primary bg-primary/5" : "border-border")}>
             <span className="block font-medium">{variant.name}</span>
-            <span className="text-xs text-muted-foreground">{formatTk(variant.price)} · {variant.stock > 0 ? `${variant.stock} in stock` : "Out of stock"}</span>
+            {/* <span className="text-xs text-muted-foreground">{formatTk(variant.price)} · {variant.stock > 0 ? `${variant.stock} in stock` : "Out of stock"}</span> */}
+            <span className="text-xs text-muted-foreground">{formatTk(variant.price)} · in stock</span>
           </button>
         ))}
       </div>
@@ -317,7 +318,7 @@ function PriceBlock({ book, price, oldPrice, stock, pct }: { book: Book; price: 
   return (
     <div>
       <div className="flex flex-wrap items-baseline gap-3">
-        <span className="font-display text-3xl font-semibold tabular-nums">{formatTk(price)}</span>
+        <span className="font-display text-lg font-semibold tabular-nums">{formatTk(price)}</span>
         {pct > 0 && (
           <>
             <span className="text-base tabular-nums text-muted-foreground line-through">{formatTk(oldPrice)}</span>
@@ -325,13 +326,17 @@ function PriceBlock({ book, price, oldPrice, stock, pct }: { book: Book; price: 
           </>
         )}
       </div>
-      {pct > 0 && <p className="mt-1 text-sm tabular-nums text-primary">You save {formatTk(oldPrice - price)}</p>}
+      {pct > 0 && <p className="mt-1 text-lg text-white rounded bg-accent px-3 py-1.5 inline-block">You save {formatTk(oldPrice - price)}</p>}
       {book.flashSale && (
         <p className="mt-2 flex items-center gap-1.5 text-xs text-muted-foreground"><Zap size={13} className="text-primary" /> Flash sale price until {formatDate(book.flashSale.endsAt)}</p>
       )}
-      <p className={cn("mt-3 flex items-center gap-1.5 text-sm font-medium", outOfStock ? "text-destructive" : "text-accent")}>
+      {/* <p className={cn("mt-3 flex items-center gap-1.5 text-sm font-medium", outOfStock ? "text-destructive" : "text-accent")}>
         <span className={cn("h-2 w-2 rounded-full", outOfStock ? "bg-destructive" : "bg-accent")} />
         {outOfStock ? "Out of stock" : stock <= 5 ? `Only ${stock} left in stock` : "In stock"}
+      </p> */}
+      <p className="mt-3 flex items-center gap-1.5 text-sm font-medium">
+        <span className="h-2 w-2 rounded-full bg-accent"/>
+         In stock
       </p>
     </div>
   );

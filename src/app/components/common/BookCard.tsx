@@ -122,13 +122,29 @@ const BOOK_CARD_CSS = `
   .book-card:hover .book-card__img { transform: none; }
 }
 
-   .book-card__actions,
-   .book-card__cta { opacity: 0; transition: opacity 2.2s ease; }
+   .book-card__actions {
+     opacity: 0;
+     transition: opacity 2.2s ease;
+   }
+
+   .book-card__cta {
+     opacity: 0;
+     pointer-events: none;
+     transform: translateY(32px);
+     transition:
+       opacity 0.4s ease,
+       transform 0.4s ease;
+   }
 
    .book-card:hover .book-card__actions,
+   .book-card:focus-within .book-card__actions { opacity: 1; }
+
    .book-card:hover .book-card__cta,
-   .book-card:focus-within .book-card__actions,
-   .book-card:focus-within .book-card__cta { opacity: 1; }
+   .book-card:focus-within .book-card__cta {
+     opacity: 1;
+     pointer-events: auto;
+     transform: translateY(0);
+   }
 
    .book-card__quick-view {
      position: relative;
@@ -174,8 +190,8 @@ const BOOK_CARD_CSS = `
      .book-card__add-to-cart-label,
      .book-card__add-to-cart-icon {
        transition:
-         opacity 1.5s ease,
-         transform 1.5s ease;
+         opacity 2.5s ease,
+         transform 2.5s ease;
    }
 
      .book-card__add-to-cart-label {
@@ -204,7 +220,11 @@ const BOOK_CARD_CSS = `
 
      @media (hover: none) {
        .book-card__actions,
-       .book-card__cta { opacity: 1; }
+       .book-card__cta {
+         opacity: 1;
+         pointer-events: auto;
+         transform: none;
+       }
 
        .book-card__add-to-cart-label {
          opacity: 0;
@@ -218,6 +238,10 @@ const BOOK_CARD_CSS = `
      }
 
      @media (prefers-reduced-motion: reduce) {
+     .book-card__cta {
+         transition: none;
+       }
+
      .book-card__quick-view-label,
      .book-card__quick-view-icon {
          transition: none;
@@ -312,12 +336,12 @@ export function BookCard({
             <Tooltip>
               <TooltipTrigger asChild>
                 <IconBtn
-                  className="bg-[#fff] text-[#8f0a0a] hover:bg-[#0c0101] hover:text-white"
+                  className="text-[#8f0a0a] hover:bg-[#0c0101] hover:text-white font-bold"
                   label={wished ? "Remove from wishlist" : "Add to wishlist"}
                   active={wished}
                   onClick={() => toggleWishlist(book)}
                 >
-                  <Heart size={15} fill={wished ? "currentColor" : "none"} />
+                  <Heart size={18} fill={wished ? "currentColor" : "none"} />
                 </IconBtn>
               </TooltipTrigger>
               <TooltipContent side="left">
@@ -327,8 +351,8 @@ export function BookCard({
 
             <Tooltip>
               <TooltipTrigger asChild>
-                <IconBtn label="Compare" className="bg-[#fff]  text-[#8f0a0a] hover:bg-[#0c0101] hover:text-white" active={compared} onClick={() => toggleCompare(book)}>
-                  <GitCompare size={15} />
+                <IconBtn label="Compare" className="text-[#8f0a0a] hover:bg-[#0c0101] hover:text-white font-bold" active={compared} onClick={() => toggleCompare(book)}>
+                  <GitCompare size={18} />
                 </IconBtn>
               </TooltipTrigger>
               <TooltipContent side="left">Compare</TooltipContent>
@@ -346,11 +370,11 @@ export function BookCard({
                 e.stopPropagation();
                 quickView.open(book);
               }}
-              className="book-card__quick-view rounded-full bg-[#8f0a0a] px-2 md:px-6 py-2.5 text-sm font-semibold text-white shadow-lg
+              className="book-card__quick-view rounded-full bg-[#8f0a0a] p-2 md:p-6 text-sm font-semibold text-white shadow-lg
                         transition-colors hover:bg-[#0c0101] focus-visible:outline-none
                         focus-visible:ring-2 focus-visible:ring-white/80"
             >
-              <span className="book-card__quick-view-label hidden md:block">Quick view</span>
+              <span className="book-card__quick-view-label hidden md:block md:py-4.5">Quick view</span>
               <span className="book-card__quick-view-label md:hidden"><Eye className="text-white" size={18} /></span>
               <Eye className="book-card__quick-view-icon" size={18} />
             </button>
@@ -358,7 +382,7 @@ export function BookCard({
             {/* Qty stepper + Add to cart */}
             {!outOfStock && (
               <div
-                className="flex w-full max-w-[230px] items-center gap-1 rounded-full bg-[#8f0a0a] p-1 text-white shadow-lg"
+                className="flex md:w-full max-w-[230px] items-center gap-1 rounded-full bg-[#8f0a0a] p-1 sm:px-2 text-white shadow-lg"
                 onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}
               >
                 <button
@@ -366,7 +390,7 @@ export function BookCard({
                   aria-label="Decrease quantity"
                   disabled={qty <= 1}
                   onClick={() => setQty((q) => Math.max(1, q - 1))}
-                  className="flex h-7 w-5 items-center justify-center rounded-full transition-colors
+                  className="flex sm:py-2.5 h-7 w-5 items-center justify-center rounded-full transition-colors
                             hover:bg-white/15 disabled:opacity-40 disabled:hover:bg-transparent"
                 >
                   <Minus size={14} />
@@ -380,7 +404,7 @@ export function BookCard({
                   type="button"
                   aria-label="Increase quantity"
                   onClick={() => setQty((q) => q + 1)}
-                  className="flex h-7 w-5 items-center justify-center rounded-full transition-colors hover:bg-white/15"
+                  className="flex sm:py-2.5 h-7 w-5 items-center justify-center rounded-full transition-colors hover:bg-white/15"
                 >
                   <Plus size={14} />
                 </button>
@@ -394,7 +418,7 @@ export function BookCard({
                     addToCart(book, qty);   // see note below
                     setQty(1);
                   }}
-                  className="book-card__add-to-cart flex-1 whitespace-nowrap rounded-full px-3 py-1.5 text-sm font-semibold
+                  className="book-card__add-to-cart flex-1 whitespace-nowrap rounded-full  sm:py-2.5 text-sm font-semibold
                             transition-colors hover:bg-[#000000]"
                 >
                   <span className="book-card__add-to-cart-label">Add to cart</span>
@@ -469,7 +493,7 @@ function IconBtn({
       aria-pressed={active}
       onClick={onClick}
       className={cn(
-        "book-card__icon-btn flex h-8 w-8 items-center justify-center rounded-full border border-border bg-card text-muted-foreground shadow-sm",
+        "book-card__icon-btn flex h-8 w-8 items-center justify-center rounded-full border border-border text-muted-foreground shadow-sm",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40",
         active && "text-primary",
         className,

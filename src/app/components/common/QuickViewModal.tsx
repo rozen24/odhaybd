@@ -91,12 +91,14 @@ export function QuickViewModal() {
               ))}
             </div>
             <div className="mt-4">
-              {savings > 0 && <p className="mt-1 text-lg text-primary">You save {formatTk(savings)}{discount > 0 ? ` · ${discount}% off` : ""}</p>}
+              {savings > 0 && <p className="mt-1 text-lg text-white rounded bg-accent px-3 py-1.5 inline-block">You save {formatTk(savings)}{discount > 0 ? ` · ${discount}% off` : ""}</p>}
               {book.flashSale && variant.flashPrice && (
                 <p className="mt-2 flex items-center gap-1.5 text-xs text-muted-foreground"><Zap size={13} className="text-primary" /> Flash sale price until {formatDate(book.flashSale.endsAt)}</p>
               )}
             </div>
-            <p className="mt-4 line-clamp-4 text-sm text-muted-foreground">{book.description}</p>
+            {book.description && (
+              <p className="mt-4 line-clamp-4 text-sm text-muted-foreground">{book.description}</p>
+            )}
             <div className="mt-auto space-y-3 pt-6">
               <div className="flex items-center gap-3">
                 <span className="text-sm text-muted-foreground">Quantity</span>
@@ -110,7 +112,7 @@ export function QuickViewModal() {
                 <Button className="cta-add gap-2" disabled={outOfStock} onClick={() => { addToCart(book, qty, variant); close(); }}>
                   <ShoppingCart size={16} /> Add to cart
                 </Button>
-                <Button variant="outline" disabled={outOfStock} onClick={buyNow}>Buy now</Button>
+                <Button className="hover:bg-accent hover:text-accent-foreground" variant="outline" disabled={outOfStock} onClick={buyNow}>Buy now</Button>
               </div>
               <div className="flex flex-wrap items-center gap-1 text-sm">
                 <button onClick={() => toggleWishlist(book)} aria-pressed={wished} className="flex items-center gap-1.5 rounded-md px-2 py-1.5 text-muted-foreground hover:bg-secondary hover:text-foreground">
