@@ -85,7 +85,8 @@ export function QuickViewModal() {
                 >
                   <p className="text-xs font-medium text-muted-foreground">{candidate.name}</p>
                   <PriceTag price={candidate.flashPrice ?? candidate.price} oldPrice={candidate.oldPrice} size="sm" />
-                  <p className="mt-1 text-xs text-muted-foreground">{candidate.stock > 0 ? `${candidate.stock} in stock` : "Out of stock"}</p>
+                  <p className="mt-1 text-sm text-muted-foreground">in stock</p>
+                  {/* <p className="mt-1 text-xs text-muted-foreground">{candidate.stock > 0 ? `${candidate.stock} in stock` : "Out of stock"}</p> */}
                 </button>
               ))}
             </div>

@@ -71,66 +71,89 @@ export function CategoryTiles() {
   const { viewportRef, scrollable, prev, next, onKeyDown, hoverProps } = useCategoryCarousel();
 
   if (loading && topCategories.length === 0) {
-    return <Section><SectionHeader eyebrow="Browse" title="Shop by category" /><TileGridSkeleton /></Section>;
+    return <Section><TileGridSkeleton /></Section>;
   }
   if (topCategories.length === 0) return null;
 
   return (
     <Section>
-      <SectionHeader
-        className="hidden md:flex"
-        eyebrow="Browse"
-        title="Shop by category"
-        href="/books"
-        hrefLabel="All books"
-        action={scrollable && <CarouselArrows canPrev canNext prev={prev} next={next} label="categories" />}
-      />
-      <div
-        role="region"
-        aria-roledescription="carousel"
-        aria-label="Shop by category"
-        tabIndex={0}
-        onKeyDown={onKeyDown}
-        {...hoverProps}
-        className="rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
-      >
-        <div className="overflow-hidden py-2" ref={viewportRef}>
-          <div className="-ml-3 flex touch-pan-y">
-            {topCategories.map((c, idx) => {
-              const Icon = iconFor(c);
-              return (
-                <div key={c.id} role="group" aria-roledescription="slide" aria-label={`${idx + 1} of ${topCategories.length}`} className={TILE_BASIS}>
-                  <Link
-                    to={`/category/${c.slug}`}
-                    draggable={false}
-                    className="group relative block aspect-[4/5] overflow-hidden rounded-2xl bg-muted shadow-sm ring-1 ring-border transition-all duration-300 hover:-translate-y-1 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60"
+      <div className="relative rounded-2xl border border-border bg-card/60 p-4 sm:p-5">
+        <h2 className="mb-4 font-display text-xl font-semibold tracking-tight text-foreground">
+          Shop By Category
+        </h2>
+
+        <div
+          role="region"
+          aria-roledescription="carousel"
+          aria-label="Shop by category"
+          tabIndex={0}
+          onKeyDown={onKeyDown}
+          {...hoverProps}
+          className="rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
+        >
+          <div className="overflow-hidden py-1" ref={viewportRef}>
+            <div className="-ml-4 flex touch-pan-y sm:-ml-6">
+              {topCategories.map((c, idx) => {
+                const Icon = iconFor(c);
+                return (
+                  <div
+                    key={c.id}
+                    role="group"
+                    aria-roledescription="slide"
+                    aria-label={`${idx + 1} of ${topCategories.length}`}
+                    className="min-w-0 shrink-0 grow-0 basis-[104px] pl-4 sm:basis-[146px] sm:pl-6"
                   >
-                    {c.imageUrl ? (
-                      <img
-                        src={c.imageUrl}
-                        alt=""
-                        loading="lazy"
-                        draggable={false}
-                        className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-110"
-                      />
-                    ) : (
-                      <div className="absolute inset-0 grid place-items-center bg-gradient-to-br from-accent to-accent/60 text-accent-foreground">
-                        <Icon size={40} strokeWidth={1.5} />
+                    <Link
+                      to={`/category/${c.slug}`}
+                      draggable={false}
+                      className="group flex flex-col items-center gap-3 focus-visible:outline-none"
+                    >
+                      <div className="aspect-square w-full overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-black/5 transition-all duration-300 group-hover:-translate-y-0.5 group-hover:shadow-md group-focus-visible:ring-2 group-focus-visible:ring-ring/60">
+                        {c.imageUrl ? (
+                          <img
+                            src={c.imageUrl}
+                            alt=""
+                            loading="lazy"
+                            draggable={false}
+                            className="h-full w-full object-contain p-2 transition-transform duration-300 group-hover:scale-105"
+                          />
+                        ) : (
+                          <div className="grid h-full w-full place-items-center text-muted-foreground">
+                            <Icon size={36} strokeWidth={1.5} />
+                          </div>
+                        )}
                       </div>
-                    )}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
-                    <div className="absolute inset-x-0 bottom-0 p-3 sm:p-4">
-                      <span className="line-clamp-2 block font-display text-base font-semibold leading-tight text-white sm:text-lg">{c.name}</span>
-                      <span className="mt-1 inline-flex items-center gap-1 text-xs font-medium text-white/80 transition-all duration-300 group-hover:gap-2 group-hover:text-white">
-                        Explore <Icons.ArrowRight size={12} />
+                      <span className="line-clamp-2 text-center text-[13px] font-medium leading-tight text-foreground/80 transition-colors group-hover:text-foreground sm:text-sm">
+                        {c.name}
                       </span>
-                    </div>
-                  </Link>
-                </div>
-              );
-            })}
+                    </Link>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </div>
+
+        {scrollable && (
+          <>
+            <button
+              type="button"
+              onClick={prev}
+              aria-label="Previous categories"
+              className="absolute left-0 top-1/2 hidden h-10 w-8 -translate-y-1/2 place-items-center rounded-r-lg border border-l-0 border-border bg-white text-foreground shadow-md transition hover:bg-muted md:grid"
+            >
+              <Icons.ChevronLeft size={18} />
+            </button>
+            <button
+              type="button"
+              onClick={next}
+              aria-label="Next categories"
+              className="absolute right-0 top-1/2 hidden h-10 w-8 -translate-y-1/2 place-items-center rounded-l-lg border border-r-0 border-border bg-white text-foreground shadow-md transition hover:bg-muted md:grid"
+            >
+              <Icons.ChevronRight size={18} />
+            </button>
+          </>
+        )}
       </div>
     </Section>
   );
