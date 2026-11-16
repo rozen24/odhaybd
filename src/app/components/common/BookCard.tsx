@@ -370,7 +370,7 @@ export function BookCard({
                 e.stopPropagation();
                 quickView.open(book);
               }}
-              className="book-card__quick-view rounded-full bg-[#8f0a0a] p-2 md:p-4 text-sm font-semibold text-white shadow-lg
+              className="book-card__quick-view rounded-full bg-[#8f0a0a] p-2 md:p-3.5 text-sm font-semibold text-white shadow-lg
                         transition-colors hover:bg-[#0c0101] focus-visible:outline-none
                         focus-visible:ring-2 focus-visible:ring-white/80"
             >
