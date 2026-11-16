@@ -85,13 +85,13 @@ export function QuickViewModal() {
                 >
                   <p className="text-xs font-medium text-muted-foreground">{candidate.name}</p>
                   <PriceTag price={candidate.flashPrice ?? candidate.price} oldPrice={candidate.oldPrice} size="sm" />
-                  <p className="mt-1 text-sm text-muted-foreground">in stock</p>
+                  <p className="mt-1 text-sm text-muted-foreground">Availability : in stock</p>
                   {/* <p className="mt-1 text-xs text-muted-foreground">{candidate.stock > 0 ? `${candidate.stock} in stock` : "Out of stock"}</p> */}
                 </button>
               ))}
             </div>
             <div className="mt-4">
-              {savings > 0 && <p className="mt-1 text-lg text-white rounded bg-accent px-3 py-1.5 inline-block">You save {formatTk(savings)}{discount > 0 ? ` · ${discount}% off` : ""}</p>}
+              {savings > 0 && <p className="mt-1 text-lg text-white rounded bg-[#ff7034] px-3 py-1.5 inline-block">You save {formatTk(savings)}{discount > 0 ? ` · ${discount}% off` : ""}</p>}
               {book.flashSale && variant.flashPrice && (
                 <p className="mt-2 flex items-center gap-1.5 text-xs text-muted-foreground"><Zap size={13} className="text-primary" /> Flash sale price until {formatDate(book.flashSale.endsAt)}</p>
               )}

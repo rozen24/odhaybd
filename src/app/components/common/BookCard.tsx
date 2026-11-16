@@ -147,7 +147,6 @@ const BOOK_CARD_CSS = `
    }
 
    .book-card__quick-view {
-     position: relative;
      overflow: hidden;
    }
 
@@ -336,7 +335,7 @@ export function BookCard({
             <Tooltip>
               <TooltipTrigger asChild>
                 <IconBtn
-                  className="text-[#8f0a0a] hover:bg-[#0c0101] hover:text-white font-bold"
+                  className="text-[#8f0a0a] font-bold"
                   label={wished ? "Remove from wishlist" : "Add to wishlist"}
                   active={wished}
                   onClick={() => toggleWishlist(book)}
@@ -351,7 +350,7 @@ export function BookCard({
 
             <Tooltip>
               <TooltipTrigger asChild>
-                <IconBtn label="Compare" className="text-[#8f0a0a] hover:bg-[#0c0101] hover:text-white font-bold" active={compared} onClick={() => toggleCompare(book)}>
+                <IconBtn label="Compare" className="text-[#8f0a0a] font-bold" active={compared} onClick={() => toggleCompare(book)}>
                   <GitCompare size={18} />
                 </IconBtn>
               </TooltipTrigger>
@@ -370,13 +369,13 @@ export function BookCard({
                 e.stopPropagation();
                 quickView.open(book);
               }}
-              className="book-card__quick-view rounded-full bg-[#8f0a0a] p-2 md:p-3.5 md:py-3 text-sm font-semibold text-white shadow-lg
+              className="book-card__quick-view sm:relative rounded-full bg-[#8f0a0a] p-2 md:p-0 text-sm font-semibold text-white shadow-lg
                         transition-colors hover:bg-[#0c0101] focus-visible:outline-none
                         focus-visible:ring-2 focus-visible:ring-white/80"
             >
-              <span className="book-card__quick-view-label hidden md:block md:py-1">Quick view</span>
+              <span className="book-card__quick-view-label hidden md:block md:p-3.5">Quick view</span>
+              <Eye className="book-card__quick-view-icon" size={20} />
               <span className="book-card__quick-view-label md:hidden"><Eye className="text-white" size={18} /></span>
-              <Eye className="book-card__quick-view-icon" size={18} />
             </button>
 
             {/* Qty stepper + Add to cart */}

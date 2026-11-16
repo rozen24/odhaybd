@@ -11,23 +11,32 @@ import { BookCard } from "../common/BookCard";
 import { ACADEMIC_KEYS, ISLAMIC_KEYS } from "../common/catalogHelpers";
 import { QueryRailSection, Section, useBooks } from "./shared";
 import type { Category, HomeSection } from "../../../types";
-import { cn } from "../ui/utils";
-import { CarouselArrows } from "./CarouselArrows";
-// import { useEmblaControls } from "./useEmblaControls";
 import { useCallback, useEffect, useState } from "react";
 import useEmblaCarousel from "embla-carousel-react";
-
 
 function iconFor(c: Category) {
   return (c.icon && (Icons as unknown as Record<string, Icons.LucideIcon>)[c.icon]) || Icons.BookOpen;
 }
 
 const AUTOPLAY_MS = 3500;
-// 2 per row on mobile, 4 on tablet, 6 on desktop
-const TILE_BASIS = "min-w-0 shrink-0 grow-0 basis-1/2 pl-3 md:basis-1/4 lg:basis-1/6";
+const DESKTOP_QUERY = "(min-width: 768px)";
+
+/** True when the viewport is at or above the `md` breakpoint. */
+function useIsDesktop() {
+  const [isDesktop, setIsDesktop] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia(DESKTOP_QUERY);
+    const update = () => setIsDesktop(mq.matches);
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  }, []);
+  return isDesktop;
+}
 
 function useCategoryCarousel() {
   const [viewportRef, api] = useEmblaCarousel({ loop: true, align: "start", slidesToScroll: 1 });
+  const isDesktop = useIsDesktop();
   const [paused, setPaused] = useState(false);
   const [scrollable, setScrollable] = useState(false);
 
@@ -39,13 +48,18 @@ function useCategoryCarousel() {
     return () => { api.off("reInit", update); };
   }, [api]);
 
-  // Auto-slide: pauses on hover/focus/touch, skipped for reduced-motion users.
+  // The carousel is display:none on mobile, so re-measure when it becomes visible.
   useEffect(() => {
-    if (!api || paused || !scrollable) return;
+    if (api && isDesktop) api.reInit();
+  }, [api, isDesktop]);
+
+  // Auto-slide: desktop only, pauses on hover/focus/touch, skipped for reduced-motion users.
+  useEffect(() => {
+    if (!api || !isDesktop || paused || !scrollable) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const id = window.setInterval(() => api.scrollNext(), AUTOPLAY_MS);
     return () => window.clearInterval(id);
-  }, [api, paused, scrollable]);
+  }, [api, isDesktop, paused, scrollable]);
 
   const prev = useCallback(() => api?.scrollPrev(), [api]);
   const next = useCallback(() => api?.scrollNext(), [api]);
@@ -66,6 +80,36 @@ function useCategoryCarousel() {
   return { viewportRef, scrollable, prev, next, onKeyDown, hoverProps };
 }
 
+function CategoryTile({ c }: { c: Category }) {
+  const Icon = iconFor(c);
+  return (
+    <Link
+      to={`/category/${c.slug}`}
+      draggable={false}
+      className="group flex flex-col items-center gap-2 focus-visible:outline-none sm:gap-3"
+    >
+      <div className="aspect-square w-full overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-black/5 transition-all duration-300 group-hover:-translate-y-0.5 group-hover:shadow-md group-focus-visible:ring-2 group-focus-visible:ring-ring/60">
+        {c.imageUrl ? (
+          <img
+            src={c.imageUrl}
+            alt=""
+            loading="lazy"
+            draggable={false}
+            className="h-full w-full object-contain p-2 transition-transform duration-300 group-hover:scale-105"
+          />
+        ) : (
+          <div className="grid h-full w-full place-items-center text-muted-foreground">
+            <Icon size={36} strokeWidth={1.5} />
+          </div>
+        )}
+      </div>
+      <span className="line-clamp-2 text-center text-[13px] font-medium leading-tight text-foreground/80 transition-colors group-hover:text-foreground sm:text-sm">
+        {c.name}
+      </span>
+    </Link>
+  );
+}
+
 export function CategoryTiles() {
   const { topCategories, loading } = useCatalog();
   const { viewportRef, scrollable, prev, next, onKeyDown, hoverProps } = useCategoryCarousel();
@@ -82,6 +126,21 @@ export function CategoryTiles() {
           Shop By Category
         </h2>
 
+        {/* Mobile: two rows, horizontal scroll */}
+        <div
+          className="-mx-4 overflow-x-auto px-4 pb-1 sm:-mx-5 sm:px-5 md:hidden [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          style={{ scrollSnapType: "x proximity" }}
+        >
+          <div className="grid auto-cols-[88px] grid-flow-col grid-rows-2 gap-x-3 gap-y-4 sm:auto-cols-[110px]">
+            {topCategories.map((c) => (
+              <div key={c.id} className="min-w-0" style={{ scrollSnapAlign: "start" }}>
+                <CategoryTile c={c} />
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Desktop: single-row carousel */}
         <div
           role="region"
           aria-roledescription="carousel"
@@ -89,47 +148,21 @@ export function CategoryTiles() {
           tabIndex={0}
           onKeyDown={onKeyDown}
           {...hoverProps}
-          className="rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
+          className="hidden rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 md:block"
         >
           <div className="overflow-hidden py-1" ref={viewportRef}>
-            <div className="-ml-4 flex touch-pan-y sm:-ml-6">
-              {topCategories.map((c, idx) => {
-                const Icon = iconFor(c);
-                return (
-                  <div
-                    key={c.id}
-                    role="group"
-                    aria-roledescription="slide"
-                    aria-label={`${idx + 1} of ${topCategories.length}`}
-                    className="min-w-0 shrink-0 grow-0 basis-[104px] pl-4 sm:basis-[146px] sm:pl-6"
-                  >
-                    <Link
-                      to={`/category/${c.slug}`}
-                      draggable={false}
-                      className="group flex flex-col items-center gap-3 focus-visible:outline-none"
-                    >
-                      <div className="aspect-square w-full overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-black/5 transition-all duration-300 group-hover:-translate-y-0.5 group-hover:shadow-md group-focus-visible:ring-2 group-focus-visible:ring-ring/60">
-                        {c.imageUrl ? (
-                          <img
-                            src={c.imageUrl}
-                            alt=""
-                            loading="lazy"
-                            draggable={false}
-                            className="h-full w-full object-contain p-2 transition-transform duration-300 group-hover:scale-105"
-                          />
-                        ) : (
-                          <div className="grid h-full w-full place-items-center text-muted-foreground">
-                            <Icon size={36} strokeWidth={1.5} />
-                          </div>
-                        )}
-                      </div>
-                      <span className="line-clamp-2 text-center text-[13px] font-medium leading-tight text-foreground/80 transition-colors group-hover:text-foreground sm:text-sm">
-                        {c.name}
-                      </span>
-                    </Link>
-                  </div>
-                );
-              })}
+            <div className="-ml-6 flex touch-pan-y">
+              {topCategories.map((c, idx) => (
+                <div
+                  key={c.id}
+                  role="group"
+                  aria-roledescription="slide"
+                  aria-label={`${idx + 1} of ${topCategories.length}`}
+                  className="min-w-0 shrink-0 grow-0 basis-[146px] pl-6"
+                >
+                  <CategoryTile c={c} />
+                </div>
+              ))}
             </div>
           </div>
         </div>

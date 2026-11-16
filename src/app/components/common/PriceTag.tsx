@@ -18,7 +18,7 @@ export function PriceTag({
   const priceCls = size === "lg" ? "font-display text-lg" : size === "sm" ? "text-sm" : "text-base";
   return (
     <div className={cn("flex flex-wrap items-baseline gap-x-2 gap-y-0.5 tabular-nums", className)}>
-      <span className={cn("font-semibold text-foreground", priceCls)}>{formatTk(price)}</span>
+      <span className={cn("font-semibold text-[14px] text-foreground", priceCls)}>{formatTk(price)}</span>
       {pct > 0 && (
         <>
           <span className={cn("text-muted-foreground line-through", size === "sm" ? "text-xs" : "text-sm")}>{formatTk(oldPrice!)}</span>
