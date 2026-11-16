@@ -370,11 +370,11 @@ export function BookCard({
                 e.stopPropagation();
                 quickView.open(book);
               }}
-              className="book-card__quick-view rounded-full bg-[#8f0a0a] p-2 md:p-6 text-sm font-semibold text-white shadow-lg
+              className="book-card__quick-view rounded-full bg-[#8f0a0a] p-2 md:p-4 text-sm font-semibold text-white shadow-lg
                         transition-colors hover:bg-[#0c0101] focus-visible:outline-none
                         focus-visible:ring-2 focus-visible:ring-white/80"
             >
-              <span className="book-card__quick-view-label hidden md:block md:py-4.5">Quick view</span>
+              <span className="book-card__quick-view-label hidden md:block md:py-1">Quick view</span>
               <span className="book-card__quick-view-label md:hidden"><Eye className="text-white" size={18} /></span>
               <Eye className="book-card__quick-view-icon" size={18} />
             </button>
