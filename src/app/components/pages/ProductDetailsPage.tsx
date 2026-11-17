@@ -326,7 +326,7 @@ function PriceBlock({ book, price, oldPrice, stock, pct }: { book: Book; price: 
           </>
         )}
       </div>
-      {pct > 0 && <p className="mt-1 text-lg text-white rounded bg-accent px-3 py-1.5 inline-block">You save {formatTk(oldPrice - price)}</p>}
+      {pct > 0 && <p className="mt-1 text-lg text-white rounded bg-[#ff7034] px-3 py-1.5 inline-block">You save {formatTk(oldPrice - price)}</p>}
       {book.flashSale && (
         <p className="mt-2 flex items-center gap-1.5 text-xs text-muted-foreground"><Zap size={13} className="text-primary" /> Flash sale price until {formatDate(book.flashSale.endsAt)}</p>
       )}
@@ -336,7 +336,7 @@ function PriceBlock({ book, price, oldPrice, stock, pct }: { book: Book; price: 
       </p> */}
       <p className="mt-3 flex items-center gap-1.5 text-sm font-medium">
         <span className="h-2 w-2 rounded-full bg-accent"/>
-         In stock
+         Availability : In stock
       </p>
     </div>
   );

@@ -180,6 +180,7 @@ const BOOK_CARD_CSS = `
      opacity: 1;
      transform: translate(-50%, -50%);
    }
+  
 
      .book-card__add-to-cart {
        position: relative;
@@ -359,7 +360,7 @@ export function BookCard({
           </div>
 
           {/* Pill CTA group: Quick view + qty stepper + Add to cart */}
-          <div className="book-card__cta absolute inset-x-0 bottom-3 flex flex-col items-center gap-1 px-1">
+          <div className="book-card__cta absolute inset-x-0 bottom-3 flex flex-col items-end sm:items-center gap-1 pe-1 sm:px-1">
             {/* Quick view */}
             <button
               type="button"

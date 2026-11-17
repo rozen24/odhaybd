@@ -8,7 +8,7 @@ const COLORS = ["#e0655a", "#e0a84f", "#5fa88e", "#7d9fd1", "#f4efe7", "#f2b8c6"
 
 // Deterministic "randomness" so the animation is identical on every render
 const confetti = Array.from({ length: 72 }, (_, i) => {
-  const shape = i % 3; // 0 = rect, 1 = circle, 2 = thin strip
+  const shape = i % 3; // 0 = rect, 1 = circle, 2 = small strip
   return {
     id: i,
     left: `${(i * 53 + (i % 7) * 11) % 100}%`,
@@ -16,8 +16,8 @@ const confetti = Array.from({ length: 72 }, (_, i) => {
     duration: `${1900 + (i % 6) * 210}ms`,
     drift: `${((i * 29) % 41) - 20}vw`,
     spin: `${(i % 2 ? 1 : -1) * (540 + (i % 5) * 120)}deg`,
-    width: shape === 2 ? 4 : 7 + (i % 4) * 2,
-    height: shape === 2 ? 18 + (i % 3) * 4 : shape === 1 ? 7 + (i % 4) * 2 : 12 + (i % 3) * 3,
+    width: shape === 2 ? 5 : 7 + (i % 4) * 2,
+    height: shape === 2 ? 12 + (i % 3) * 3 : shape === 1 ? 7 + (i % 4) * 2 : 12 + (i % 3) * 3,
     radius: shape === 1 ? "9999px" : "2px",
     color: COLORS[i % COLORS.length],
   };
@@ -32,15 +32,6 @@ const floaters = [
   { Icon: Heart, left: "76%", size: 22, color: "#f2b8c6", delay: 400 },
   { Icon: Star, left: "88%", size: 30, color: "#7d9fd1", delay: 250 },
   { Icon: BookOpen, left: "46%", size: 22, color: "#e0655a", delay: 650 },
-];
-
-const streamers = [
-  { left: "8%", color: "#e0655a", delay: 0, rot: -6 },
-  { left: "22%", color: "#e0a84f", delay: 120, rot: 5 },
-  { left: "37%", color: "#5fa88e", delay: 60, rot: -4 },
-  { left: "63%", color: "#7d9fd1", delay: 90, rot: 6 },
-  { left: "78%", color: "#f2b8c6", delay: 30, rot: -5 },
-  { left: "92%", color: "#e0a84f", delay: 150, rot: 4 },
 ];
 
 const twinkles = [
@@ -93,12 +84,6 @@ export function CartCelebration() {
           85%  { opacity: 1; }
           100% { transform: translate3d(8px, 105vh, 0) scale(0.9) rotate(-6deg); opacity: 0; }
         }
-        @keyframes cc-streamer {
-          0%   { transform: scaleY(0) rotate(var(--rot)); opacity: 1; }
-          30%  { transform: scaleY(1) rotate(var(--rot)); opacity: 1; }
-          55%  { transform: scaleY(1) rotate(calc(var(--rot) * -1)); opacity: 1; }
-          100% { transform: translateY(110vh) scaleY(1) rotate(var(--rot)); opacity: 0; }
-        }
         @keyframes cc-twinkle {
           0%   { transform: scale(0) rotate(0deg); opacity: 0; }
           40%  { transform: scale(1.3) rotate(90deg); opacity: 1; }
@@ -120,24 +105,6 @@ export function CartCelebration() {
       />
 
       <div className="cc-motion absolute inset-0">
-        {/* Ribbons unrolling from the top edge */}
-        {streamers.map((s, i) => (
-          <span
-            key={i}
-            className="absolute top-0 block h-[38vh] w-[7px] origin-top rounded-b-full"
-            style={
-              {
-                left: s.left,
-                background: `linear-gradient(to bottom, ${s.color}, ${s.color}cc)`,
-                ["--rot" as string]: `${s.rot}deg`,
-                animation: `cc-streamer 2300ms cubic-bezier(.2,.8,.3,1) ${s.delay}ms forwards`,
-                transform: "scaleY(0)",
-                opacity: 0,
-              } as React.CSSProperties
-            }
-          />
-        ))}
-
         {/* Confetti */}
         {confetti.map((p) => (
           <span
