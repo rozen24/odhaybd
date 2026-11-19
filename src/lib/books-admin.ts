@@ -114,8 +114,10 @@ export function parseBookInput(
   }
 
   if (b.variants !== undefined || !opts.partial) {
-    if (!Array.isArray(b.variants) || b.variants.length !== 2) return { error: "Add both paperback and hardcover prices" };
+    if (!Array.isArray(b.variants) || b.variants.length !== 3) return { error: "Add paperback Premium, paperback Regular, and hardcover prices" };
     const variants: NonNullable<BookInput["variants"]> = [];
+    const names = new Set(["Paperback (Premium)", "Paperback (Regular)", "Hardcover"]);
+    const seenNames = new Set<string>();
     for (const raw of b.variants as Record<string, unknown>[]) {
       const name = str(raw?.name, 80);
       const price = Number(raw?.price);
@@ -123,11 +125,14 @@ export function parseBookInput(
       const flashPrice = raw?.flashPrice === undefined || raw?.flashPrice === "" ? 0 : Number(raw.flashPrice);
       const stock = intOrNull(raw?.stock);
       if (!name || !Number.isFinite(price) || price <= 0 || price > 10_000_000 ||
+          !names.has(name) ||
           !Number.isFinite(oldPrice) || oldPrice < 0 || oldPrice > 10_000_000 ||
           !Number.isFinite(flashPrice) || flashPrice < 0 || flashPrice >= price ||
           stock === "bad" || stock === null) {
         return { error: "Enter valid prices, flash sale prices, and stock" };
       }
+      if (seenNames.has(name)) return { error: "Add each format only once" };
+      seenNames.add(name);
       variants.push({ name, price, oldPrice, flashPrice: flashPrice || undefined, stock });
     }
     input.variants = variants;

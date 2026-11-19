@@ -48,7 +48,12 @@ function toBook(product: ProductRecord): Book {
   const variantRecords = [...product.variants].sort((a, b) => {
     const aPaperback = a.name.toLowerCase().includes("paperback");
     const bPaperback = b.name.toLowerCase().includes("paperback");
-    return aPaperback === bPaperback ? a.name.localeCompare(b.name) : aPaperback ? -1 : 1;
+    if (aPaperback !== bPaperback) return aPaperback ? -1 : 1;
+    if (a.name === "Paperback (Premium)") return -1;
+    if (b.name === "Paperback (Premium)") return 1;
+    if (a.name === "Paperback (Regular)") return -1;
+    if (b.name === "Paperback (Regular)") return 1;
+    return a.name.localeCompare(b.name);
   });
   const variants = variantRecords.length > 0
     ? variantRecords.map((variant) => ({

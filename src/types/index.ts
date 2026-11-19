@@ -83,7 +83,7 @@ export interface Book {
 
 export interface ProductVariant {
   id?: string;
-  name: "Paperback (Premium)" | "Hardcover (Regular)" | string;
+  name: "Paperback (Premium)" | "Paperback (Regular)" | "Hardcover" | string;
   price: number;
   oldPrice: number;
   flashPrice?: number;

@@ -165,7 +165,7 @@ type BookForm = {
   publisherId: string;
   authorIds: string[];
   categoryIds: string[];
-  variants: { name: "Paperback (Premium)" | "Hardcover (Regular)"; price: number; oldPrice: number; flashPrice: number; stock: number }[];
+  variants: { name: "Paperback (Premium)" | "Paperback (Regular)" | "Hardcover"; price: number; oldPrice: number; flashPrice: number; stock: number }[];
 };
 
 const emptyBookForm = (): BookForm => ({
@@ -173,7 +173,8 @@ const emptyBookForm = (): BookForm => ({
   coverUrl: "", status: "published", publisherId: "", authorIds: [], categoryIds: [],
   variants: [
     { name: "Paperback (Premium)", price: 0, oldPrice: 0, flashPrice: 0, stock: 0 },
-    { name: "Hardcover (Regular)", price: 0, oldPrice: 0, flashPrice: 0, stock: 0 },
+    { name: "Paperback (Regular)", price: 0, oldPrice: 0, flashPrice: 0, stock: 0 },
+    { name: "Hardcover", price: 0, oldPrice: 0, flashPrice: 0, stock: 0 },
   ],
 });
 
@@ -203,10 +204,11 @@ export function BookFormDialog({ book, onSaved, asAdmin }: { book?: Book; onSave
           publisherId: book.publisherId ?? "",
           authorIds: book.authorIds ?? [],
           categoryIds: book.categoryIds ?? [],
-          variants: (book.variants?.length ? book.variants : [
-            { name: "Paperback (Premium)", price: book.price, oldPrice: book.oldPrice, flashPrice: book.variants?.[0]?.flashPrice ?? 0, stock: book.stock },
-            { name: "Hardcover (Regular)", price: book.price, oldPrice: book.oldPrice, flashPrice: book.variants?.[1]?.flashPrice ?? 0, stock: book.stock },
-          ]).map((variant) => ({ ...variant, flashPrice: variant.flashPrice ?? 0, name: variant.name as "Paperback (Premium)" | "Hardcover (Regular)" })),
+          variants: [
+            book.variants?.find((variant) => variant.name === "Paperback (Premium)") ?? { name: "Paperback (Premium)", price: book.price, oldPrice: book.oldPrice, flashPrice: 0, stock: book.stock },
+            book.variants?.find((variant) => variant.name === "Paperback (Regular)") ?? { name: "Paperback (Regular)", price: book.price, oldPrice: book.oldPrice, flashPrice: 0, stock: book.stock },
+            book.variants?.find((variant) => variant.name === "Hardcover" || variant.name.includes("Hardcover")) ?? { name: "Hardcover", price: book.price, oldPrice: book.oldPrice, flashPrice: 0, stock: book.stock },
+          ].map((variant) => ({ ...variant, flashPrice: variant.flashPrice ?? 0, name: variant.name as "Paperback (Premium)" | "Paperback (Regular)" | "Hardcover" })),
         }
       : emptyBookForm(),
   );

@@ -57,9 +57,11 @@ function toLocalInput(iso?: string) {
 function FlashSaleDialog({ books, book, onSaved }: { books: Book[]; book?: Book; onSaved: () => void }) {
   const [open, setOpen] = useState(false);
   const [bookId, setBookId] = useState(book?.id ?? "");
-  const initialPaperback = book?.variants?.find((variant) => variant.name.toLowerCase().includes("paperback"));
+  const initialPaperbackPremium = book?.variants?.find((variant) => variant.name === "Paperback (Premium)");
+  const initialPaperbackRegular = book?.variants?.find((variant) => variant.name === "Paperback (Regular)");
   const initialHardcover = book?.variants?.find((variant) => variant.name.toLowerCase().includes("hardcover"));
-  const [paperbackPrice, setPaperbackPrice] = useState(initialPaperback?.flashPrice ?? 0);
+  const [paperbackPremiumPrice, setPaperbackPremiumPrice] = useState(initialPaperbackPremium?.flashPrice ?? 0);
+  const [paperbackRegularPrice, setPaperbackRegularPrice] = useState(initialPaperbackRegular?.flashPrice ?? 0);
   const [hardcoverPrice, setHardcoverPrice] = useState(initialHardcover?.flashPrice ?? 0);
   const [endsAt, setEndsAt] = useState(toLocalInput(book?.flashSale?.endsAt ?? new Date(Date.now() + 3 * 86400000).toISOString()));
   const [saving, setSaving] = useState(false);
@@ -68,10 +70,13 @@ function FlashSaleDialog({ books, book, onSaved }: { books: Book[]; book?: Book;
     e.preventDefault();
     if (!target) { toast.error("Choose a book"); return; }
     const variants = target.variants ?? [];
-    const paperback = variants.find((variant) => variant.name.toLowerCase().includes("paperback"));
+    const paperbackPremium = variants.find((variant) => variant.name === "Paperback (Premium)");
+    const paperbackRegular = variants.find((variant) => variant.name === "Paperback (Regular)");
     const hardcover = variants.find((variant) => variant.name.toLowerCase().includes("hardcover"));
-    if (!paperback || !hardcover) { toast.error("This product needs paperback and hardcover prices first"); return; }
-    if (paperbackPrice <= 0 || paperbackPrice >= paperback.price || hardcoverPrice <= 0 || hardcoverPrice >= hardcover.price) {
+    if (!paperbackPremium || !paperbackRegular || !hardcover) { toast.error("This product needs all three format prices first"); return; }
+    if (paperbackPremiumPrice <= 0 || paperbackPremiumPrice >= paperbackPremium.price ||
+        paperbackRegularPrice <= 0 || paperbackRegularPrice >= paperbackRegular.price ||
+        hardcoverPrice <= 0 || hardcoverPrice >= hardcover.price) {
       toast.error("Each flash sale price must be below its regular price"); return;
     }
     if (!endsAt || new Date(endsAt).getTime() <= Date.now()) { toast.error("End time must be in the future"); return; }
@@ -83,9 +88,11 @@ function FlashSaleDialog({ books, book, onSaved }: { books: Book[]; book?: Book;
           price: variant.price,
           oldPrice: variant.oldPrice,
           stock: variant.stock,
-          flashPrice: variant.name.toLowerCase().includes("paperback") ? paperbackPrice : variant.name.toLowerCase().includes("hardcover") ? hardcoverPrice : 0,
+          flashPrice: variant.name === "Paperback (Premium)" ? paperbackPremiumPrice
+            : variant.name === "Paperback (Regular)" ? paperbackRegularPrice
+            : variant.name === "Hardcover" ? hardcoverPrice : 0,
         })),
-        flashSale: { price: paperbackPrice, endsAt: new Date(endsAt).toISOString() },
+        flashSale: { price: paperbackPremiumPrice, endsAt: new Date(endsAt).toISOString() },
       });
       toast.success(`Flash sale set on "${target.title}"`);
       setOpen(false);
@@ -107,7 +114,8 @@ function FlashSaleDialog({ books, book, onSaved }: { books: Book[]; book?: Book;
             </Select>
           </div>
           <div className="grid grid-cols-2 gap-3">
-            <div className="space-y-1.5"><Label>Paperback flash price (৳)</Label><Input type="number" min={1} value={paperbackPrice} onChange={(e) => setPaperbackPrice(Number(e.target.value))} /></div>
+            <div className="space-y-1.5"><Label>Paperback Premium flash price (৳)</Label><Input type="number" min={1} value={paperbackPremiumPrice} onChange={(e) => setPaperbackPremiumPrice(Number(e.target.value))} /></div>
+            <div className="space-y-1.5"><Label>Paperback Regular flash price (৳)</Label><Input type="number" min={1} value={paperbackRegularPrice} onChange={(e) => setPaperbackRegularPrice(Number(e.target.value))} /></div>
             <div className="space-y-1.5"><Label>Hardcover flash price (৳)</Label><Input type="number" min={1} value={hardcoverPrice} onChange={(e) => setHardcoverPrice(Number(e.target.value))} /></div>
             <div className="space-y-1.5"><Label>Ends at</Label><Input type="datetime-local" value={endsAt} onChange={(e) => setEndsAt(e.target.value)} /></div>
           </div>

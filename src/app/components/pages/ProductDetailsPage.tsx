@@ -13,6 +13,7 @@ import { services } from "../../../services";
 import { useCatalog } from "../../contexts/CatalogContext";
 import { useStore } from "../../contexts/StoreContext";
 import { RatingStars } from "../common/RatingStars";
+import { PriceTag } from "../common/PriceTag";
 import { BookRail } from "../common/BookRail";
 import { RailSkeleton } from "../common/Skeletons";
 import { ReviewsTab } from "./ReviewsTab";
@@ -304,8 +305,8 @@ function VariantSelector({ variants, value, onChange }: { variants: ProductVaria
         {variants.map((variant) => (
           <button key={variant.id ?? variant.name} type="button" onClick={() => onChange(variant.id ?? "")} className={cn("rounded-md border px-3 py-2 text-left text-sm", value === variant.id ? "border-primary bg-primary/5" : "border-border")}>
             <span className="block font-medium">{variant.name}</span>
-            {/* <span className="text-xs text-muted-foreground">{formatTk(variant.price)} · {variant.stock > 0 ? `${variant.stock} in stock` : "Out of stock"}</span> */}
-            <span className="text-xs text-muted-foreground">{formatTk(variant.price)} · in stock</span>
+            <PriceTag price={variant.flashPrice ?? variant.price} oldPrice={variant.oldPrice} size="sm" />
+            <span className="text-xs text-muted-foreground">{variant.stock > 0 ? `${variant.stock} in stock` : "Out of stock"}</span>
           </button>
         ))}
       </div>
