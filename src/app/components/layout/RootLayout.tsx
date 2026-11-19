@@ -10,6 +10,7 @@ import { Footer } from "./Footer";
 import { BottomTabBar } from "./MobileNav";
 import { QuickViewModal } from "../common/QuickViewModal";
 import { ShoppingCartDrawer } from "../cart/ShoppingCartDrawer";
+import { CouponPopup } from "../common/CouponPopup";
 
 export function StorefrontShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -28,6 +29,7 @@ export function StorefrontShell({ children }: { children: React.ReactNode }) {
       <BottomTabBar />
       <QuickViewModal />
       <ShoppingCartDrawer />
+      <CouponPopup />
     </div>
   );
 }

@@ -66,7 +66,8 @@ export function toNotification(n: {
 
 export function toCoupon(c: {
   code: string; type: "PERCENT" | "FLAT"; value: Prisma.Decimal; minSpend: Prisma.Decimal;
-  active: boolean; expiresAt: Date | null;
+  active: boolean; expiresAt: Date | null; displayText: string | null;
+  displayStartsAt: Date | null; displayEndsAt: Date | null;
 }): Coupon {
   return {
     code: c.code,
@@ -75,5 +76,8 @@ export function toCoupon(c: {
     minSpend: Number(c.minSpend),
     active: c.active,
     expiresAt: c.expiresAt?.toISOString() ?? "",
+    displayText: c.displayText ?? "",
+    displayStartsAt: c.displayStartsAt?.toISOString() ?? "",
+    displayEndsAt: c.displayEndsAt?.toISOString() ?? "",
   };
 }

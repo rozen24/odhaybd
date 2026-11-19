@@ -178,6 +178,9 @@ export interface Coupon {
   minSpend: number;
   active: boolean;
   expiresAt: string;
+  displayText?: string;
+  displayStartsAt?: string;
+  displayEndsAt?: string;
 }
 
 export interface AppNotification {

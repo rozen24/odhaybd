@@ -3645,6 +3645,9 @@ export const CouponScalarFieldEnum = {
   minSpend: 'minSpend',
   active: 'active',
   expiresAt: 'expiresAt',
+  displayText: 'displayText',
+  displayStartsAt: 'displayStartsAt',
+  displayEndsAt: 'displayEndsAt',
   createdAt: 'createdAt'
 } as const
 

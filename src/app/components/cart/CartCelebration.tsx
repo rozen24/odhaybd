@@ -1,52 +1,57 @@
 "use client";
 
 import { useEffect } from "react";
-import { BookOpen, Heart, Sparkles, Star } from "lucide-react";
 import { useStore } from "../../contexts/StoreContext";
 
-const COLORS = ["#e0655a", "#e0a84f", "#5fa88e", "#7d9fd1", "#f4efe7", "#f2b8c6"];
+const COLORS = [
+  "#2f6bff", // blue
+  "#e8203a", // red
+  "#ffd400", // yellow
+  "#7bc043", // green
+  "#7c4dff", // purple
+  "#ff8ac0", // pink
+  "#ff8a1f", // orange
+  "#8fd3f4", // light blue
+];
 
-// Deterministic "randomness" so the animation is identical on every render
-const confetti = Array.from({ length: 72 }, (_, i) => {
-  const shape = i % 3; // 0 = rect, 1 = circle, 2 = small strip
+// Small seeded generator: varied looking, but identical on every render
+function seeded(seed: number) {
+  let s = seed;
+  return () => {
+    s = (s * 16807) % 2147483647;
+    return (s - 1) / 2147483646;
+  };
+}
+
+const rand = seeded(42);
+
+const confetti = Array.from({ length: 110 }, (_, i) => {
+  const isSquare = rand() > 0.55;
+  const w = 7 + Math.round(rand() * 9); // 7–16px
+  const h = isSquare ? w : 5 + Math.round(rand() * 7); // 5–12px
+  const dir = rand() > 0.5 ? 1 : -1;
   return {
     id: i,
-    left: `${(i * 53 + (i % 7) * 11) % 100}%`,
-    delay: `${(i % 16) * 55}ms`,
-    duration: `${1900 + (i % 6) * 210}ms`,
-    drift: `${((i * 29) % 41) - 20}vw`,
-    spin: `${(i % 2 ? 1 : -1) * (540 + (i % 5) * 120)}deg`,
-    width: shape === 2 ? 5 : 7 + (i % 4) * 2,
-    height: shape === 2 ? 12 + (i % 3) * 3 : shape === 1 ? 7 + (i % 4) * 2 : 12 + (i % 3) * 3,
-    radius: shape === 1 ? "9999px" : "2px",
-    color: COLORS[i % COLORS.length],
+    left: `${(rand() * 100).toFixed(2)}%`,
+    delay: `${Math.round(rand() * 700)}ms`,
+    duration: `${2300 + Math.round(rand() * 1700)}ms`,
+    drift: `${Math.round((rand() - 0.5) * 18)}vw`,
+    sway: `${Math.round(10 + rand() * 30)}px`,
+    rx: `${dir * Math.round(360 + rand() * 720)}deg`,
+    ry: `${-dir * Math.round(180 + rand() * 540)}deg`,
+    rz: `${dir * Math.round(180 + rand() * 540)}deg`,
+    width: w,
+    height: h,
+    color: COLORS[Math.floor(rand() * COLORS.length)],
   };
 });
-
-const floaters = [
-  { Icon: BookOpen, left: "12%", size: 34, color: "#e0a84f", delay: 100 },
-  { Icon: Star, left: "26%", size: 24, color: "#f4efe7", delay: 350 },
-  { Icon: Heart, left: "38%", size: 26, color: "#e0655a", delay: 200 },
-  { Icon: BookOpen, left: "52%", size: 30, color: "#5fa88e", delay: 450 },
-  { Icon: Sparkles, left: "64%", size: 28, color: "#e0a84f", delay: 150 },
-  { Icon: Heart, left: "76%", size: 22, color: "#f2b8c6", delay: 400 },
-  { Icon: Star, left: "88%", size: 30, color: "#7d9fd1", delay: 250 },
-  { Icon: BookOpen, left: "46%", size: 22, color: "#e0655a", delay: 650 },
-];
-
-const twinkles = [
-  { left: "18%", top: "10%", size: 22, delay: 200 },
-  { left: "42%", top: "6%", size: 28, delay: 350 },
-  { left: "58%", top: "12%", size: 20, delay: 500 },
-  { left: "81%", top: "8%", size: 26, delay: 300 },
-];
 
 export function CartCelebration() {
   const { cartCelebration, dismissCartCelebration } = useStore();
 
   useEffect(() => {
     if (!cartCelebration) return;
-    const timer = window.setTimeout(dismissCartCelebration, 3600);
+    const timer = window.setTimeout(dismissCartCelebration, 4600);
     return () => window.clearTimeout(timer);
   }, [cartCelebration, dismissCartCelebration]);
 
@@ -61,113 +66,52 @@ export function CartCelebration() {
       <span className="sr-only">Added to cart: {cartCelebration.title}</span>
 
       <style>{`
-        @keyframes cc-glow {
-          0%   { opacity: 0; transform: translateY(-20%); }
-          25%  { opacity: 1; transform: translateY(0); }
-          100% { opacity: 0; transform: translateY(0); }
-        }
         @keyframes cc-fall {
-          0%   { transform: translate3d(0, -12vh, 0); opacity: 0; }
-          8%   { opacity: 1; }
-          85%  { opacity: 1; }
+          0%   { transform: translate3d(0, -8vh, 0); opacity: 1; }
+          25%  { transform: translate3d(calc(var(--drift) * 0.25 + var(--sway)), 25vh, 0); }
+          50%  { transform: translate3d(calc(var(--drift) * 0.5 - var(--sway)), 52vh, 0); }
+          75%  { transform: translate3d(calc(var(--drift) * 0.75 + var(--sway)), 80vh, 0); opacity: 1; }
           100% { transform: translate3d(var(--drift), 112vh, 0); opacity: 0; }
         }
-        @keyframes cc-spin {
-          0%   { transform: rotateZ(0) rotateX(0) rotateY(0); }
-          100% { transform: rotateZ(var(--spin)) rotateX(720deg) rotateY(360deg); }
-        }
-        @keyframes cc-float {
-          0%   { transform: translate3d(0, -14vh, 0) scale(0.4) rotate(-12deg); opacity: 0; }
-          12%  { opacity: 1; transform: translate3d(0, 4vh, 0) scale(1.15) rotate(8deg); }
-          35%  { transform: translate3d(14px, 28vh, 0) scale(1) rotate(-8deg); }
-          60%  { transform: translate3d(-14px, 55vh, 0) scale(1) rotate(8deg); }
-          85%  { opacity: 1; }
-          100% { transform: translate3d(8px, 105vh, 0) scale(0.9) rotate(-6deg); opacity: 0; }
-        }
-        @keyframes cc-twinkle {
-          0%   { transform: scale(0) rotate(0deg); opacity: 0; }
-          40%  { transform: scale(1.3) rotate(90deg); opacity: 1; }
-          100% { transform: scale(0) rotate(180deg); opacity: 0; }
+        @keyframes cc-tumble {
+          0%   { transform: perspective(500px) rotateX(0) rotateY(0) rotateZ(0); }
+          100% { transform: perspective(500px) rotateX(var(--rx)) rotateY(var(--ry)) rotateZ(var(--rz)); }
         }
         @media (prefers-reduced-motion: reduce) {
-          .cc-motion { display: none !important; }
+          .cc-piece { display: none !important; }
         }
       `}</style>
 
-      {/* Warm light washing down from the top */}
-      <div
-        className="absolute inset-x-0 top-0 h-[55vh]"
-        style={{
-          background:
-            "radial-gradient(ellipse 70% 100% at 50% 0%, rgba(224,168,79,0.55), rgba(242,184,198,0.22) 45%, transparent 75%)",
-          animation: "cc-glow 1800ms ease-out forwards",
-        }}
-      />
-
-      <div className="cc-motion absolute inset-0">
-        {/* Confetti */}
-        {confetti.map((p) => (
+      {confetti.map((p) => (
+        <span
+          key={p.id}
+          className="cc-piece absolute top-0 block"
+          style={
+            {
+              left: p.left,
+              opacity: 0,
+              ["--drift" as string]: p.drift,
+              ["--sway" as string]: p.sway,
+              animation: `cc-fall ${p.duration} cubic-bezier(.25,.1,.6,1) ${p.delay} both`,
+            } as React.CSSProperties
+          }
+        >
           <span
-            key={p.id}
-            className="absolute top-0 block"
+            className="block"
             style={
               {
-                left: p.left,
-                opacity: 0,
-                ["--drift" as string]: p.drift,
-                ["--spin" as string]: p.spin,
-                animation: `cc-fall ${p.duration} cubic-bezier(.3,.1,.6,1) ${p.delay} forwards`,
+                width: p.width,
+                height: p.height,
+                backgroundColor: p.color,
+                ["--rx" as string]: p.rx,
+                ["--ry" as string]: p.ry,
+                ["--rz" as string]: p.rz,
+                animation: `cc-tumble ${p.duration} linear ${p.delay} both`,
               } as React.CSSProperties
             }
-          >
-            <span
-              className="block"
-              style={
-                {
-                  width: p.width,
-                  height: p.height,
-                  borderRadius: p.radius,
-                  backgroundColor: p.color,
-                  ["--spin" as string]: p.spin,
-                  animation: `cc-spin ${p.duration} linear ${p.delay} forwards`,
-                } as React.CSSProperties
-              }
-            />
-          </span>
-        ))}
-
-        {/* Floating books, hearts and stars */}
-        {floaters.map(({ Icon, left, size, color, delay }, i) => (
-          <span
-            key={i}
-            className="absolute top-0 block"
-            style={{
-              left,
-              opacity: 0,
-              color,
-              filter: "drop-shadow(0 4px 8px rgba(0,0,0,0.25))",
-              animation: `cc-float 2800ms ease-in-out ${delay}ms forwards`,
-            }}
-          >
-            <Icon size={size} strokeWidth={1.8} fill={Icon === Sparkles ? "none" : "currentColor"} fillOpacity={0.18} />
-          </span>
-        ))}
-
-        {/* Twinkling sparkles near the top */}
-        {twinkles.map((t, i) => (
-          <Sparkles
-            key={i}
-            size={t.size}
-            className="absolute text-[#e0a84f]"
-            style={{
-              left: t.left,
-              top: t.top,
-              opacity: 0,
-              animation: `cc-twinkle 1100ms ease-out ${t.delay}ms forwards`,
-            }}
           />
-        ))}
-      </div>
+        </span>
+      ))}
     </div>
   );
 }

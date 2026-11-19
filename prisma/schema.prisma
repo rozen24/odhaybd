@@ -468,13 +468,16 @@ model OrderTimeline {
 }
 
 model Coupon {
-  code      String     @id
-  type      CouponType
-  value     Decimal    @db.Decimal(12, 2)
-  minSpend  Decimal    @default(0) @db.Decimal(12, 2)
-  active    Boolean    @default(true)
-  expiresAt DateTime?
-  createdAt DateTime   @default(now())
+  code            String     @id
+  type            CouponType
+  value           Decimal    @db.Decimal(12, 2)
+  minSpend        Decimal    @default(0) @db.Decimal(12, 2)
+  active          Boolean    @default(true)
+  expiresAt       DateTime?
+  displayText     String?
+  displayStartsAt DateTime?
+  displayEndsAt   DateTime?
+  createdAt       DateTime   @default(now())
 
   @@index([active, expiresAt])
 }

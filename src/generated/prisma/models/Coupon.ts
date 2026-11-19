@@ -43,6 +43,9 @@ export type CouponMinAggregateOutputType = {
   minSpend: runtime.Decimal | null
   active: boolean | null
   expiresAt: Date | null
+  displayText: string | null
+  displayStartsAt: Date | null
+  displayEndsAt: Date | null
   createdAt: Date | null
 }
 
@@ -53,6 +56,9 @@ export type CouponMaxAggregateOutputType = {
   minSpend: runtime.Decimal | null
   active: boolean | null
   expiresAt: Date | null
+  displayText: string | null
+  displayStartsAt: Date | null
+  displayEndsAt: Date | null
   createdAt: Date | null
 }
 
@@ -63,6 +69,9 @@ export type CouponCountAggregateOutputType = {
   minSpend: number
   active: number
   expiresAt: number
+  displayText: number
+  displayStartsAt: number
+  displayEndsAt: number
   createdAt: number
   _all: number
 }
@@ -85,6 +94,9 @@ export type CouponMinAggregateInputType = {
   minSpend?: true
   active?: true
   expiresAt?: true
+  displayText?: true
+  displayStartsAt?: true
+  displayEndsAt?: true
   createdAt?: true
 }
 
@@ -95,6 +107,9 @@ export type CouponMaxAggregateInputType = {
   minSpend?: true
   active?: true
   expiresAt?: true
+  displayText?: true
+  displayStartsAt?: true
+  displayEndsAt?: true
   createdAt?: true
 }
 
@@ -105,6 +120,9 @@ export type CouponCountAggregateInputType = {
   minSpend?: true
   active?: true
   expiresAt?: true
+  displayText?: true
+  displayStartsAt?: true
+  displayEndsAt?: true
   createdAt?: true
   _all?: true
 }
@@ -202,6 +220,9 @@ export type CouponGroupByOutputType = {
   minSpend: runtime.Decimal
   active: boolean
   expiresAt: Date | null
+  displayText: string | null
+  displayStartsAt: Date | null
+  displayEndsAt: Date | null
   createdAt: Date
   _count: CouponCountAggregateOutputType | null
   _avg: CouponAvgAggregateOutputType | null
@@ -235,6 +256,9 @@ export type CouponWhereInput = {
   minSpend?: Prisma.DecimalFilter<"Coupon"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   active?: Prisma.BoolFilter<"Coupon"> | boolean
   expiresAt?: Prisma.DateTimeNullableFilter<"Coupon"> | Date | string | null
+  displayText?: Prisma.StringNullableFilter<"Coupon"> | string | null
+  displayStartsAt?: Prisma.DateTimeNullableFilter<"Coupon"> | Date | string | null
+  displayEndsAt?: Prisma.DateTimeNullableFilter<"Coupon"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Coupon"> | Date | string
 }
 
@@ -245,6 +269,9 @@ export type CouponOrderByWithRelationInput = {
   minSpend?: Prisma.SortOrder
   active?: Prisma.SortOrder
   expiresAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  displayText?: Prisma.SortOrderInput | Prisma.SortOrder
+  displayStartsAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  displayEndsAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -258,6 +285,9 @@ export type CouponWhereUniqueInput = Prisma.AtLeast<{
   minSpend?: Prisma.DecimalFilter<"Coupon"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   active?: Prisma.BoolFilter<"Coupon"> | boolean
   expiresAt?: Prisma.DateTimeNullableFilter<"Coupon"> | Date | string | null
+  displayText?: Prisma.StringNullableFilter<"Coupon"> | string | null
+  displayStartsAt?: Prisma.DateTimeNullableFilter<"Coupon"> | Date | string | null
+  displayEndsAt?: Prisma.DateTimeNullableFilter<"Coupon"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Coupon"> | Date | string
 }, "code">
 
@@ -268,6 +298,9 @@ export type CouponOrderByWithAggregationInput = {
   minSpend?: Prisma.SortOrder
   active?: Prisma.SortOrder
   expiresAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  displayText?: Prisma.SortOrderInput | Prisma.SortOrder
+  displayStartsAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  displayEndsAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   _count?: Prisma.CouponCountOrderByAggregateInput
   _avg?: Prisma.CouponAvgOrderByAggregateInput
@@ -286,6 +319,9 @@ export type CouponScalarWhereWithAggregatesInput = {
   minSpend?: Prisma.DecimalWithAggregatesFilter<"Coupon"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   active?: Prisma.BoolWithAggregatesFilter<"Coupon"> | boolean
   expiresAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Coupon"> | Date | string | null
+  displayText?: Prisma.StringNullableWithAggregatesFilter<"Coupon"> | string | null
+  displayStartsAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Coupon"> | Date | string | null
+  displayEndsAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Coupon"> | Date | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Coupon"> | Date | string
 }
 
@@ -296,6 +332,9 @@ export type CouponCreateInput = {
   minSpend?: runtime.Decimal | runtime.DecimalJsLike | number | string
   active?: boolean
   expiresAt?: Date | string | null
+  displayText?: string | null
+  displayStartsAt?: Date | string | null
+  displayEndsAt?: Date | string | null
   createdAt?: Date | string
 }
 
@@ -306,6 +345,9 @@ export type CouponUncheckedCreateInput = {
   minSpend?: runtime.Decimal | runtime.DecimalJsLike | number | string
   active?: boolean
   expiresAt?: Date | string | null
+  displayText?: string | null
+  displayStartsAt?: Date | string | null
+  displayEndsAt?: Date | string | null
   createdAt?: Date | string
 }
 
@@ -316,6 +358,9 @@ export type CouponUpdateInput = {
   minSpend?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  displayText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  displayStartsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  displayEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -326,6 +371,9 @@ export type CouponUncheckedUpdateInput = {
   minSpend?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  displayText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  displayStartsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  displayEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -336,6 +384,9 @@ export type CouponCreateManyInput = {
   minSpend?: runtime.Decimal | runtime.DecimalJsLike | number | string
   active?: boolean
   expiresAt?: Date | string | null
+  displayText?: string | null
+  displayStartsAt?: Date | string | null
+  displayEndsAt?: Date | string | null
   createdAt?: Date | string
 }
 
@@ -346,6 +397,9 @@ export type CouponUpdateManyMutationInput = {
   minSpend?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  displayText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  displayStartsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  displayEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -356,6 +410,9 @@ export type CouponUncheckedUpdateManyInput = {
   minSpend?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  displayText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  displayStartsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  displayEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -366,6 +423,9 @@ export type CouponCountOrderByAggregateInput = {
   minSpend?: Prisma.SortOrder
   active?: Prisma.SortOrder
   expiresAt?: Prisma.SortOrder
+  displayText?: Prisma.SortOrder
+  displayStartsAt?: Prisma.SortOrder
+  displayEndsAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -381,6 +441,9 @@ export type CouponMaxOrderByAggregateInput = {
   minSpend?: Prisma.SortOrder
   active?: Prisma.SortOrder
   expiresAt?: Prisma.SortOrder
+  displayText?: Prisma.SortOrder
+  displayStartsAt?: Prisma.SortOrder
+  displayEndsAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -391,6 +454,9 @@ export type CouponMinOrderByAggregateInput = {
   minSpend?: Prisma.SortOrder
   active?: Prisma.SortOrder
   expiresAt?: Prisma.SortOrder
+  displayText?: Prisma.SortOrder
+  displayStartsAt?: Prisma.SortOrder
+  displayEndsAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -412,6 +478,9 @@ export type CouponSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   minSpend?: boolean
   active?: boolean
   expiresAt?: boolean
+  displayText?: boolean
+  displayStartsAt?: boolean
+  displayEndsAt?: boolean
   createdAt?: boolean
 }, ExtArgs["result"]["coupon"]>
 
@@ -422,6 +491,9 @@ export type CouponSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extens
   minSpend?: boolean
   active?: boolean
   expiresAt?: boolean
+  displayText?: boolean
+  displayStartsAt?: boolean
+  displayEndsAt?: boolean
   createdAt?: boolean
 }, ExtArgs["result"]["coupon"]>
 
@@ -432,6 +504,9 @@ export type CouponSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extens
   minSpend?: boolean
   active?: boolean
   expiresAt?: boolean
+  displayText?: boolean
+  displayStartsAt?: boolean
+  displayEndsAt?: boolean
   createdAt?: boolean
 }, ExtArgs["result"]["coupon"]>
 
@@ -442,10 +517,13 @@ export type CouponSelectScalar = {
   minSpend?: boolean
   active?: boolean
   expiresAt?: boolean
+  displayText?: boolean
+  displayStartsAt?: boolean
+  displayEndsAt?: boolean
   createdAt?: boolean
 }
 
-export type CouponOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"code" | "type" | "value" | "minSpend" | "active" | "expiresAt" | "createdAt", ExtArgs["result"]["coupon"]>
+export type CouponOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"code" | "type" | "value" | "minSpend" | "active" | "expiresAt" | "displayText" | "displayStartsAt" | "displayEndsAt" | "createdAt", ExtArgs["result"]["coupon"]>
 
 export type $CouponPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Coupon"
@@ -457,6 +535,9 @@ export type $CouponPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     minSpend: runtime.Decimal
     active: boolean
     expiresAt: Date | null
+    displayText: string | null
+    displayStartsAt: Date | null
+    displayEndsAt: Date | null
     createdAt: Date
   }, ExtArgs["result"]["coupon"]>
   composites: {}
@@ -887,6 +968,9 @@ export interface CouponFieldRefs {
   readonly minSpend: Prisma.FieldRef<"Coupon", 'Decimal'>
   readonly active: Prisma.FieldRef<"Coupon", 'Boolean'>
   readonly expiresAt: Prisma.FieldRef<"Coupon", 'DateTime'>
+  readonly displayText: Prisma.FieldRef<"Coupon", 'String'>
+  readonly displayStartsAt: Prisma.FieldRef<"Coupon", 'DateTime'>
+  readonly displayEndsAt: Prisma.FieldRef<"Coupon", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"Coupon", 'DateTime'>
 }
     

@@ -258,16 +258,25 @@ export function AdminReviews() {
 export function CouponsManager() {
   const coupons = useQuery(["coupons"], () => services.coupons.all());
   const [open, setOpen] = useState(false);
-  const [form, setForm] = useState({ code: "", type: "percent" as Coupon["type"], value: 10, minSpend: 0, days: 90 });
+  const [form, setForm] = useState({
+    code: "", type: "percent" as Coupon["type"], value: 10, minSpend: 0, days: 90,
+    displayText: "", displayStartsAt: "", displayEndsAt: "",
+  });
 
   const create = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const { days, ...rest } = form;
-      await services.coupons.create({ ...rest, active: true, expiresAt: new Date(Date.now() + days * 86400000).toISOString() });
+      const { days, displayStartsAt, displayEndsAt, ...rest } = form;
+      await services.coupons.create({
+        ...rest,
+        active: true,
+        expiresAt: new Date(Date.now() + days * 86400000).toISOString(),
+        displayStartsAt: displayStartsAt ? new Date(displayStartsAt).toISOString() : undefined,
+        displayEndsAt: displayEndsAt ? new Date(displayEndsAt).toISOString() : undefined,
+      });
       toast.success("Coupon created");
       setOpen(false);
-      setForm({ code: "", type: "percent", value: 10, minSpend: 0, days: 90 });
+      setForm({ code: "", type: "percent", value: 10, minSpend: 0, days: 90, displayText: "", displayStartsAt: "", displayEndsAt: "" });
       coupons.refetch();
     } catch (err) {
       toast.error((err as Error).message);
@@ -298,6 +307,25 @@ export function CouponsManager() {
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1.5"><Label>Minimum spend (৳)</Label><Input type="number" min={0} value={form.minSpend} onChange={(e) => setForm({ ...form, minSpend: Number(e.target.value) })} /></div>
               <div className="space-y-1.5"><Label>Valid for (days)</Label><Input type="number" min={1} value={form.days} onChange={(e) => setForm({ ...form, days: Number(e.target.value) })} /></div>
+            </div>
+            <div className="space-y-1.5">
+              <Label>Frontend display text</Label>
+              <Input
+                value={form.displayText}
+                onChange={(e) => setForm({ ...form, displayText: e.target.value })}
+                placeholder="Get 10% off on 10 December"
+                maxLength={160}
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1.5">
+                <Label>Display starts</Label>
+                <Input type="datetime-local" value={form.displayStartsAt} onChange={(e) => setForm({ ...form, displayStartsAt: e.target.value })} />
+              </div>
+              <div className="space-y-1.5">
+                <Label>Display ends</Label>
+                <Input type="datetime-local" value={form.displayEndsAt} onChange={(e) => setForm({ ...form, displayEndsAt: e.target.value })} />
+              </div>
             </div>
             <DialogFooter><Button type="submit">Create</Button></DialogFooter>
           </form>
