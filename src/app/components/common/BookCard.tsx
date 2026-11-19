@@ -8,7 +8,7 @@
 //  - cover shadow grows
 
 import { Link } from "@/lib/navigation";
-import { Eye, Heart, GitCompare, Minus, Plus, ShoppingCart } from "lucide-react";
+import { Eye, Heart, Shuffle, Minus, Plus, ShoppingCart } from "lucide-react";
 import { BookCover } from "./BookCover";
 import { PriceTag } from "./PriceTag";
 import { RatingStars } from "./RatingStars";
@@ -92,8 +92,9 @@ const BOOK_CARD_CSS = `
 /* each button's own hover / press feedback */
 .book-card:hover .book-card__icon-btn:hover {
   transform: scale(1.1);
-  box-shadow: 0 4px 8px -2px rgb(0 0 0 / 0.25);
+  // box-shadow: 0 4px 8px -2px rgb(0 0 0 / 0.25);
   transition-delay: 0ms;
+  border: none;
 }
 .book-card:hover .book-card__icon-btn:active {
   transform: scale(0.95);
@@ -352,7 +353,7 @@ export function BookCard({
             <Tooltip>
               <TooltipTrigger asChild>
                 <IconBtn label="Compare" className="text-[#8f0a0a] font-bold" active={compared} onClick={() => toggleCompare(book)}>
-                  <GitCompare size={18} />
+                  <Shuffle size={18} />
                 </IconBtn>
               </TooltipTrigger>
               <TooltipContent side="left">Compare</TooltipContent>
@@ -493,7 +494,7 @@ function IconBtn({
       aria-pressed={active}
       onClick={onClick}
       className={cn(
-        "book-card__icon-btn flex h-8 w-8 items-center justify-center rounded-full border border-border text-muted-foreground shadow-sm",
+        "book-card__icon-btn flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40",
         active && "text-primary",
         className,
