@@ -14,7 +14,7 @@ const COLORS = [
   "#8fd3f4", // light blue
 ];
 
-// Small seeded generator: varied looking, but identical on every render
+// Seeded generator: varied looking, but identical on every render
 function seeded(seed: number) {
   let s = seed;
   return () => {
@@ -23,23 +23,26 @@ function seeded(seed: number) {
   };
 }
 
-const rand = seeded(42);
+const rand = seeded(7);
 
-const confetti = Array.from({ length: 110 }, (_, i) => {
+const RAIN_SPREAD_MS = 2200; // how long new pieces keep starting to fall
+
+const confetti = Array.from({ length: 180 }, (_, i) => {
   const isSquare = rand() > 0.55;
-  const w = 7 + Math.round(rand() * 9); // 7–16px
-  const h = isSquare ? w : 5 + Math.round(rand() * 7); // 5–12px
+  const w = 6 + Math.round(rand() * 8); // 6-14px
+  const h = isSquare ? w : 5 + Math.round(rand() * 6); // 5-11px
   const dir = rand() > 0.5 ? 1 : -1;
   return {
     id: i,
-    left: `${(rand() * 100).toFixed(2)}%`,
-    delay: `${Math.round(rand() * 700)}ms`,
-    duration: `${2300 + Math.round(rand() * 1700)}ms`,
-    drift: `${Math.round((rand() - 0.5) * 18)}vw`,
-    sway: `${Math.round(10 + rand() * 30)}px`,
-    rx: `${dir * Math.round(360 + rand() * 720)}deg`,
-    ry: `${-dir * Math.round(180 + rand() * 540)}deg`,
-    rz: `${dir * Math.round(180 + rand() * 540)}deg`,
+    left: `${(rand() * 104 - 2).toFixed(2)}%`,
+    delay: `${Math.round(rand() * RAIN_SPREAD_MS)}ms`,
+    duration: `${1300 + Math.round(rand() * 1000)}ms`,
+    // small, consistent slant like wind-blown rain
+    drift: `${(3 + rand() * 4).toFixed(1)}vw`,
+    flutter: `${Math.round(4 + rand() * 10)}px`,
+    rx: `${dir * Math.round(360 + rand() * 540)}deg`,
+    ry: `${-dir * Math.round(180 + rand() * 360)}deg`,
+    rz: `${dir * Math.round(120 + rand() * 360)}deg`,
     width: w,
     height: h,
     color: COLORS[Math.floor(rand() * COLORS.length)],
@@ -51,7 +54,7 @@ export function CartCelebration() {
 
   useEffect(() => {
     if (!cartCelebration) return;
-    const timer = window.setTimeout(dismissCartCelebration, 4600);
+    const timer = window.setTimeout(dismissCartCelebration, 4800);
     return () => window.clearTimeout(timer);
   }, [cartCelebration, dismissCartCelebration]);
 
@@ -66,11 +69,11 @@ export function CartCelebration() {
       <span className="sr-only">Added to cart: {cartCelebration.title}</span>
 
       <style>{`
-        @keyframes cc-fall {
-          0%   { transform: translate3d(0, -8vh, 0); opacity: 1; }
-          25%  { transform: translate3d(calc(var(--drift) * 0.25 + var(--sway)), 25vh, 0); }
-          50%  { transform: translate3d(calc(var(--drift) * 0.5 - var(--sway)), 52vh, 0); }
-          75%  { transform: translate3d(calc(var(--drift) * 0.75 + var(--sway)), 80vh, 0); opacity: 1; }
+        @keyframes cc-rain {
+          0%   { transform: translate3d(0, -10vh, 0); opacity: 1; }
+          25%  { transform: translate3d(calc(var(--drift) * 0.25 + var(--flutter)), 27vh, 0); }
+          50%  { transform: translate3d(calc(var(--drift) * 0.5 - var(--flutter)), 54vh, 0); }
+          75%  { transform: translate3d(calc(var(--drift) * 0.75 + var(--flutter)), 81vh, 0); opacity: 1; }
           100% { transform: translate3d(var(--drift), 112vh, 0); opacity: 0; }
         }
         @keyframes cc-tumble {
@@ -91,8 +94,8 @@ export function CartCelebration() {
               left: p.left,
               opacity: 0,
               ["--drift" as string]: p.drift,
-              ["--sway" as string]: p.sway,
-              animation: `cc-fall ${p.duration} cubic-bezier(.25,.1,.6,1) ${p.delay} both`,
+              ["--flutter" as string]: p.flutter,
+              animation: `cc-rain ${p.duration} linear ${p.delay} both`,
             } as React.CSSProperties
           }
         >
