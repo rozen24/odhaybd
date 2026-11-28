@@ -7,6 +7,9 @@ import { OUTSIDE_SHIPPING } from "@/lib/constants";
 import { orderInclude, toOrder } from "@/lib/mappers";
 import { prismaRepositories } from "@/services/prisma-repositories";
 import { fail, handle, isUuid, ok, readJson, str } from "@/lib/api-route";
+import { cookies } from "next/headers";
+import { OTP_VERIFIED_COOKIE, normalizeOtpPhone, readOtpPayload } from "@/lib/otp";
+import { createHash } from "node:crypto";
 
 class OrderError extends Error {}
 
@@ -59,6 +62,24 @@ export const POST = handle(async (request: Request) => {
   };
   if (!address.fullName || !address.phone || !address.district || !address.area || !address.street) {
     return fail("Please fill in all delivery details", 400);
+  }
+  const normalizedAddressPhone = normalizeOtpPhone(address.phone);
+  if (!/^01[3-9]\d{8}$/.test(normalizedAddressPhone)) {
+    return fail("Please enter a valid mobile number", 400);
+  }
+  const otpToken = str(body.otpToken, 2000);
+  const otpPayload = readOtpPayload<{ phone: string; expiresAt: number }>(otpToken);
+  const jar = await cookies();
+  const verifiedCookie = jar.get(OTP_VERIFIED_COOKIE)?.value;
+  const tokenHash = otpToken ? createHash("sha256").update(otpToken).digest("hex") : "";
+  if (
+    !otpPayload ||
+    otpPayload.phone !== normalizedAddressPhone ||
+    otpPayload.expiresAt < Date.now() ||
+    !verifiedCookie ||
+    tokenHash !== verifiedCookie
+  ) {
+    return fail("Please verify your mobile number before placing the order", 403);
   }
 
   // 2. Price everything from the database

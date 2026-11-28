@@ -82,7 +82,7 @@ export interface AdminUsersRepository {
 }
 
 export interface OrdersRepository {
-  create(order: Partial<Order>): Promise<Order>;
+  create(order: Partial<Order> & { otpToken?: string }): Promise<Order>;
   listForUser(): Promise<Order[]>;
   listAll(): Promise<Order[]>;
   listForSeller(): Promise<Order[]>;

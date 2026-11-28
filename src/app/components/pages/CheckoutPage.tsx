@@ -1,6 +1,6 @@
 // Checkout stepper: address → payment → review. Supports guest and signed-in
-// checkout (saved address pick or new address), coupon validation, payment
-// method selection, and order placement via the API.
+// checkout (saved address pick or new address), mobile-number OTP verification,
+// coupon validation, payment method selection, and order placement via the API.
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate } from "@/lib/navigation";
@@ -14,6 +14,7 @@ import { BookCover } from "../common/BookCover";
 import { CONTAINER, Breadcrumbs, PanelSkeleton } from "../catalog/states";
 import { useStoreSettings } from "../product/useStoreSettings";
 import { COUPON_KEY, Row } from "./commerce";
+import { OtpVerifier, normalizePhone, isValidBdPhone } from "../checkout/OtpVerifier";
 import { formatTk } from "../../../lib/format";
 import { DISTRICTS, PAYMENT_METHODS, OUTSIDE_SHIPPING } from "../../../lib/constants";
 import type { Address, Book, OrderItem, PaymentMethod } from "../../../types";
@@ -55,6 +56,9 @@ export default function CheckoutPage() {
   const [payment, setPayment] = useState<PaymentMethod>("cod");
   const [placing, setPlacing] = useState(false);
 
+  // OTP verification: the token is issued by the server for one specific phone.
+  const [otpState, setOtpState] = useState<{ phone: string; token: string } | null>(null);
+
   // Coupon (pre-filled from cart, re-validated here against the live subtotal).
   // sessionStorage only exists in the browser, so it is read in an effect (not
   // in a useState initializer) to keep server prerendering from crashing.
@@ -83,6 +87,10 @@ export default function CheckoutPage() {
     }
     return form;
   }, [addrChoice, saved, form]);
+
+  // Verification is tied to the phone number: change the number or pick another
+  // address and this becomes false again automatically.
+  const phoneVerified = !!otpState && otpState.phone === normalizePhone(address.phone);
 
   const shipping = useMemo(() => {
     if (subtotal >= settings.freeShippingThreshold || subtotal === 0) return 0;
@@ -133,10 +141,11 @@ export default function CheckoutPage() {
   }
 
   const set = (k: keyof typeof form, v: string) => setForm((f) => ({ ...f, [k]: v }));
-  const addressValid = !!(address.fullName && address.phone && address.area && address.street);
+  const addressValid = !!(address.fullName && isValidBdPhone(address.phone) && address.area && address.street);
 
   const next = () => {
-    if (step === 0 && !addressValid) { toast.error("Please fill in all delivery details."); return; }
+    if (step === 0 && !addressValid) { toast.error("Please fill in all delivery details with a valid mobile number."); return; }
+    if (step === 0 && !phoneVerified) { toast.error("Please verify your mobile number first."); return; }
     setStep((s) => Math.min(2, s + 1));
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -145,7 +154,12 @@ export default function CheckoutPage() {
     e.preventDefault();
     if (step < 2) { next(); return; }
     if (!addressValid) {
-      toast.error("Please fill in all delivery details.");
+      toast.error("Please fill in all delivery details with a valid mobile number.");
+      setStep(0);
+      return;
+    }
+    if (!phoneVerified || !otpState) {
+      toast.error("Please verify your mobile number first.");
       setStep(0);
       return;
     }
@@ -164,6 +178,7 @@ export default function CheckoutPage() {
         userId: user?.id ?? null, items, subtotal, shipping, discount, total,
         ...(applied ? { couponCode: applied.code } : {}),
         paymentMethod: payment, address: orderAddress,
+        otpToken: otpState.token, // the server must re-verify this token against address.phone
       });
       clearCart();
       sessionStorage.removeItem(COUPON_KEY);
@@ -244,7 +259,7 @@ export default function CheckoutPage() {
               {addrChoice === NEW && (
                 <div className="mt-4 grid gap-4 sm:grid-cols-2">
                   <Field label="Full name" id="co-name"><Input id="co-name" value={form.fullName} onChange={(e) => set("fullName", e.target.value)} required autoComplete="name" /></Field>
-                  <Field label="Phone" id="co-phone"><Input id="co-phone" type="tel" value={form.phone} onChange={(e) => set("phone", e.target.value)} required autoComplete="tel" /></Field>
+                  <Field label="Phone" id="co-phone"><Input id="co-phone" type="tel" placeholder="01XXXXXXXXX" value={form.phone} onChange={(e) => set("phone", e.target.value)} required autoComplete="tel" /></Field>
                   <Field label="District" id="co-district">
                     <Select value={form.district} onValueChange={(v) => set("district", v)}>
                       <SelectTrigger id="co-district"><SelectValue /></SelectTrigger>
@@ -260,6 +275,16 @@ export default function CheckoutPage() {
                   )}
                 </div>
               )}
+
+              {/* Mobile number verification (OTP) */}
+              <div className="mt-5">
+                <OtpVerifier
+                  phone={address.phone}
+                  verified={phoneVerified}
+                  onVerified={(token) => setOtpState({ phone: normalizePhone(address.phone), token })}
+                />
+              </div>
+
               <p className="mt-5 text-xs text-muted-foreground">{settings.deliveryEstimate}. Delivery inside Dhaka {formatTk(settings.shippingFee)}, outside Dhaka {formatTk(OUTSIDE_SHIPPING)}; free over {formatTk(settings.freeShippingThreshold)}.</p>
             </section>
           )}
@@ -316,10 +341,10 @@ export default function CheckoutPage() {
                 <h2 className="mb-4 font-display text-lg font-semibold">Items ({lines.length})</h2>
                 <ul className="divide-y divide-border">
                   {lines.map(({ item, book }) => (
-                    <li key={item.bookId} className="flex items-center gap-3 py-3">
+                    <li key={`${item.bookId}:${item.variantId ?? ""}`} className="flex items-center gap-3 py-3">
                       <div className="h-16 w-11 shrink-0 overflow-hidden rounded-[3px] shadow-sm"><BookCover title={book.title} coverUrl={book.coverUrl} /></div>
-                      <div className="min-w-0 flex-1"><p className="line-clamp-1 text-sm font-medium">{book.title}</p><p className="text-xs tabular-nums text-muted-foreground">{item.qty} × {formatTk(priceOf(book))}</p></div>
-                      <span className="text-sm tabular-nums">{formatTk(priceOf(book) * item.qty)}</span>
+                      <div className="min-w-0 flex-1"><p className="line-clamp-1 text-sm font-medium">{book.title}</p><p className="text-xs tabular-nums text-muted-foreground">{item.qty} × {formatTk(priceOf(book, item.variantId))}</p></div>
+                      <span className="text-sm tabular-nums">{formatTk(priceOf(book, item.variantId) * item.qty)}</span>
                     </li>
                   ))}
                 </ul>
@@ -341,7 +366,7 @@ export default function CheckoutPage() {
             {resolving && lines.length === 0 ? <PanelSkeleton rows={2} className="mt-4" /> : (
               <ul className="mt-4 max-h-64 space-y-3 overflow-y-auto">
                 {lines.map(({ item, book }) => (
-                  <li key={item.bookId} className="flex items-center gap-3">
+                  <li key={`${item.bookId}:${item.variantId ?? ""}`} className="flex items-center gap-3">
                     <div className="h-14 w-10 shrink-0 overflow-hidden rounded-[3px] shadow-sm"><BookCover title={book.title} coverUrl={book.coverUrl} /></div>
                     <div className="min-w-0 flex-1"><p className="truncate text-sm">{book.title}</p><p className="text-xs text-muted-foreground">{variantOf(book, item.variantId)?.name ?? "Paperback (Premium)"} · Qty {item.qty}</p></div>
                     <span className="text-sm tabular-nums">{formatTk(priceOf(book, item.variantId) * item.qty)}</span>
@@ -370,8 +395,12 @@ export default function CheckoutPage() {
               <Row label={`Delivery (${address.district})`} value={shipping === 0 ? "Free" : formatTk(shipping)} />
               <div className="border-t border-border pt-3"><Row label="Total" value={formatTk(total)} bold /></div>
             </dl>
+
+            {!phoneVerified && (
+              <p className="mt-4 text-center text-sm text-destructive">Please verify your mobile number first</p>
+            )}
             {step === 2 ? (
-              <Button type="submit" size="lg" className="mt-5 w-full" disabled={placing || resolving}>{placing ? "Placing order…" : `Place order · ${formatTk(total)}`}</Button>
+              <Button type="submit" size="lg" className="mt-5 w-full" disabled={placing || resolving || !phoneVerified}>{placing ? "Placing order…" : `Place order · ${formatTk(total)}`}</Button>
             ) : (
               <Button type="button" size="lg" className="mt-5 w-full" onClick={next}>Continue</Button>
             )}
